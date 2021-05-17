@@ -1,6 +1,6 @@
-final String tableNotes = 'notes';
+final String tablePictures = 'pictures';
 
-class NoteFields {
+class PictureField {
   static final String id = '_id';
   static final String data = 'data';
   static final String created_at = 'created_at';
@@ -13,7 +13,7 @@ class NoteFields {
 
 }
 
-class Note {
+class Picture {
   final int? id;
   final String data;
   final String created_at;
@@ -24,7 +24,7 @@ class Note {
   final String categories;
   final int walk_id;
 
-  const Note({
+  const Picture({
     this.id,
     required this.data,
     required this.created_at,
