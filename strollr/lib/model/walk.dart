@@ -1,32 +1,83 @@
 final String tableWalks = 'walks';
 
 class WalkField {
+  static final List<String> values = [
+    id,
+    name,
+    duration,
+    distance,
+    route,
+    startedAt,
+    endedAt
+  ];
+
   static final String id = '_id';
   static final String name = 'name';
   static final String duration = 'duration';
   static final String distance = 'distance';
   static final String route = 'route';
-  static final String started_at = 'started_at';
-  static final String ended_at = 'ended_at';
-
+  static final String startedAt = 'started_at';
+  static final String endedAt = 'ended_at';
 }
 
 class Walk {
   final int? id;
   final String name;
-  final String duration;
-  final String distance;
-  final int route;
-  final String started_at;
-  final String ended_at;
+  final DateTime durationTime;
+  final double distanceInKm;
+  final String route;
+  final DateTime startedAtTime;
+  final DateTime endedAtTime;
 
   const Walk({
     this.id,
     required this.name,
-    required this.duration,
-    required this.distance,
+    required this.durationTime,
+    required this.distanceInKm,
     required this.route,
-    required this.started_at,
-    required this.ended_at,
+    required this.startedAtTime,
+    required this.endedAtTime,
   });
+
+  /// convert the current walk object to json format to insert it into the database
+  Map<String, Object?> toJson() => {
+        WalkField.id: id,
+        WalkField.name: name,
+        WalkField.duration: durationTime.toIso8601String(),
+        WalkField.distance: distanceInKm,
+        WalkField.route: route,
+        WalkField.startedAt: startedAtTime.toIso8601String(),
+        WalkField.endedAt: endedAtTime.toIso8601String(),
+      };
+
+  /// convert json input from the database into a walk object
+  static Walk fromJson(Map<String, Object?> json) => Walk(
+        id: json[WalkField.id] as int?,
+        name: json[WalkField.name] as String,
+        durationTime: DateTime.parse(json[WalkField.duration] as String),
+        distanceInKm: json[WalkField.distance] as double,
+        route: json[WalkField.route] as String,
+        startedAtTime: DateTime.parse(json[WalkField.startedAt] as String),
+        endedAtTime: DateTime.parse(json[WalkField.endedAt] as String),
+      );
+
+  /// creating a copy of the current walk object
+  Walk copy({
+    int? id,
+    String? name,
+    DateTime? durationTime,
+    double? distanceInKm,
+    String? route,
+    DateTime? startedAtTime,
+    DateTime? endedAtTime,
+  }) =>
+      Walk(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        durationTime: durationTime ?? this.durationTime,
+        distanceInKm: distanceInKm ?? this.distanceInKm,
+        route: route ?? this.route,
+        startedAtTime: startedAtTime ?? this.startedAtTime,
+        endedAtTime: endedAtTime ?? this.endedAtTime,
+      );
 }
