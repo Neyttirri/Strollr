@@ -191,6 +191,48 @@ class DatabaseManager {
     return result.map((json) => Walk.fromJson(json)).toList();
   }
 
+  /// update a picture in the database by passing the updated version [picture]
+  Future<int> updatePicture(Picture picture) async {
+    final db = await instance.database;
+    return await db.update(
+      tablePictures,
+      picture.toJson(),
+      where: '${PictureField.id} = ?',
+      whereArgs: [picture.id],
+    );
+  }
+
+  /// update a walk in the database by passing the updated version [walk]
+  Future<int> updateWalk(Walk walk) async {
+    final db = await instance.database;
+    return await db.update(
+      tableWalks,
+      walk.toJson(),
+      where: '${WalkField.id} = ?',
+      whereArgs: [walk.id],
+    );
+  }
+
+  /// delete a picture in the database by passing its id [id]
+  Future<int> deletePicture(int id) async {
+    final db = await instance.database;
+    return await db.delete(
+      tablePictures,
+      where: '${PictureField.id} = ?',
+      whereArgs: [id],
+    );
+  }
+
+  /// delete a walk in the database by passing its id [id]
+  Future<int> deleteWalk(int id) async {
+    final db = await instance.database;
+    return await db.delete(
+      tableWalks,
+      where: '${WalkField.id} = ?',
+      whereArgs: [id],
+    );
+  }
+
   Future close() async {
     final db = await instance.database;
 
