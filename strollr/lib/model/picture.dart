@@ -28,18 +28,18 @@ class PictureField {
 }
 
 class Picture {
-  final int? id;
-  final ByteData pictureData;
-  final DateTime createdAtTime;
-  final String color;
-  final String size;
-  final String description;
-  final String location;
-  final int category;
+  int? id;
+  Uint8List pictureData;
+  DateTime createdAtTime;
+  String color;
+  String size;
+  String description;
+  String location;
+  int category;
   // ignore: non_constant_identifier_names
-  final int walk_id;
+  int walk_id;
 
-  const Picture({
+  Picture({
     this.id,
     required this.pictureData,
     required this.createdAtTime,
@@ -68,7 +68,7 @@ class Picture {
   /// convert json input from the database into a picture object
   static Picture fromJson(Map<String, Object?> json) => Picture(
         id: json[PictureField.id] as int?,
-        pictureData: json[PictureField.data] as ByteData,
+        pictureData: json[PictureField.data] as Uint8List,
         createdAtTime: DateTime.parse(json[PictureField.createdAt] as String),
         color: json[PictureField.color] as String,
         size: json[PictureField.size] as String,
@@ -81,7 +81,7 @@ class Picture {
   /// creating a copy of the current picture object
   Picture copy({
     int? id,
-    ByteData? pictureData,
+    Uint8List? pictureData,
     DateTime? createdAtTime,
     String? color,
     String? size,

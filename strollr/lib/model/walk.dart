@@ -21,15 +21,15 @@ class WalkField {
 }
 
 class Walk {
-  final int? id;
-  final String name;
-  final DateTime durationTime;
-  final double distanceInKm;
-  final String route;
-  final DateTime startedAtTime;
-  final DateTime endedAtTime;
+  int? id;
+  String name;
+  DateTime durationTime;
+  double distanceInKm;
+  String route;
+  DateTime startedAtTime;
+  DateTime endedAtTime;
 
-  const Walk({
+  Walk({
     this.id,
     required this.name,
     required this.durationTime,
