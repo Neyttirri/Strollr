@@ -6,6 +6,7 @@ class PictureField {
   static final List<String> values = [
     id,
     data,
+    filename,
     createdAt,
     color,
     size,
@@ -17,6 +18,7 @@ class PictureField {
 
   static final String id = '_id';
   static final String data = 'data';
+  static final String filename = 'filename';
   static final String createdAt = 'created_at';
   static final String color = 'color';
   static final String size = 'size';
@@ -30,6 +32,7 @@ class PictureField {
 class Picture {
   int? id;
   Uint8List pictureData;
+  String filename;
   DateTime createdAtTime;
   String color;
   String size;
@@ -42,6 +45,7 @@ class Picture {
   Picture({
     this.id,
     required this.pictureData,
+    required this.filename,
     required this.createdAtTime,
     required this.color,
     required this.size,
@@ -56,6 +60,7 @@ class Picture {
   Map<String, Object?> toJson() => {
         PictureField.id: id,
         PictureField.data: pictureData,
+        PictureField.filename: filename,
         PictureField.createdAt: createdAtTime.toIso8601String(),
         PictureField.color: color,
         PictureField.size: size,
@@ -69,6 +74,7 @@ class Picture {
   static Picture fromJson(Map<String, Object?> json) => Picture(
         id: json[PictureField.id] as int?,
         pictureData: json[PictureField.data] as Uint8List,
+        filename: json[PictureField.filename] as String,
         createdAtTime: DateTime.parse(json[PictureField.createdAt] as String),
         color: json[PictureField.color] as String,
         size: json[PictureField.size] as String,
@@ -82,6 +88,7 @@ class Picture {
   Picture copy({
     int? id,
     Uint8List? pictureData,
+    String? filename,
     DateTime? createdAtTime,
     String? color,
     String? size,
@@ -94,6 +101,7 @@ class Picture {
       Picture(
         id: id ?? this.id,
         pictureData: pictureData ?? this.pictureData,
+        filename: filename ?? this.filename,
         createdAtTime: createdAtTime ?? this.createdAtTime,
         color: color ?? this.color,
         size: size ?? this.size,

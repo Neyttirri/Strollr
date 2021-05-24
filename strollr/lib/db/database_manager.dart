@@ -3,6 +3,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:strollr/model/picture.dart';
 import 'package:strollr/model/picture_categories.dart';
 import 'package:strollr/model/walk.dart';
+import 'package:strollr/logger.dart';
 
 class DatabaseManager {
   static final DatabaseManager instance = DatabaseManager._init();
@@ -45,6 +46,8 @@ class DatabaseManager {
         ${PictureCategoriesField.description} TEXT DEFAULT "undefined" NOT NULL
       )
     ''');
+    ApplicationLogger.getLogger('DatabaseManager', colors: true)
+        .d('Table $tablePictureCategories created.');
 
     // create table for the walks
     // for DateTime -> TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS"), because there is to timestamp in sqlite
@@ -60,7 +63,8 @@ class DatabaseManager {
         ${WalkField.endedAt} $textType
       )
     ''');
-
+    ApplicationLogger.getLogger('DatabaseManager', colors: true)
+        .i('Table $tableWalks created.');
     // create table for the pictures
     // image data as Uint8List -> BLOB in DB
     // color, size and description are user input -> questions about each taken picture
@@ -68,6 +72,7 @@ class DatabaseManager {
       CREATE TABLE $tablePictures (
         ${PictureField.id} $idType,
         ${PictureField.data} $dataType, 
+        ${PictureField.filename} $textType, 
         ${PictureField.createdAt} $textType,
         ${PictureField.color} $textType, 
         ${PictureField.size} $textType, 
@@ -79,9 +84,13 @@ class DatabaseManager {
         FOREIGN KEY (${PictureField.walk_id}) REFERENCES $tableWalks(${WalkField.id}) 
       )
     ''');
+    ApplicationLogger.getLogger('DatabaseManager', colors: true)
+        .d('Table $tablePictures created.');
 
     // fill the categories as they are known from the beginning
     _insertCategories(db);
+    ApplicationLogger.getLogger('DatabaseManager', colors: true)
+        .d('Table $tablePictureCategories filled.');
   }
 
   void _insertCategories(Database db) {
@@ -96,6 +105,8 @@ class DatabaseManager {
   Future<Picture> insertPicture(Picture picture) async {
     final db = await instance.database;
     final id = await db.insert(tablePictures, picture.toJson());
+    ApplicationLogger.getLogger('DatabaseManager', colors: true).d(
+        'insertPicture | Picture inserted into $tablePictures with ID = $id');
     return picture.copy(id: id);
   }
 
@@ -103,6 +114,8 @@ class DatabaseManager {
   Future<Walk> insertWalk(Walk walk) async {
     final db = await instance.database;
     final id = await db.insert(tableWalks, walk.toJson());
+    ApplicationLogger.getLogger('DatabaseManager', colors: true)
+        .d('insertWalk | Walk inserted into $tableWalks with ID = $id');
     return walk.copy(id: id);
   }
 
@@ -212,6 +225,8 @@ class DatabaseManager {
   /// update a picture in the database by passing the updated version [picture]. Returns the number of changes made
   Future<int> updatePicture(Picture picture) async {
     final db = await instance.database;
+    ApplicationLogger.getLogger('DatabaseManager', colors: true).d(
+        'updatePicture | Updating picture with ID = ${picture.id}');
     return await db.update(
       tablePictures,
       picture.toJson(),
@@ -223,6 +238,8 @@ class DatabaseManager {
   /// update a walk in the database by passing the updated version [walk]. Returns the number of changes made
   Future<int> updateWalk(Walk walk) async {
     final db = await instance.database;
+    ApplicationLogger.getLogger('DatabaseManager', colors: true)
+        .d('updateWalk | Updating walk with ID = ${walk.id}');
     return await db.update(
       tableWalks,
       walk.toJson(),
@@ -234,6 +251,8 @@ class DatabaseManager {
   /// delete a picture in the database by passing its id [id]
   Future<int> deletePicture(int id) async {
     final db = await instance.database;
+    ApplicationLogger.getLogger('DatabaseManager', colors: true)
+        .d('deletePicture | Deleting picture with ID = $id');
     return await db.delete(
       tablePictures,
       where: '${PictureField.id} = ?',
@@ -244,6 +263,8 @@ class DatabaseManager {
   /// delete a walk in the database by passing its id [id]
   Future<int> deleteWalk(int id) async {
     final db = await instance.database;
+    ApplicationLogger.getLogger('DatabaseManager', colors: true)
+        .d('deleteWalk | Deleting walk with ID = $id');
     return await db.delete(
       tableWalks,
       where: '${WalkField.id} = ?',
@@ -254,6 +275,8 @@ class DatabaseManager {
   /// clear the database, should be used for the database testing
   Future<void> deleteDb() async {
     final db = await instance.database;
+    ApplicationLogger.getLogger('DatabaseManager', colors: true)
+        .d('deleteDb | Deleting all entries in table $tableWalks and table $tablePictures');
     await db.delete(
       tableWalks,
     );
@@ -264,7 +287,8 @@ class DatabaseManager {
 
   Future close() async {
     final db = await instance.database;
-
+    ApplicationLogger.getLogger('DatabaseManager', colors: true)
+        .d('close | Closing database');
     db.close();
   }
 }
