@@ -73,25 +73,24 @@ void main() {
       toDeleteWalk = await DatabaseOperations.insertWalk(toDeleteWalk);
       expect((await DatabaseManager.instance.readALlWalks()).length,
           DatabaseOperations.walksCounter);
-      int deletedWalkId = await DatabaseOperations.deleteWalk(toDeleteWalk.id!);
+      await DatabaseOperations.deleteWalk(toDeleteWalk.id!);
       expect((await DatabaseManager.instance.readALlWalks()).length,
           DatabaseOperations.walksCounter);
       List<Walk> currentWalks =
           (await DatabaseManager.instance.readALlWalks()).toList();
       for (var i = 0; i < currentWalks.length; i++) {
-        expect(currentWalks[i].id == deletedWalkId, false);
+        expect(currentWalks[i].id == toDeleteWalk.id, false);
       }
     });
 
     test('Delete picture', () async {
       Picture toDeletePicture = await _createTestPicture(walk.id!);
       toDeletePicture = await DatabaseOperations.insertPicture(toDeletePicture);
-      int deletedPictureId =
-          await DatabaseOperations.deletePicture(toDeletePicture.id!);
+      await DatabaseOperations.deletePicture(toDeletePicture.id!);
       List<Picture> currentPictures =
           (await DatabaseManager.instance.readALlPictures()).toList();
       for (var i = 0; i < currentPictures.length; i++) {
-        expect(currentPictures[i].id == deletedPictureId, false);
+        expect(currentPictures[i].id == toDeletePicture.id, false);
       }
     });
   });
@@ -114,6 +113,7 @@ Future<Picture> _createTestPicture(int walkID) async {
       .asUint8List();
   return Picture(
     pictureData: bytes,
+    filename: 'someNameHere.jpg',
     createdAtTime: DateTime.parse("2021-05-22 11:40:00Z"),
     color: 'black, if that is a color',
     size: 'not too big',
