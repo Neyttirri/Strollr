@@ -41,11 +41,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>LSApplicationCategoryType</key>
-	<string>&lt;key&gt;io.flutter.embedded_views_preview&lt;/key&gt;
-&lt;string&gt;YES&lt;/string&gt;</string>
-	<key>CFBundleDisplayName</key>
-	<string>&lt;key&gt;NSLocationWhenInUseUsageDescription&lt;/key&gt;
-&lt;string&gt;This app needs access to location when open.&lt;/string&gt;</string>
 </dict>
 </plist>
