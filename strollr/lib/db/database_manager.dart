@@ -141,6 +141,8 @@ class DatabaseManager {
       {String orderedByColumn = '', bool ascending = false}) async {
     final db = await instance.database;
     if (orderedByColumn.isEmpty) orderedByColumn = PictureField.createdAt;
+    if(!PictureField.values.contains(orderedByColumn))
+      throw Exception('readALlPictures | Invalid parameter: there is no column $orderedByColumn in the $tablePictures table');
     final String orderBy = orderedByColumn + (ascending ? ' ASC' : ' DESC');
     final result = await db.query(tablePictures, orderBy: orderBy);
     return result.map((json) => Picture.fromJson(json)).toList();
@@ -152,6 +154,8 @@ class DatabaseManager {
       {String orderedByColumn = '', bool ascending = false}) async {
     final db = await instance.database;
     if (orderedByColumn.isEmpty) orderedByColumn = PictureField.createdAt;
+    if(!PictureField.values.contains(orderedByColumn))
+      throw Exception('readALlPicturesFromCategory | Invalid parameter: there is no column $orderedByColumn in the $tablePictures table');
     final String orderBy = orderedByColumn + (ascending ? ' ASC' : ' DESC');
     final result = await db.query(
       tablePictures,
@@ -168,6 +172,8 @@ class DatabaseManager {
       {String orderedByColumn = '', bool ascending = false}) async {
     final db = await instance.database;
     if (orderedByColumn.isEmpty) orderedByColumn = PictureField.createdAt;
+    if(!PictureField.values.contains(orderedByColumn))
+      throw Exception('readALlPicturesFromWalk | Invalid parameter: there is no column $orderedByColumn in the $tablePictures table');
     final String orderBy = orderedByColumn + (ascending ? ' ASC' : ' DESC');
     final result = await db.query(
       tablePictures,
@@ -185,6 +191,8 @@ class DatabaseManager {
       {String orderedByColumn = '', bool ascending = false}) async {
     final db = await instance.database;
     if (orderedByColumn.isEmpty) orderedByColumn = PictureField.createdAt;
+    if(!PictureField.values.contains(orderedByColumn))
+      throw Exception('readALlPicturesFromWalkInCategory | Invalid parameter: there is no column $orderedByColumn in the $tablePictures table');
     final String orderBy = orderedByColumn + (ascending ? ' ASC' : ' DESC');
     final result = await db.query(
       tablePictures,
@@ -217,6 +225,8 @@ class DatabaseManager {
       {String orderedByColumn = '', bool ascending = false}) async {
     final db = await instance.database;
     if (orderedByColumn.isEmpty) orderedByColumn = WalkField.endedAt;
+    if(!WalkField.values.contains(orderedByColumn))
+      throw Exception('readALlWalks | Invalid parameter: there is no column $orderedByColumn in the $tableWalks table');
     final String orderBy = orderedByColumn + (ascending ? ' ASC' : ' DESC');
     final result = await db.query(tableWalks, orderBy: orderBy);
     return result.map((json) => Walk.fromJson(json)).toList();
