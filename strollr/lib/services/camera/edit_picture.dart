@@ -1,9 +1,11 @@
+import 'dart:collection';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
+import 'package:strollr/services/camera/edit_picture_settings.dart';
 import 'package:strollr/services/camera/save_picture.dart';
 import 'package:image_editor/image_editor.dart' hide ImageSource;
 
@@ -20,7 +22,7 @@ class EditPhotoScreen extends StatefulWidget {
 class _EditPhotoScreenState extends State<EditPhotoScreen> {
   // keep the state on a global (not local) level -> here: to show the image in another widget but in the same state
   final GlobalKey<ExtendedImageEditorState> editorKey =
-      GlobalKey<ExtendedImageEditorState>();
+  GlobalKey<ExtendedImageEditorState>();
 
   double saturation = 1;
   double brightness = 0;
@@ -50,6 +52,19 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     1,
     0
   ];
+
+  static const int ID_BRIGHTNESS = 0;
+  static const int ID_CONTRAST = 1;
+  static const int ID_SATURATION = 2;
+  static const int ID_FILTERS = 3;
+
+  int selectedTabIndex = 0;
+  Map<int, bool> tabSelectionMap = {
+    ID_BRIGHTNESS: true,
+    ID_CONTRAST: false,
+    ID_SATURATION: false,
+    ID_FILTERS: false
+  };
 
   late File image;
 
@@ -123,116 +138,63 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
               },
             ),
           ]),
-      body: SingleChildScrollView(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: MediaQuery.of(context).size.width,
-                width: MediaQuery.of(context).size.width,
-                child: AspectRatio(
-                  aspectRatio: 16.0 / 9.0,
-                  child: buildImage(),
-                ),
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          children: <Widget>[
+            // the picture + crop option
+            SizedBox(
+              height: MediaQuery.of(context).size.width,
+              width: MediaQuery.of(context).size.width,
+              child: AspectRatio(
+                aspectRatio:  1.0,   // 16.0 / 9.0,
+                child: buildImage(),
               ),
-              SizedBox(
-                //height: MediaQuery.of(context).size.height -
-                 //   MediaQuery.of(context).size.width,
-                //width: MediaQuery.of(context).size.width,
-                child: SliderTheme(
-                  data: const SliderThemeData(
-                    showValueIndicator: ShowValueIndicator.never,
-                  ),
-                  child: Container(
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.6,
-                                child: Slider(
-                                  label: 'con : ${contrast.toStringAsFixed(2)}',
-                                  onChanged: (double value) {
-                                    setState(() {
-                                      contrast = value;
-                                    });
-                                  },
-                                  divisions: 50,
-                                  value: contrast,
-                                  min: 0,
-                                  max: 4,
-                                ),
-                              ),
-                            ]),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Spacer(),
-                              Column(
-                                children: <Widget>[
-                                  IconButton(
-                                    icon: Icon(Icons.brush),
-                                    color: Theme.of(context).accentColor,
-                                    highlightColor: Colors.white54,
-                                    onPressed: () {  },
-                                  ),
-                                  Text(
-                                    "Saturation",
-                                    style: TextStyle(
-                                        color: Theme.of(context).accentColor),
-                                  ),
-                                ],
-                              ),
-                              // _buildSat(),
-                              Spacer(),
-                              Column(
-                                children: <Widget>[
-                                  IconButton(
-                                    icon: Icon(Icons.brightness_4),
-                                    color: Theme.of(context).accentColor,
-                                    highlightColor: Colors.white54,
-                                    onPressed: () {  },
-                                  ),
-                                  Text(
-                                    "Saturation",
-                                    style: TextStyle(
-                                        color: Theme.of(context).accentColor),
-                                  )
-                                ],
-                              ),
-                              // _buildBrightness(),
-                              Spacer(),
-                              Column(
-                                children: <Widget>[
-                                  IconButton(
-                                    icon: Icon(Icons.color_lens),
-                                    color: Theme.of(context).accentColor,
-                                    highlightColor: Colors.white54,
-                                    focusColor: Colors.red,
-                                    onPressed: () {  },
-                                  ),
-                                  Text(
-                                    "Kontrast",
-                                    style: TextStyle(
-                                        color: Theme.of(context).accentColor),
-                                  )
-                                ],
-                              ),
-                              Spacer(),
-                              // _buildCon(),
-                            ]),
-                      ],
-                    ),
+            ),
+            SizedBox(
+              height: (MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).size.width)*0.55,
+              width: MediaQuery.of(context).size.width,
+              child: SliderTheme(
+                data: const SliderThemeData(
+                  showValueIndicator: ShowValueIndicator.never,
+                ),
+                child: Container(
+                  color: Colors.white,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      // Sliders for editing picture
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: getCurrentSlider(selectedTabIndex),
+                            )
+                          ]),
+                      // icons to choose editing option
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            //Spacer(),
+                            _createIconTap('Helligkeit', Icons.brightness_6,
+                                ID_BRIGHTNESS),
+                            //Spacer(),
+                            _createIconTap('Kontrast', Icons.invert_colors_on,
+                                ID_CONTRAST),
+                            //Spacer(),
+                            _createIconTap(
+                                'Sättigung', Icons.brush, ID_SATURATION),
+                            //Spacer(),
+                          ]),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: _buildFunctions(),
@@ -271,7 +233,6 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
   Widget _buildFunctions() {
     return BottomNavigationBar(
       backgroundColor: Theme.of(context).primaryColor,
-
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(
@@ -353,12 +314,12 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     image.writeAsBytesSync(result);
     print('image_editor time : $diff');
     Future.delayed(Duration(seconds: 0)).then(
-      (value) => Navigator.pushReplacement(
+          (value) => Navigator.pushReplacement(
         context,
         CupertinoPageRoute(
             builder: (context) => SaveImageScreen(
-                  arguments: [image],
-                )),
+              arguments: [image],
+            )),
       ),
     );
   }
@@ -371,26 +332,11 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     editorKey.currentState!.rotate(right: right);
   }
 
-  Widget _buildSat() {
+  Widget _buildSatSlider() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.03,
-        ),
-        Column(
-          children: <Widget>[
-            Icon(
-              Icons.brush,
-              color: Theme.of(context).accentColor,
-            ),
-            Text(
-              "Saturation",
-              style: TextStyle(color: Theme.of(context).accentColor),
-            )
-          ],
-        ),
         Container(
           width: MediaQuery.of(context).size.width * 0.6,
           child: Slider(
@@ -408,33 +354,18 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
         ),
         Padding(
           padding:
-              EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.08),
+          EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.08),
           child: Text(saturation.toStringAsFixed(2)),
         ),
       ],
     );
   }
 
-  Widget _buildBrightness() {
+  Widget _buildBrightnessSlider() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.03,
-        ),
-        Column(
-          children: <Widget>[
-            Icon(
-              Icons.brightness_4,
-              color: Theme.of(context).accentColor,
-            ),
-            Text(
-              "Helligkeit",
-              style: TextStyle(color: Theme.of(context).accentColor),
-            )
-          ],
-        ),
         Container(
           width: MediaQuery.of(context).size.width * 0.6,
           child: Slider(
@@ -452,33 +383,18 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
         ),
         Padding(
           padding:
-              EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.08),
+          EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.08),
           child: Text(brightness.toStringAsFixed(2)),
         ),
       ],
     );
   }
 
-  Widget _buildCon() {
+  Widget _buildConSlider() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.03,
-        ),
-        Column(
-          children: <Widget>[
-            Icon(
-              Icons.color_lens,
-              color: Theme.of(context).accentColor,
-            ),
-            Text(
-              "Kontrast",
-              style: TextStyle(color: Theme.of(context).accentColor),
-            )
-          ],
-        ),
         Container(
           width: MediaQuery.of(context).size.width * 0.6,
           child: Slider(
@@ -496,13 +412,99 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
         ),
         Padding(
           padding:
-              EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.08),
+          EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.08),
           child: Text(contrast.toStringAsFixed(2)),
         ),
       ],
     );
   }
+
+  Widget getCurrentSlider(int index) {
+    switch (index) {
+      case ID_BRIGHTNESS:
+        return _buildBrightnessSlider();
+      case ID_CONTRAST:
+        return _buildConSlider();
+      case ID_SATURATION:
+        return _buildSatSlider();
+      case ID_FILTERS:
+        return Text('create filters!! ');
+
+      default:
+        throw Exception('no such tab!! ');
+    }
+  }
+
+  Widget _createIconTap(String label, IconData icon, int id) {
+    return Column(
+        children: <Widget>[
+          IconButton(
+            onPressed: () {
+              _updateTabSelection(id);
+            },
+            icon: Icon(icon),
+            color: tabSelectionMap[id] as bool ? Colors.green[900] : Colors.green[300],
+          ),
+          Text(
+            label,
+            style: TextStyle(color: tabSelectionMap[id] as bool ? Colors.green[900] : Colors.green[300]), // TextStyle(color: Theme.of(context).accentColor),
+          ),
+        ],
+      );
+  }
+
+  _updateTabSelection(int id) {
+    print(tabSelectionMap);
+    setState(() {
+      selectedTabIndex = id;
+      tabSelectionMap.forEach((key, value) {
+        if (key == id)
+          tabSelectionMap.update(key, (value) => true);
+        else
+          tabSelectionMap.update(key, (value) => false);
+      });
+    });
+  }
 }
+
+Widget _createCustomSlider(String label, double valueSlider, int divisions,
+    double minValue, double maxValue, Function onTap, BuildContext context) {
+  return SizedBox(
+    height:
+    MediaQuery.of(context).size.height - MediaQuery.of(context).size.width,
+    width: MediaQuery.of(context).size.width,
+    child: SliderTheme(
+      data: const SliderThemeData(
+        showValueIndicator: ShowValueIndicator.never,
+      ),
+      child: Container(
+        color: Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width * 0.6,
+              child: Slider(
+                label: '${label} : ${valueSlider.toStringAsFixed(2)}',
+                onChanged: (double value) {
+                  onTap(value);
+                },
+                divisions: divisions,
+                value: valueSlider,
+                min: minValue,
+                max: maxValue,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+
+
+
 /*
 @override
   Widget build(BuildContext context) {
