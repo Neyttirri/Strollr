@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:strollr/route_pages/active_route.dart';
+import 'package:strollr/route_pages/new_route.dart';
 
 class Routes extends StatelessWidget {
 
@@ -26,7 +27,7 @@ class Routes extends StatelessWidget {
         child: Icon(Icons.add),
         backgroundColor: Colors.green,
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => ActiveRoute()));
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewRoute()));
           //onPressed: () => Navigator.pushNamed(context, 'newRoute')
         },
       ),

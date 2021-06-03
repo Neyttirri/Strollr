@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'active_route.dart';
+
 class NewRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Aktive Route", style: TextStyle(color: Colors.green)),
+        title: Text("Neue Route starten", style: TextStyle(color: Colors.green)),
         backgroundColor: Colors.white,
       ),
       body: Center(
@@ -15,7 +17,7 @@ class NewRoute extends StatelessWidget {
             RaisedButton(
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 30),
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewRoute()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ActiveRoute()));
               },
               color: Colors.green,
               shape: RoundedRectangleBorder(
