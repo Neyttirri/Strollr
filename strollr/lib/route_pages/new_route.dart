@@ -1,15 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'neue_route.dart';
-
-class ActiveRoute extends StatefulWidget {
-  ActiveRoute({Key key}) : super(key: key);
-
-  @override
-  _ActiveRouteState createState() => _ActiveRouteState();
-}
-
-class _ActiveRouteState extends State<ActiveRoute> {
+class NewRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,12 +16,12 @@ class _ActiveRouteState extends State<ActiveRoute> {
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 30),
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewRoute()));
-                },
+              },
               color: Colors.green,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(30))),
+                  borderRadius: BorderRadius.all(Radius.circular(30))),
               child: Text(
-              "Route Starten",
+                "Route Starten",
                 style: TextStyle(color: Colors.white),
 
               ),

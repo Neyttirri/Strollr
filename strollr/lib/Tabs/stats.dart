@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Stats extends StatefulWidget {
-  Stats({Key key}) : super(key: key);
-
-  @override
-  _StatsState createState() => _StatsState();
-}
-
-class _StatsState extends State<Stats> {
-
+class Stats extends StatelessWidget {
   final collectables = Container(
     decoration: BoxDecoration(
         border: Border.all(
@@ -137,7 +129,8 @@ class _StatsState extends State<Stats> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Statistik'),
+        title: Text("Sammlung", style: TextStyle(color: Colors.green)),
+        backgroundColor: Colors.white,
       ),
       body: Center(
         child: Container(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:strollr/Tabs/home_page.dart';
-import 'package:strollr/Tabs/routes.dart';
+import 'package:strollr/main_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,11 +10,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Strollr',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: MainScreen(),
     );
   }
 }

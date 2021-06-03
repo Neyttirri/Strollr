@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
 
-class NewRoute extends StatefulWidget {
-  NewRoute({Key key}) : super(key: key);
-
-  @override
-  _NewRouteState createState() => _NewRouteState();
-}
-
-class _NewRouteState extends State<NewRoute> {
+class ActiveRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,8 +22,8 @@ class _NewRouteState extends State<NewRoute> {
         child: Icon(Icons.add),
         backgroundColor: Colors.green,
         //onPressed: () {
-          //Navigator.of(context).push(MaterialPageRoute(builder: (context) => ActiveRoute()));
-       // },
+        //Navigator.of(context).push(MaterialPageRoute(builder: (context) => ActiveRoute()));
+        // },
       ),
     );
   }

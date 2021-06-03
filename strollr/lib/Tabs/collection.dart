@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Collection extends StatefulWidget {
-  Collection({Key key}) : super(key: key);
-
-  @override
-  _CollectionState createState() => _CollectionState();
-}
-
-class _CollectionState extends State<Collection> {
-
+class Collection extends StatelessWidget {
   final imagePilze = "assets/images/mushroomIcon.png";
   final imagePflanzen = "assets/images/plantIcon.png";
   final imageTiere = "assets/images/animalFootstepIcon.png";

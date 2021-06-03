@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:strollr/Tabs/active_route.dart';
+import 'package:strollr/route_pages/active_route.dart';
 
+class Routes extends StatelessWidget {
 
-class Routes extends StatefulWidget {
-  Routes({Key key}) : super(key: key);
-
- @override
- _RoutesState createState() => _RoutesState();
-}
-
-class _RoutesState extends State<Routes> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,23 +11,23 @@ class _RoutesState extends State<Routes> {
         backgroundColor: Colors.white,
       ),
       body: ListView.builder(
-        itemCount: 40,
-        itemBuilder: (context, index) {
-          return Card(
-            child: Column(
-              children: <Widget>[
-                Text("Route ${index + 1}"),
-              ],
-            ),
-          );
-        }),
+          itemCount: 40,
+          itemBuilder: (context, index) {
+            return Card(
+              child: Column(
+                children: <Widget>[
+                  Text("Route ${index + 1}"),
+                ],
+              ),
+            );
+          }),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Neue Route',
         child: Icon(Icons.add),
         backgroundColor: Colors.green,
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(builder: (context) => ActiveRoute()));
-        //onPressed: () => Navigator.pushNamed(context, 'newRoute')
+          //onPressed: () => Navigator.pushNamed(context, 'newRoute')
         },
       ),
     );
