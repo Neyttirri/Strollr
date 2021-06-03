@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:strollr/route_pages/active_route.dart';
 import 'package:strollr/route_pages/new_route.dart';
 import 'package:strollr/style.dart';
+import 'package:strollr/route_pages/route_list_card.dart';
+import 'package:intl/intl.dart';
+
 
 class Routes extends StatelessWidget {
+
+  final List<RouteListCard> routeList = [
+    RouteListCard(DateTime.now(), "Berlin", "Botanischer Garten", 34.43, 6.3),
+    RouteListCard(DateTime.now(), "Hamburg", "Hamburg Garten", 24.43, 5.1),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -13,16 +21,9 @@ class Routes extends StatelessWidget {
         backgroundColor: Colors.white,
       ),
       body: ListView.builder(
-          itemCount: 40,
-          itemBuilder: (context, index) {
-            return Card(
-              child: Column(
-                children: <Widget>[
-                  Text("Route ${index + 1}"),
-                ],
-              ),
-            );
-          }),
+          itemCount: routeList.length, //Database length
+          itemBuilder: (BuildContext context, int index) => buildRouteListCard(context, index)
+      ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Neue Route',
         child: Icon(Icons.add),
@@ -31,6 +32,53 @@ class Routes extends StatelessWidget {
           Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewRoute()));
           //onPressed: () => Navigator.pushNamed(context, 'newRoute')
         },
+      ),
+    );
+  }
+
+  Widget buildRouteListCard(BuildContext context, int index) {
+    final route = routeList[index];
+    return new Container(
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                child: Row(
+                  children: <Widget>[
+                    Text(route.routeName, style: new TextStyle(fontSize: 18.0),),
+                    Spacer(),
+                  ]
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Row(
+                    children: <Widget>[
+                      Text(route.routeLocation),
+                      Spacer(),
+                      Text("${DateFormat('dd/MM/yyyy').format(route.routeTime).toString()}", textAlign: TextAlign.left,),
+                      Spacer(),
+                    ]
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Row(
+                  children: <Widget>[
+                    Text("Länge: " + route.routeDistance.toString() + " km"),
+                    Spacer(),
+                    Text("Dauer: " + route.routeDuration.toString() + " h"),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
