@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:strollr/style.dart';
 
 import 'Tabs/collection.dart';
 import 'Tabs/routes.dart';
@@ -37,7 +38,7 @@ class _MainScreenState extends State<MainScreen> {
         backgroundColor: Colors.white,
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
-          selectedItemColor: Colors.green,
+          selectedItemColor: headerGreen,
           unselectedItemColor: Colors.grey,
           backgroundColor: Colors.white,
           showSelectedLabels: true,
@@ -75,9 +76,7 @@ class _MainScreenState extends State<MainScreen> {
       '/': (context) {
         return [
           Collection(),
-          Routes(
-            //onNext: _next,
-          ),
+          Routes(),
           Stats(),
         ].elementAt(index);
       },

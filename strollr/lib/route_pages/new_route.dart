@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../style.dart';
 import 'active_route.dart';
 
 class NewRoute extends StatelessWidget {
@@ -7,7 +8,7 @@ class NewRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Neue Route starten", style: TextStyle(color: Colors.green)),
+        title: Text("Neue Route starten", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
       body: Center(

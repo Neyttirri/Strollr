@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:strollr/route_pages/active_route.dart';
 import 'package:strollr/route_pages/new_route.dart';
+import 'package:strollr/style.dart';
 
 class Routes extends StatelessWidget {
 
@@ -8,7 +9,7 @@ class Routes extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Routen", style: TextStyle(color: Colors.green)),
+        title: Text("Routen", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
       body: ListView.builder(

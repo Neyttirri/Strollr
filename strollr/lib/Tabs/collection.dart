@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:strollr/style.dart';
 
 class Collection extends StatelessWidget {
   final imagePilze = "assets/images/mushroomIcon.png";
@@ -10,7 +11,7 @@ class Collection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Sammlung", style: TextStyle(color: Colors.green)),
+        title: Text("Sammlung", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
       body: Center(
@@ -47,7 +48,7 @@ class Collection extends StatelessWidget {
         //padding: EdgeInsets.only(left: 10), // im container rand nach innen
         height: 110, width: 330,
         decoration: BoxDecoration(
-          color: Color(0xDDDDDDDD),
+          color: backgroundGrey,
           borderRadius: BorderRadius.all(Radius.circular(20)),
           // boxShadow: [
           //  new BoxShadow( color: Colors.black, blurRadius: 10.0,)

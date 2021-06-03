@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../style.dart';
+
 class ActiveRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Aktive Route", style: TextStyle(color: Colors.green)),
+        title: Text("Aktive Route", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
       body: Center(

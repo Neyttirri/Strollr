@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../style.dart';
+
 class Stats extends StatelessWidget {
   final collectables = Container(
     decoration: BoxDecoration(
@@ -129,7 +131,7 @@ class Stats extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Sammlung", style: TextStyle(color: Colors.green)),
+        title: Text("Statistiken", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
       body: Center(
