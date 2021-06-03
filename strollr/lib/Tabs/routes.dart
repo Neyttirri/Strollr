@@ -23,7 +23,7 @@ class _RoutesState extends State<Routes> {
           return Card(
             child: Column(
               children: <Widget>[
-                Text("HELLO ${index + 1}"),
+                Text("Route ${index + 1}"),
               ],
             ),
           );

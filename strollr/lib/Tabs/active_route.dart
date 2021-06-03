@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'neue_route.dart';
+
 class ActiveRoute extends StatefulWidget {
   ActiveRoute({Key key}) : super(key: key);
 
@@ -15,6 +17,28 @@ class _ActiveRouteState extends State<ActiveRoute> {
         title: Text("Aktive Route", style: TextStyle(color: Colors.green)),
         backgroundColor: Colors.white,
       ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            RaisedButton(
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 30),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewRoute()));
+                },
+              color: Colors.green,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30))),
+              child: Text(
+              "Route Starten",
+                style: TextStyle(color: Colors.white),
+
+              ),
+            )
+          ],
+        ),
+      ),
+      /*
       floatingActionButton: FloatingActionButton(
         tooltip: 'Foto aufnehmen',
         child: Icon(Icons.add),
@@ -22,7 +46,7 @@ class _ActiveRouteState extends State<ActiveRoute> {
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(builder: (context) => ActiveRoute()));
         },
-      ),
+      ),*/
     );
   }
 }
