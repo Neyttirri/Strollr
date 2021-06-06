@@ -18,7 +18,8 @@ class NewRoute extends StatelessWidget {
             RaisedButton(
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 30),
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ActiveRoute()));
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => ActiveRoute()));
               },
               color: Colors.green,
               shape: RoundedRectangleBorder(
@@ -26,7 +27,6 @@ class NewRoute extends StatelessWidget {
               child: Text(
                 "Route Starten",
                 style: TextStyle(color: Colors.white),
-
               ),
             )
           ],
