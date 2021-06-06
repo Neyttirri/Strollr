@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
+import '../globals.dart' as globals;
 import '../style.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
-final StopWatchTimer _stopWatchTimer = StopWatchTimer();
 final _isHours = true;
 
 final overview = DefaultTextStyle.merge(
@@ -30,8 +29,8 @@ final overview = DefaultTextStyle.merge(
                 Column(
                   children: [
                     StreamBuilder<int>(
-                        stream: _stopWatchTimer.rawTime,
-                        initialData: _stopWatchTimer.rawTime.value,
+                        stream: globals.stopWatchTimer.rawTime,
+                        initialData: globals.stopWatchTimer.rawTime.value,
                         builder: (context, snapshot) {
                           final value = snapshot.data;
                           final displayTime = StopWatchTimer.getDisplayTime(
@@ -63,7 +62,8 @@ final overview = DefaultTextStyle.merge(
                 child: CustomButton(
                     label: 'Start',
                     onPress: () {
-                      _stopWatchTimer.onExecute.add(StopWatchExecute.start);
+                      globals.stopWatchTimer.onExecute
+                          .add(StopWatchExecute.start);
                     }),
               ),
               Padding(
@@ -71,7 +71,8 @@ final overview = DefaultTextStyle.merge(
                 child: CustomButton(
                     label: 'Pause',
                     onPress: () {
-                      _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                      globals.stopWatchTimer.onExecute
+                          .add(StopWatchExecute.stop);
                     }),
               ),
               Padding(
@@ -79,7 +80,8 @@ final overview = DefaultTextStyle.merge(
                 child: CustomButton(
                     label: 'Walk beenden',
                     onPress: () {
-                      _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                      globals.stopWatchTimer.onExecute
+                          .add(StopWatchExecute.stop);
                     }),
               ),
             ])
@@ -99,7 +101,7 @@ class _ActiveRouteState extends State<ActiveRoute> {
   @override
   void dispose() {
     super.dispose();
-    _stopWatchTimer.dispose();
+    globals.stopWatchTimer.dispose();
   }
 
   @override
