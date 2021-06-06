@@ -98,11 +98,11 @@ class ActiveRoute extends StatefulWidget {
 }
 
 class _ActiveRouteState extends State<ActiveRoute> {
-  @override
-  void dispose() {
-    super.dispose();
-    globals.stopWatchTimer.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   globals.stopWatchTimer.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {

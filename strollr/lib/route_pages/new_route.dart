@@ -4,7 +4,12 @@ import '../style.dart';
 import 'active_route.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
-class NewRoute extends StatelessWidget {
+class NewRoute extends StatefulWidget {
+  @override
+  _NewRouteState createState() => _NewRouteState();
+}
+
+class _NewRouteState extends State<NewRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,6 +26,7 @@ class NewRoute extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => ActiveRoute()));
+                globals.stopWatchTimer.onExecute.add(StopWatchExecute.reset);
                 globals.stopWatchTimer.onExecute.add(StopWatchExecute.start);
               },
               color: Colors.green,
