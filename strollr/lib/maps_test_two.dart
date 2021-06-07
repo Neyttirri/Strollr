@@ -117,8 +117,8 @@ class _MapViewState extends State<MapView> {
 
   @override
   Widget build(BuildContext context) {
-    // Determining the screen width & height
-    var height = MediaQuery.of(context).size.height;
+//Determining the screen width & height
+    var height = MediaQuery.of(context).size.height * 0.571;
     var width = MediaQuery.of(context).size.width;
 
     return Container(
@@ -145,7 +145,7 @@ class _MapViewState extends State<MapView> {
                 changeMapStyle();
               },
             ),
-            // Current location button
+            //Current location button
             SafeArea(
               child: Align(
                 alignment: Alignment.bottomRight,

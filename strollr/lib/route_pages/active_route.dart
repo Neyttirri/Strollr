@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import '../globals.dart' as globals;
 import '../style.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
+import '../maps_test_two.dart';
 
 final _isHours = true;
+final maps = new MapView();
 
 final overview = DefaultTextStyle.merge(
   style: TextStyle(
@@ -115,20 +117,19 @@ class _ActiveRouteState extends State<ActiveRoute> {
         child: Container(
           padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
           child: Column(
-            children: [
-              overview,
-            ],
+            children: [overview, new Expanded(child: maps)],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Foto aufnehmen',
         child: Icon(Icons.add_a_photo_outlined),
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.grey[500],
         //onPressed: () {
         //Navigator.of(context).push(MaterialPageRoute(builder: (context) => ActiveRoute()));
         // },
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
