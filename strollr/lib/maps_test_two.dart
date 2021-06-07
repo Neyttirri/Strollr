@@ -162,6 +162,7 @@ class _MapViewState extends State<MapView> {
                           child: Icon(Icons.my_location),
                         ),
                         onTap: () {
+                          _getCurrentLocation();
                           mapController.animateCamera(
                             CameraUpdate.newCameraPosition(
                               CameraPosition(
