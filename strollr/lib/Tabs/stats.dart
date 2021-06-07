@@ -55,7 +55,8 @@ class Stats extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Image.asset('assets/images/mushroomIcon.png', width: 50, height: 50),
+              Image.asset('assets/images/mushroomIcon.png',
+                  width: 50, height: 50),
               Text(
                 '0',
                 style: TextStyle(
@@ -74,7 +75,8 @@ class Stats extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Image.asset('assets/images/animalFootstepIcon.png', width: 50, height: 50),
+              Image.asset('assets/images/animalFootstepIcon.png',
+                  width: 50, height: 50),
               Text(
                 '1',
                 style: TextStyle(
