@@ -42,6 +42,7 @@ class _SaveImageScreenState extends State<SaveImageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('save image file dart');
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
