@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:strollr/style.dart';
 
 import 'Tabs/collection.dart';
+import 'Tabs/collectionTwo.dart';
 import 'Tabs/routes.dart';
 import 'Tabs/stats.dart';
 
@@ -75,7 +76,7 @@ class _MainScreenState extends State<MainScreen> {
     return {
       '/': (context) {
         return [
-          Collection(),
+          CollectionTwo(),
           Routes(),
           Stats(),
         ].elementAt(index);
