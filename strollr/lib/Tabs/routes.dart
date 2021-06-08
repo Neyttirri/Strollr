@@ -14,6 +14,7 @@ class Routes extends StatelessWidget {
   ];
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -22,7 +23,15 @@ class Routes extends StatelessWidget {
       ),
       body: ListView.builder(
           itemCount: routeList.length, //Database length
-          itemBuilder: (BuildContext context, int index) => buildRouteListCard(context, index)
+          itemBuilder: (BuildContext context, int index) {
+            return new GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails()));
+              },
+              child: buildRouteListCard(context, index),
+            );
+
+          }
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Neue Route',
