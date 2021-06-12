@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:strollr/services/camera/edit_picture.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   // used to interact with the Flutter engine -> make sure that you have an instance of the WidgetsBinding
@@ -14,10 +16,8 @@ void main() {
 class RenameMeLater extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(body: CameraMain()));
+    return MaterialApp(home: Scaffold(body: CameraMain()));
   }
-
 }
 
 // camera main separatly so it is a child of MaterialApp so Navigator works and knows the right context
@@ -28,21 +28,35 @@ class CameraMain extends StatefulWidget {
 }
 
 class _CameraMainState extends State<CameraMain> {
-  late File imageFile;
-  final picker = ImagePicker();
+  late File _imageFile;
+  // late Position _currentPosition;
+  final _picker = ImagePicker();
 
   Future<void> _openGallery(BuildContext context) async {
-    var picture = (await picker.getImage(source: ImageSource.gallery))!;
+    var picture = (await _picker.getImage(source: ImageSource.gallery))!;
     setState(() {
-      imageFile = File(picture.path);
+      _imageFile = File(picture.path);
     });
     Navigator.of(context).pop();
   }
 
   Future<void> _openCamera() async {
-    var picture = (await picker.getImage(source: ImageSource.camera))!;
+    var picture = (await _picker.getImage(source: ImageSource.camera))!;
+    /*
+    var positionImage;
+    await Permission.locationWhenInUse.status;
+    await Permission.location.request();
+    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((Position position) async {
+      positionImage = position;
+    }).catchError((e) {
+      print(e);
+    });
+
+     */
     setState(() {
-      imageFile = File(picture.path);
+      _imageFile = File(picture.path);
+     // _currentPosition = positionImage;
     });
 
     Future.delayed(Duration(seconds: 0)).then(
@@ -51,13 +65,13 @@ class _CameraMainState extends State<CameraMain> {
         // the transition
         MaterialPageRoute(
           builder: (context) => EditPhotoScreen(
-            arguments: [imageFile],
+            arguments: [
+              _imageFile
+            ],//arguments: [_imageFile, _currentPosition],
           ),
         ),
       ),
     );
-
-
   }
 
 /*

@@ -1,44 +1,68 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:photo_view/photo_view.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:gpx/gpx.dart';
+import 'package:strollr/db/database_manager.dart';
+import 'package:strollr/model/picture_categories.dart';
 
-class SaveImageScreen extends StatefulWidget {
-  final List arguments;
-  SaveImageScreen({required this.arguments});
-  @override
-  _SaveImageScreenState createState() => _SaveImageScreenState();
-}
+class SavePhotoScreen extends StatelessWidget {
+  final Uint8List imageBytes;
+  final String color;
+  final String size;
+  final String description;
+  final Categories category;
+  final String imagePath;
+  final DateTime createdAt = DateTime.now();
+  //final Position imageLocation;
 
-class _SaveImageScreenState extends State<SaveImageScreen> {
-  late File image;
-  late bool savedImage;
-  @override
-  void initState() {
-    super.initState();
-    image = widget.arguments[0];
-    savedImage = false;
+  late String filename;
+  var gpx = Gpx();
+
+  SavePhotoScreen(
+      {required this.imageBytes,
+      required this.color,
+      required this.size,
+      required this.description,
+      required this.category,
+      required this.imagePath,
+      }); //required this.imageLocation
+
+  void getFilename() {
+    String categoryLabel = category.toString();
+    List<String> pathList = imagePath.split('/');
+    String extension = pathList[pathList.length - 1].split('.')[1];
+    String dateFormatted =
+        "${createdAt.day.toString().padLeft(2, '0')}-${createdAt.month.toString().padLeft(2, '0')}-${createdAt.year.toString()}_${createdAt.hour.toString().padLeft(2, '0')}-${createdAt.minute.toString().padLeft(2, '0')}-${createdAt.second.toString().padLeft(2, '0')}";
+    filename = '${categoryLabel}_$dateFormatted.$extension';
+    print(filename);
   }
 
-  Future saveImage() async {
-    renameImage();
-    //await GallerySaver.saveImage(image.path, albumName: "PhotoEditor");
-    setState(() {
-      savedImage = true;
-    });
+  Future<int> getCategoryId() async {
+    final db = await DatabaseManager.instance.database;
+    final map = await db.rawQuery(
+        'SELECT ID FROM categories WHERE description = ?',
+        [category.toString()]);
+
+    if (map.isNotEmpty) {
+      return map.first[0] as int;
+    } else {
+      throw Exception('Category $category not found!');
+    }
   }
 
-  void renameImage() {
-    String ogPath = image.path;
-    List<String> ogPathList = ogPath.split('/');
-    String ogExt = ogPathList[ogPathList.length - 1].split('.')[1];
-    DateTime today = new DateTime.now();
-    String dateSlug =
-        "${today.day.toString().padLeft(2, '0')}-${today.month.toString().padLeft(2, '0')}-${today.year.toString()}_${today.hour.toString().padLeft(2, '0')}-${today.minute.toString().padLeft(2, '0')}-${today.second.toString().padLeft(2, '0')}";
-    image = image.renameSync(
-        "${ogPath.split('/image')[0]}/PhotoEditor_$dateSlug.$ogExt");
-    print(image.path);
+  void getWalkId() {
+    // TODO: Shared preferences, save the current walk ID, read it from there for the pic -> maybe?
   }
 
+  String getLocation() {
+    /*
+    gpx.creator = 'picture-location';
+    gpx.wpts = [ Wpt(lat: imageLocation.latitude, lon: imageLocation.longitude)];
+    return GpxWriter().asString(gpx, pretty: true);
+
+     */
+    return '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,78 +78,7 @@ class _SaveImageScreenState extends State<SaveImageScreen> {
       body: Container(
         color: Colors.white,
         child: Column(
-          children: <Widget>[
-            ClipRRect(
-              child: Container(
-                color: Theme.of(context).hintColor,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.width * 0.9,
-                child: PhotoView(
-                  imageProvider: FileImage(image),
-                  backgroundDecoration: BoxDecoration(
-                    color: Theme.of(context).hintColor,
-                  ),
-                ),
-              ),
-            ),
-            //
-            Spacer(),
-            Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FloatingActionButton.extended(
-                      disabledElevation: 0,
-                      heroTag: "SAVE",
-                      icon: Icon(Icons.save),
-                      label: savedImage ? Text("SAVED") : Text("SAVE"),
-                      backgroundColor: savedImage
-                          ? Colors.grey
-                          : Theme.of(context).primaryColor,
-                      onPressed: savedImage
-                          ? null
-                          : () {
-                        saveImage();
-                      }),
-                ),
-              ],
-            ),
-            Spacer(),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.1,
-                    child: Center(
-                      child: Icon(
-                        Icons.info,
-                        color: Theme.of(context).accentColor.withOpacity(0.6),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    child: Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Center(
-                        child: Text(
-                          "Note - The images are saved in the best possible quality.",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color:
-                            Theme.of(context).accentColor.withOpacity(0.6),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
+          children: <Widget>[],
         ),
       ),
     );

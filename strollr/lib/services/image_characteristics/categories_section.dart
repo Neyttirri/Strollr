@@ -1,4 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:strollr/model/picture_categories.dart';
+
+class CategoriesIcons {
+
+  static Categories chosenCategory = Categories.undefined;
+
+  // TODO: get categories from the DB and create RadioModels
+  static List<RadioModel> radioList = [
+    new RadioModel(false, Icon(Icons.brush), 'Baum'),
+    new RadioModel(false, Icon(Icons.brush), 'Pflanze'),
+    new RadioModel(false, Icon(Icons.brush), 'Pilze'),
+    new RadioModel(false, Icon(Icons.brush), 'Tier')
+  ];
+
+  static Categories getChosenCategory() {
+    for (RadioModel rm in radioList) {
+      if(rm.isSelected) {
+        switch(rm.description) {
+          case 'Baum':
+            chosenCategory = Categories.tree;
+            break;
+          case 'Pflanze':
+            chosenCategory = Categories.plant;
+            break;
+          case 'Pilze':
+            chosenCategory = Categories.mushroom;
+            break;
+          case 'Tier':
+            chosenCategory = Categories.animal;
+            break;
+          default:
+            chosenCategory = Categories.undefined;
+            break;
+        }
+      }
+    }
+    return chosenCategory;
+  }
+}
 
 class CategoriesRadioList extends StatefulWidget {
   @override
@@ -8,32 +47,23 @@ class CategoriesRadioList extends StatefulWidget {
 }
 
 class CategoriesRadioListState extends State<CategoriesRadioList> {
-  List<RadioModel> sampleData = [];
 
   @override
   void initState() {
     super.initState();
-    _fillCategoriesRadioList();
-  }
-
-  void _fillCategoriesRadioList() {
-    // TODO: get categories from the DB and create RadioModels
-    sampleData.add(new RadioModel(false, Icon(Icons.brush), 'Baum'));
-    sampleData.add(new RadioModel(false, Icon(Icons.brush), 'Pflanze'));
-    sampleData.add(new RadioModel(false, Icon(Icons.brush), 'Pilze'));
-    sampleData.add(new RadioModel(false, Icon(Icons.brush), 'Tier'));
   }
 
   List<Widget> _getAllCategoriesRadioButtons() {
     List<Widget> radioList = [];
-    for (RadioModel radio in sampleData) {
+    for (RadioModel radio in CategoriesIcons.radioList) {
       radioList.add(
         InkWell(
           splashColor: Colors.blueAccent,
           onTap: () {
             setState(() {
-              sampleData.forEach((element) => element.isSelected = false);
+              CategoriesIcons.radioList.forEach((element) => element.isSelected = false);
               radio.isSelected = true;
+              CategoriesIcons.getChosenCategory();
             });
           },
           child: new RadioItem(radio),
@@ -83,10 +113,12 @@ class RadioItem extends StatelessWidget {
               child: _item.buttonIcon,
             ),
             decoration: BoxDecoration(
-              color: _item.isSelected ? Colors.green.shade300 : Colors.transparent,
+              color:
+                  _item.isSelected ? Colors.green.shade300 : Colors.transparent,
               border: Border.all(
                   width: 1.0,
-                  color: _item.isSelected ? Colors.green.shade500 : Colors.grey),
+                  color:
+                      _item.isSelected ? Colors.green.shade500 : Colors.grey),
               borderRadius: BorderRadius.all(Radius.circular(6.0)),
             ),
           ),

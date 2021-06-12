@@ -8,6 +8,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:strollr/services/image_characteristics/describe_picture.dart';
 import 'package:strollr/utils/loading_screen.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_editor/image_editor.dart' hide ImageSource;
 
 class EditPhotoScreen extends StatefulWidget {
@@ -210,6 +211,9 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                 ],
               ),
             ),
+      floatingActionButton: FloatingActionButton(onPressed: () {  },
+
+      ),
       bottomNavigationBar: _buildFunctions(),
     );
   }
@@ -349,7 +353,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => DescribePhotoScreen(
-            arguments: [image],
+              arguments: [image] //arguments: [image, widget.arguments[1]],
           ),
         ),
       ),
