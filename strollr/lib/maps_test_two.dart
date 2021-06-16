@@ -198,6 +198,10 @@ class _MapViewState extends State<MapView> {
                         ),
                         onTap: () {
                           _getCurrentLocation();
+                          /*
+                          * may be redundant
+                          * l. 50-54
+                           */
                           mapController.animateCamera(
                             CameraUpdate.newCameraPosition(
                               CameraPosition(
@@ -209,6 +213,10 @@ class _MapViewState extends State<MapView> {
                               ),
                             ),
                           );
+                          /*
+                          *
+                          *
+                           */
                         },
                       ),
                     ),
