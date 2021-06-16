@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -33,6 +34,13 @@ class _MapViewState extends State<MapView> {
   final Geolocator _geolocator = Geolocator();
   final Set<Marker> _itemMarkers = {};
 
+  //lines to be drawn in maps
+  Set<Polyline> _polylines = {};
+  //recorded locations of user
+  List<LatLng> polylineCoordinates = [];
+
+  PolylinePoints polylinePoints;
+
   // For storing the current position
   Position _currentPosition;
 
@@ -61,6 +69,27 @@ class _MapViewState extends State<MapView> {
     });
   }
 
+
+  /*
+  * when finished, method will take list of recorded locations
+  * connect them via _polylines.add
+   */
+  _createPolylines() async{
+    polylineCoordinates.add(LatLng(52.548625, 13.5824117));
+    polylineCoordinates.add(LatLng(52.5440367, 13.568205));
+
+    setState(() {
+      _polylines.add(
+        Polyline(
+          width: 10,
+          polylineId: PolylineId('route'),
+          color: Colors.blueAccent,
+          points: polylineCoordinates
+        )
+      );
+    });
+  }
+
   _addMarker(latlong) {
     setState(
       () {
@@ -86,6 +115,9 @@ class _MapViewState extends State<MapView> {
     super.initState();
     _getCurrentLocation();
     getMarkerIcon();
+    _createPolylines();
+
+    polylinePoints = PolylinePoints();
   }
 
   void changeMapStyle() {
@@ -129,6 +161,7 @@ class _MapViewState extends State<MapView> {
           children: <Widget>[
             // map itself
             GoogleMap(
+              polylines: _polylines,
               initialCameraPosition: _initialLocation,
               myLocationEnabled: true,
               myLocationButtonEnabled: false,
@@ -143,6 +176,8 @@ class _MapViewState extends State<MapView> {
               onMapCreated: (GoogleMapController controller) {
                 mapController = controller;
                 changeMapStyle();
+
+                _createPolylines();
               },
             ),
             //Current location button
