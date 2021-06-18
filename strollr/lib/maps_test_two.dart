@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:strollr/route_pages/PolylineIf.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -34,6 +38,10 @@ class _MapViewState extends State<MapView> {
   final Geolocator _geolocator = Geolocator();
   final Set<Marker> _itemMarkers = {};
 
+  final _locationUpdateIntervall = Duration(seconds: 3);
+  Timer _timer;
+
+
   //lines to be drawn in maps
   Set<Polyline> _polylines = {};
   //recorded locations of user
@@ -44,28 +52,35 @@ class _MapViewState extends State<MapView> {
   // For storing the current position
   Position _currentPosition;
 
-  _getCurrentLocation() async {
-    await _geolocator
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then((Position position) async {
-      setState(() {
-        // Store the position in the variable
-        _currentPosition = position;
+  Timer _getCurrentLocation() {
+    return Timer.periodic(_locationUpdateIntervall, (timer) async {
 
-        print('CURRENT POS: $_currentPosition');
+      Position currentPosition = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-        // For moving the camera to current location
-        mapController.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              target: LatLng(position.latitude, position.longitude),
-              zoom: 18.0,
+      if (PolylineIf.gpx != null) _createPolylines();
+
+      print(PolylineIf.gpx);
+
+
+      if (mounted && PolylineIf.gpx == null) {
+        setState(() {
+          // Store the position in the variable
+          _currentPosition = currentPosition;
+
+          print('CURRENT POS: $_currentPosition');
+
+          // For moving the camera to current location
+          mapController.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: LatLng(
+                    currentPosition.latitude, currentPosition.longitude),
+                zoom: 18.0,
+              ),
             ),
-          ),
-        );
-      });
-    }).catchError((e) {
-      print(e);
+          );
+        });
+      }
     });
   }
 
@@ -75,19 +90,36 @@ class _MapViewState extends State<MapView> {
   * connect them via _polylines.add
    */
   _createPolylines() async{
-    polylineCoordinates.add(LatLng(52.548625, 13.5824117));
-    polylineCoordinates.add(LatLng(52.5440367, 13.568205));
-
-    setState(() {
-      _polylines.add(
-        Polyline(
-          width: 10,
-          polylineId: PolylineId('route'),
-          color: Colors.blueAccent,
-          points: polylineCoordinates
-        )
-      );
+    PolylineIf.gpx.wpts.forEach((element) {
+      polylineCoordinates.add(LatLng(element.lat, element.lon));
     });
+
+    LatLng source = LatLng(PolylineIf.gpx.wpts[0].lat, PolylineIf.gpx.wpts[0].lon);
+    LatLng dest = LatLng(PolylineIf.gpx.wpts[PolylineIf.gpx.wpts.length - 1].lat, PolylineIf.gpx.wpts[PolylineIf.gpx.wpts.length - 1].lon);
+
+    if (mounted) {
+      setState(() {
+        _polylines.add(
+            Polyline(
+                width: 10,
+                polylineId: PolylineId('route'),
+                color: Colors.blueAccent,
+                points: polylineCoordinates
+            )
+        );
+
+        mapController.animateCamera(
+          /*CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(
+                  _currentPosition.latitude, _currentPosition.longitude),
+            ),
+          ),*/
+          CameraUpdate.newLatLngBounds(LatLngBounds(southwest: source,
+              northeast: dest), 50)
+        );
+      });
+    }
   }
 
   _addMarker(latlong) {
@@ -118,6 +150,13 @@ class _MapViewState extends State<MapView> {
     _createPolylines();
 
     polylinePoints = PolylinePoints();
+  }
+
+  void dispose() {
+    _timer?.cancel();
+    _polylines = {};
+
+    super.dispose();
   }
 
   void changeMapStyle() {
@@ -176,6 +215,8 @@ class _MapViewState extends State<MapView> {
               onMapCreated: (GoogleMapController controller) {
                 mapController = controller;
                 changeMapStyle();
+
+                _timer = _getCurrentLocation();
 
                 _createPolylines();
               },

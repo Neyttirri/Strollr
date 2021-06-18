@@ -3,11 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
+import 'package:strollr/route_pages/PolylineIf.dart';
 import '../globals.dart' as globals;
 import '../style.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import '../maps_test_two.dart';
 import 'dart:math';
+
+import 'PolylineIf.dart';
 
 final _isHours = true;
 final maps = new MapView();
@@ -107,7 +110,7 @@ final overview = DefaultTextStyle.merge(
                       print(gpxString);
                       print('Distance: $distance' + 'km');
 
-                      gpx.wpts.clear();
+                      PolylineIf.gpx = gpx;
 
                       globals.stopWatchTimer.onExecute
                           .add(StopWatchExecute.stop);
