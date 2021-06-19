@@ -111,6 +111,7 @@ final overview = DefaultTextStyle.merge(
                       print('Distance: $distance' + 'km');
 
                       PolylineIf.gpx = gpx;
+                      PolylineIf.walkFinished = true;
 
                       globals.stopWatchTimer.onExecute
                           .add(StopWatchExecute.stop);

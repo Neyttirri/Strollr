@@ -57,12 +57,12 @@ class _MapViewState extends State<MapView> {
 
       Position currentPosition = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-      if (PolylineIf.gpx != null) _createPolylines();
+      if (PolylineIf.walkFinished) _createPolylines();
 
       print(PolylineIf.gpx);
 
 
-      if (mounted && PolylineIf.gpx == null) {
+      if (mounted && !PolylineIf.walkFinished) {
         setState(() {
           // Store the position in the variable
           _currentPosition = currentPosition;
@@ -94,14 +94,14 @@ class _MapViewState extends State<MapView> {
       polylineCoordinates.add(LatLng(element.lat, element.lon));
     });
 
-    LatLng source = LatLng(PolylineIf.gpx.wpts[0].lat, PolylineIf.gpx.wpts[0].lon);
-    LatLng dest = LatLng(PolylineIf.gpx.wpts[PolylineIf.gpx.wpts.length - 1].lat, PolylineIf.gpx.wpts[PolylineIf.gpx.wpts.length - 1].lon);
+    LatLng southWestBound = _getBound(true);
+    LatLng northEastBound = _getBound(false);
 
     if (mounted) {
       setState(() {
         _polylines.add(
             Polyline(
-                width: 10,
+                width: 5,
                 polylineId: PolylineId('route'),
                 color: Colors.blueAccent,
                 points: polylineCoordinates
@@ -115,11 +115,51 @@ class _MapViewState extends State<MapView> {
                   _currentPosition.latitude, _currentPosition.longitude),
             ),
           ),*/
-          CameraUpdate.newLatLngBounds(LatLngBounds(southwest: source,
-              northeast: dest), 50)
+          CameraUpdate.newLatLngBounds(LatLngBounds(southwest: southWestBound,
+              northeast: northEastBound), 50)
         );
       });
     }
+  }
+
+  /*
+  * compares coordinates of recorded Locations
+  * to find southwest or northwest most points
+   */
+  _getBound(bool southWest){
+    LatLng res = LatLng(PolylineIf.gpx.wpts[0].lat, PolylineIf.gpx.wpts[0].lon);
+
+    double resLat = res.latitude;
+    double resLon = res.longitude;
+
+    PolylineIf.gpx.wpts.forEach((element) {
+
+      if (southWest && element.lat < res.latitude) {
+        resLat = element.lat;
+        res = LatLng(element.lat, element.lon);
+      }
+
+      else if (!southWest && element.lat > res.latitude) {
+        resLat = element.lat;
+        res = LatLng(element.lat, element.lon);
+      }
+    });
+
+    PolylineIf.gpx.wpts.forEach((element) {
+
+      if (southWest && element.lon < res.longitude) {
+        resLon = element.lon;
+        res = LatLng(element.lat, element.lon);
+      }
+      else if (!southWest && element.lon > res.longitude){
+        resLon = element.lon;
+        res = LatLng(element.lat, element.lon);
+      }
+    });
+
+    res = LatLng(resLat, resLon);
+
+    return res;
   }
 
   _addMarker(latlong) {
@@ -213,12 +253,11 @@ class _MapViewState extends State<MapView> {
                 _addMarker(latlang);
               },
               onMapCreated: (GoogleMapController controller) {
+                PolylineIf.walkFinished = false;
                 mapController = controller;
                 changeMapStyle();
 
                 _timer = _getCurrentLocation();
-
-                _createPolylines();
               },
             ),
             //Current location button
