@@ -27,6 +27,8 @@ class DatabaseManager {
   }
 
   Future _createDB(Database db, int version) async {
+    ApplicationLogger.getLogger('DatabaseManager', colors: true)
+        .i('Creating database... ');
     final idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     final textType = 'TEXT NOT NULL';
     final integerType = 'INTEGER NOT NULL';
@@ -47,7 +49,7 @@ class DatabaseManager {
       )
     ''');
     ApplicationLogger.getLogger('DatabaseManager', colors: true)
-        .d('Table $tablePictureCategories created.');
+        .i('Table $tablePictureCategories created.');
 
     // create table for the walks
     // for DateTime -> TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS"), because there is to timestamp in sqlite
@@ -74,30 +76,30 @@ class DatabaseManager {
         ${PictureField.data} $dataType, 
         ${PictureField.filename} $textType, 
         ${PictureField.createdAt} $textType,
-        ${PictureField.color} $textType, 
-        ${PictureField.size} $textType, 
+        ${PictureField.generic1} $textType, 
+        ${PictureField.generic2} $textType, 
         ${PictureField.description} $textType, 
         ${PictureField.location} $textType,
         ${PictureField.category} $integerType,
         ${PictureField.walk_id} $integerType,
-        FOREIGN KEY (${PictureField.category}) REFERENCES $tablePictureCategories(${PictureCategoriesField.id}),
-        FOREIGN KEY (${PictureField.walk_id}) REFERENCES $tableWalks(${WalkField.id}) 
+        FOREIGN KEY (${PictureField.category}) REFERENCES $tablePictureCategories(${PictureCategoriesField.id}) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (${PictureField.walk_id}) REFERENCES $tableWalks(${WalkField.id}) ON DELETE CASCADE ON UPDATE CASCADE
       )
     ''');
     ApplicationLogger.getLogger('DatabaseManager', colors: true)
-        .d('Table $tablePictures created.');
+        .i('Table $tablePictures created.');
 
     // fill the categories as they are known from the beginning
     _insertCategories(db);
     ApplicationLogger.getLogger('DatabaseManager', colors: true)
-        .d('Table $tablePictureCategories filled.');
+        .i('Table $tablePictureCategories filled.');
   }
 
   void _insertCategories(Database db) {
-    Categories.values.forEach((v) => () async {
-          await db
-              .execute("INSERT INTO $tablePictureCategories ('description') "
-                  "VALUES ($v)"); // id is automatically created
+    print('inserting categories');
+    Categories.values.forEach((v)  async {
+      await db.rawInsert("INSERT INTO $tablePictureCategories (description) "
+          "VALUES (?)", [v.toShortString()]); // id is automatically created
         });
   }
 
@@ -141,8 +143,9 @@ class DatabaseManager {
       {String orderedByColumn = '', bool ascending = false}) async {
     final db = await instance.database;
     if (orderedByColumn.isEmpty) orderedByColumn = PictureField.createdAt;
-    if(!PictureField.values.contains(orderedByColumn))
-      throw Exception('readALlPictures | Invalid parameter: there is no column $orderedByColumn in the $tablePictures table');
+    if (!PictureField.values.contains(orderedByColumn))
+      throw Exception(
+          'readALlPictures | Invalid parameter: there is no column $orderedByColumn in the $tablePictures table');
     final String orderBy = orderedByColumn + (ascending ? ' ASC' : ' DESC');
     final result = await db.query(tablePictures, orderBy: orderBy);
     return result.map((json) => Picture.fromJson(json)).toList();
@@ -154,8 +157,9 @@ class DatabaseManager {
       {String orderedByColumn = '', bool ascending = false}) async {
     final db = await instance.database;
     if (orderedByColumn.isEmpty) orderedByColumn = PictureField.createdAt;
-    if(!PictureField.values.contains(orderedByColumn))
-      throw Exception('readALlPicturesFromCategory | Invalid parameter: there is no column $orderedByColumn in the $tablePictures table');
+    if (!PictureField.values.contains(orderedByColumn))
+      throw Exception(
+          'readALlPicturesFromCategory | Invalid parameter: there is no column $orderedByColumn in the $tablePictures table');
     final String orderBy = orderedByColumn + (ascending ? ' ASC' : ' DESC');
     final result = await db.query(
       tablePictures,
@@ -172,8 +176,9 @@ class DatabaseManager {
       {String orderedByColumn = '', bool ascending = false}) async {
     final db = await instance.database;
     if (orderedByColumn.isEmpty) orderedByColumn = PictureField.createdAt;
-    if(!PictureField.values.contains(orderedByColumn))
-      throw Exception('readALlPicturesFromWalk | Invalid parameter: there is no column $orderedByColumn in the $tablePictures table');
+    if (!PictureField.values.contains(orderedByColumn))
+      throw Exception(
+          'readALlPicturesFromWalk | Invalid parameter: there is no column $orderedByColumn in the $tablePictures table');
     final String orderBy = orderedByColumn + (ascending ? ' ASC' : ' DESC');
     final result = await db.query(
       tablePictures,
@@ -191,8 +196,9 @@ class DatabaseManager {
       {String orderedByColumn = '', bool ascending = false}) async {
     final db = await instance.database;
     if (orderedByColumn.isEmpty) orderedByColumn = PictureField.createdAt;
-    if(!PictureField.values.contains(orderedByColumn))
-      throw Exception('readALlPicturesFromWalkInCategory | Invalid parameter: there is no column $orderedByColumn in the $tablePictures table');
+    if (!PictureField.values.contains(orderedByColumn))
+      throw Exception(
+          'readALlPicturesFromWalkInCategory | Invalid parameter: there is no column $orderedByColumn in the $tablePictures table');
     final String orderBy = orderedByColumn + (ascending ? ' ASC' : ' DESC');
     final result = await db.query(
       tablePictures,
@@ -225,8 +231,9 @@ class DatabaseManager {
       {String orderedByColumn = '', bool ascending = false}) async {
     final db = await instance.database;
     if (orderedByColumn.isEmpty) orderedByColumn = WalkField.endedAt;
-    if(!WalkField.values.contains(orderedByColumn))
-      throw Exception('readALlWalks | Invalid parameter: there is no column $orderedByColumn in the $tableWalks table');
+    if (!WalkField.values.contains(orderedByColumn))
+      throw Exception(
+          'readALlWalks | Invalid parameter: there is no column $orderedByColumn in the $tableWalks table');
     final String orderBy = orderedByColumn + (ascending ? ' ASC' : ' DESC');
     final result = await db.query(tableWalks, orderBy: orderBy);
     return result.map((json) => Walk.fromJson(json)).toList();
@@ -235,8 +242,8 @@ class DatabaseManager {
   /// update a picture in the database by passing the updated version [picture]. Returns the number of changes made
   Future<int> updatePicture(Picture picture) async {
     final db = await instance.database;
-    ApplicationLogger.getLogger('DatabaseManager', colors: true).d(
-        'updatePicture | Updating picture with ID = ${picture.id}');
+    ApplicationLogger.getLogger('DatabaseManager', colors: true)
+        .d('updatePicture | Updating picture with ID = ${picture.id}');
     return await db.update(
       tablePictures,
       picture.toJson(),
@@ -285,8 +292,8 @@ class DatabaseManager {
   /// clear the database, should be used for the database testing
   Future<void> deleteDb() async {
     final db = await instance.database;
-    ApplicationLogger.getLogger('DatabaseManager', colors: true)
-        .d('deleteDb | Deleting all entries in table $tableWalks and table $tablePictures');
+    ApplicationLogger.getLogger('DatabaseManager', colors: true).d(
+        'deleteDb | Deleting all entries in table $tableWalks and table $tablePictures');
     await db.delete(
       tableWalks,
     );
