@@ -6,7 +6,7 @@ class Stats extends StatelessWidget {
   final collectables = Container(
     decoration: BoxDecoration(
         border: Border.all(
-          color: Colors.green[500],
+          color: Colors.green.shade500,
         ),
         borderRadius: BorderRadius.all(Radius.circular(20))),
     padding: EdgeInsets.all(10),
@@ -105,7 +105,7 @@ class Stats extends StatelessWidget {
       decoration: BoxDecoration(
           color: Colors.green[50],
           border: Border.all(
-            color: Colors.green[500],
+            color: Colors.green.shade500,
           ),
           borderRadius: BorderRadius.all(Radius.circular(20))),
       padding: EdgeInsets.all(10),

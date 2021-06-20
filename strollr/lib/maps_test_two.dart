@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -32,14 +31,14 @@ class MapView extends StatefulWidget {
 
 class _MapViewState extends State<MapView> {
   CameraPosition _initialLocation = CameraPosition(target: LatLng(0.0, 0.0));
-  GoogleMapController mapController;
-  BitmapDescriptor markerIcon;
+   late GoogleMapController mapController;
+   late BitmapDescriptor markerIcon;
 
   final Geolocator _geolocator = Geolocator();
   final Set<Marker> _itemMarkers = {};
 
   final _locationUpdateIntervall = Duration(seconds: 3);
-  Timer _timer;
+  Timer? _timer;
 
 
   //lines to be drawn in maps
@@ -47,10 +46,10 @@ class _MapViewState extends State<MapView> {
   //recorded locations of user
   List<LatLng> polylineCoordinates = [];
 
-  PolylinePoints polylinePoints;
+   PolylinePoints? polylinePoints;
 
   // For storing the current position
-  Position _currentPosition;
+   Position? _currentPosition;
 
   Timer _getCurrentLocation() {
     return Timer.periodic(_locationUpdateIntervall, (timer) async {
@@ -90,8 +89,8 @@ class _MapViewState extends State<MapView> {
   * connect them via _polylines.add
    */
   _createPolylines() async{
-    PolylineIf.gpx.wpts.forEach((element) {
-      polylineCoordinates.add(LatLng(element.lat, element.lon));
+    PolylineIf.gpx.wpts.forEach((element)  {
+      polylineCoordinates.add(LatLng(element.lat as double,  element.lon  as double));
     });
 
     LatLng southWestBound = _getBound(true);
@@ -127,33 +126,41 @@ class _MapViewState extends State<MapView> {
   * to find southwest or northwest most points
    */
   _getBound(bool southWest){
-    LatLng res = LatLng(PolylineIf.gpx.wpts[0].lat, PolylineIf.gpx.wpts[0].lon);
+    LatLng res = LatLng(PolylineIf.gpx.wpts[0].lat as double, PolylineIf.gpx.wpts[0].lon as double);
 
     double resLat = res.latitude;
     double resLon = res.longitude;
+    var elementLat;
+    var elementLon;
 
     PolylineIf.gpx.wpts.forEach((element) {
-
-      if (southWest && element.lat < res.latitude) {
-        resLat = element.lat;
-        res = LatLng(element.lat, element.lon);
+      elementLat = element.lat;
+      elementLon = element.lon;
+      if(elementLat == null || elementLon == null )
+        throw Exception('_MapViewState | Should not happen: latitude or longitude is null!');
+      if (southWest && elementLat < res.latitude) {
+        resLat = elementLat;
+        res = LatLng(elementLat, elementLon);
       }
 
-      else if (!southWest && element.lat > res.latitude) {
-        resLat = element.lat;
-        res = LatLng(element.lat, element.lon);
+      else if (!southWest && elementLat > res.latitude) {
+        resLat = elementLat;
+        res = LatLng( elementLat, elementLon);
       }
     });
 
     PolylineIf.gpx.wpts.forEach((element) {
-
-      if (southWest && element.lon < res.longitude) {
-        resLon = element.lon;
-        res = LatLng(element.lat, element.lon);
+      elementLat = element.lat;
+      elementLon = element.lon;
+      if(elementLat == null || elementLon == null )
+        throw Exception('_MapViewState | Should not happen: latitude or longitude is null!');
+      if (southWest && elementLon < res.longitude) {
+        resLon = elementLon;
+        res = LatLng(elementLat, elementLon);
       }
-      else if (!southWest && element.lon > res.longitude){
-        resLon = element.lon;
-        res = LatLng(element.lat, element.lon);
+      else if (!southWest && elementLon > res.longitude){
+        resLon = elementLon;
+        res = LatLng(elementLat, elementLon);
       }
     });
 
@@ -286,8 +293,8 @@ class _MapViewState extends State<MapView> {
                             CameraUpdate.newCameraPosition(
                               CameraPosition(
                                 target: LatLng(
-                                  _currentPosition.latitude,
-                                  _currentPosition.longitude,
+                                  _currentPosition!.latitude,
+                                  _currentPosition!.longitude,
                                 ),
                                 zoom: 18.0,
                               ),

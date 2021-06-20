@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
 import 'package:strollr/route_pages/PolylineIf.dart';
+import 'package:strollr/services/camera/edit_picture.dart';
 import '../globals.dart' as globals;
 import '../style.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import '../maps_test_two.dart';
 import 'dart:math';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 import 'PolylineIf.dart';
 
@@ -16,7 +19,7 @@ final _isHours = true;
 final maps = new MapView();
 
 final _trackingInterval = Duration(seconds: 5);
-Timer _timer;
+late Timer _timer;
 bool _paused = false;
 
 double distance = 0;
@@ -25,7 +28,7 @@ Geolocator _geolocator = Geolocator();
 
 var gpx = Gpx();
 
-final overview = DefaultTextStyle.merge(
+final overview =  DefaultTextStyle.merge(
   style: TextStyle(
       color: Colors.black,
       fontWeight: FontWeight.w700,
@@ -48,13 +51,13 @@ final overview = DefaultTextStyle.merge(
               children: [
                 Column(
                   children: [
-                    StreamBuilder<int>(
+                    StreamBuilder<int> (
                         stream: globals.stopWatchTimer.rawTime,
                         initialData: globals.stopWatchTimer.rawTime.value,
                         builder: (context, snapshot) {
                           final value = snapshot.data;
                           final displayTime = StopWatchTimer.getDisplayTime(
-                              value,
+                              value!,
                               hours: _isHours);
                           return Padding(
                               padding: EdgeInsets.all(8),
@@ -131,6 +134,10 @@ class ActiveRoute extends StatefulWidget {
 }
 
 class _ActiveRouteState extends State<ActiveRoute> {
+  late File _imageFile;
+  late Position _currentPosition;
+  final _picker = ImagePicker();
+
    @override
    void initState() {
      super.initState();
@@ -158,11 +165,43 @@ class _ActiveRouteState extends State<ActiveRoute> {
         tooltip: 'Foto aufnehmen',
         child: Icon(Icons.add_a_photo_outlined),
         backgroundColor: Colors.grey[500],
-        //onPressed: () {
+        onPressed: () {}
         //Navigator.of(context).push(MaterialPageRoute(builder: (context) => ActiveRoute()));
         // },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  Future<void> _openCamera() async {
+    var picture = (await _picker.getImage(
+        source: ImageSource.camera,
+        imageQuality: 50,
+        maxHeight: 400,
+        maxWidth: 400))!;
+    // 400x400 is less than 40kB, imageQuality is also for compressing the image
+
+    Position position = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    print('CURRENT POS: $position');
+
+    setState(() {
+      _imageFile = File(picture.path);
+      _currentPosition = position;
+    });
+
+    Future.delayed(Duration(seconds: 0)).then(
+          (value) => Navigator.push(
+        context,
+        // the transition
+        MaterialPageRoute(
+          builder: (context) => EditPhotoScreen(
+            arguments: [
+              _imageFile,
+              _currentPosition,
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -180,15 +219,15 @@ class _ActiveRouteState extends State<ActiveRoute> {
 
        double distanceToLastPosition = 0;
 
-       if (gpx.wpts.isNotEmpty) distanceToLastPosition = calcDistance(gpx.wpts[gpx.wpts.length - 1].lat, currentPosition.latitude,
-                                    gpx.wpts[gpx.wpts.length - 1].lon, currentPosition.longitude);
+       if (gpx.wpts.isNotEmpty) distanceToLastPosition = calcDistance((gpx.wpts[gpx.wpts.length - 1]).lat as double, currentPosition.latitude,
+                                    gpx.wpts[gpx.wpts.length - 1].lon as double, currentPosition.longitude);
 
        if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.2) return;
 
-       double lat1 = gpx.wpts.isEmpty ? currentPosition.latitude : gpx.wpts[gpx.wpts.length - 1].lat;
+       double lat1 = gpx.wpts.isEmpty ? currentPosition.latitude : gpx.wpts[gpx.wpts.length - 1].lat as double;
        double lat2 = currentPosition.latitude;
 
-       double lon1 = gpx.wpts.isEmpty ? currentPosition.longitude : gpx.wpts[gpx.wpts.length - 1].lon;
+       double lon1 = gpx.wpts.isEmpty ? currentPosition.longitude : gpx.wpts[gpx.wpts.length - 1].lon as double;
        double lon2 = currentPosition.longitude;
 
        distance += calcDistance(lat1, lat2, lon1, lon2);
@@ -228,9 +267,9 @@ class _ActiveRouteState extends State<ActiveRoute> {
 
 class CustomButton extends StatelessWidget {
   final String label;
-  final Function onPress;
+  final VoidCallback onPress;
 
-  CustomButton({this.onPress, this.label});
+  CustomButton({required this.onPress, required this.label});
 
   @override
   Widget build(BuildContext context) {

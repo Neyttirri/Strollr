@@ -1,7 +1,14 @@
+// @dart=2.9
 import 'package:flutter/material.dart';
 import 'package:strollr/main_screen.dart';
+import 'package:strollr/utils/shared_prefs.dart';
 
-void main() {
+import 'db/database_manager.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPrefs.init();
+  await DatabaseManager.instance.database;
   runApp(MyApp());
 }
 

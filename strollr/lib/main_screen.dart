@@ -27,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
     return WillPopScope(
       onWillPop: () async {
         final isFirstRouteInCurrentTab =
-        !await _navigatorKeys[_selectedIndex].currentState.maybePop();
+        !await _navigatorKeys[_selectedIndex].currentState!.maybePop();
 
         print(
             'isFirstRouteInCurrentTab: ' + isFirstRouteInCurrentTab.toString());
@@ -93,7 +93,7 @@ class _MainScreenState extends State<MainScreen> {
         key: _navigatorKeys[index],
         onGenerateRoute: (routeSettings) {
           return MaterialPageRoute(
-            builder: (context) => routeBuilders[routeSettings.name](context),
+            builder: (context) => routeBuilders[routeSettings.name]!(context),
           );
         },
       ),

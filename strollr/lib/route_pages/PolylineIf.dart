@@ -1,6 +1,6 @@
 import 'package:gpx/gpx.dart';
 
 class PolylineIf{
-  static Gpx gpx;
-  static bool walkFinished;
+  static late Gpx gpx;
+  static late bool walkFinished;
 }

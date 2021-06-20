@@ -1,5 +1,5 @@
 class DbInterface{
-  static int walk;
+  static late int walk;
 
   static void generateWalk(){}
 
