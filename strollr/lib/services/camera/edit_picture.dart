@@ -8,8 +8,9 @@ import 'package:extended_image/extended_image.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:strollr/services/image_characteristics/describe_picture.dart';
 import 'package:strollr/utils/loading_screen.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:image_editor/image_editor.dart' hide ImageSource;
+
+import '../../logger.dart';
 
 class EditPhotoScreen extends StatefulWidget {
   final List arguments;
@@ -124,33 +125,37 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
-          title: Text(
-            "Bild bearbeiten",
-            style: TextStyle(color: Colors.white),
+        title: Text(
+          "Bild bearbeiten",
+          style: TextStyle(color: Colors.green),
+        ),
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.green),
+        actions: <Widget>[
+          // icon to reset made changes
+          IconButton(
+            icon: Icon(Icons.settings_backup_restore),
+            onPressed: () {
+              setState(() {
+                saturation = 1;
+                brightness = 0;
+                contrast = 1;
+              });
+            },
           ),
-          actions: <Widget>[
-            // icon to reset made changes
-            IconButton(
-              icon: Icon(Icons.settings_backup_restore),
-              onPressed: () {
-                setState(() {
-                  saturation = 1;
-                  brightness = 0;
-                  contrast = 1;
-                });
-              },
-            ),
-            // icon to confirm and save edited image
-            IconButton(
-              icon: Icon(Icons.check),
-              onPressed: () async {
-                await crop();
-              },
-            ),
-          ]),
+          // icon to confirm and save edited image
+          IconButton(
+            icon: Icon(Icons.check),
+            onPressed: () async {
+              await crop();
+            },
+          ),
+        ],
+      ),
       body: _loading
           ? LoadingScreen()
           : Container(
+              color: Color(0xFFDDDDDD),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: Column(
@@ -164,17 +169,29 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                       child: buildImage(),
                     ),
                   ),
-                  SizedBox(
+                  Expanded(
+                    /*
+                    sizedBox stuff
                     height: (MediaQuery.of(context).size.height -
                             MediaQuery.of(context).size.width) *
-                        0.55,
+                        0.57,
                     width: MediaQuery.of(context).size.width,
+
+                     */
                     child: SliderTheme(
                       data: const SliderThemeData(
                         showValueIndicator: ShowValueIndicator.never,
                       ),
                       child: Container(
-                        color: Colors.white,
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.white,
+                              blurRadius: 30,
+                            ),
+                          ],
+                        ),
+                        //color: Colors.white,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -211,9 +228,6 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                 ],
               ),
             ),
-      floatingActionButton: FloatingActionButton(onPressed: () {  },
-
-      ),
       bottomNavigationBar: _buildFunctions(),
     );
   }
@@ -237,6 +251,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
           fit: BoxFit.contain,
           initEditorConfigHandler: (state) {
             return EditorConfig(
+              cornerColor: Colors.green,
               maxScale: 8.0,
               cropRectPadding: const EdgeInsets.all(20.0),
               hitTestSize: 20.0,
@@ -249,26 +264,31 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
 
   Widget _buildFunctions() {
     return BottomNavigationBar(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Colors.white,
+      elevation: 20,
+      selectedIconTheme: IconThemeData(color: Colors.green),
+      unselectedIconTheme: IconThemeData(color: Colors.green),
+      selectedFontSize: 12.0,
+      unselectedFontSize: 12.0,
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(
             Icons.flip,
-            color: Colors.white,
+            color: Colors.green,
           ),
           label: 'Flip',
         ),
         BottomNavigationBarItem(
           icon: Icon(
             Icons.rotate_left,
-            color: Colors.white,
+            color: Colors.green,
           ),
           label: 'Rotate left',
         ),
         BottomNavigationBarItem(
           icon: Icon(
             Icons.rotate_right,
-            color: Colors.white,
+            color: Colors.green,
           ),
           label: 'Rotate right',
         ),
@@ -287,8 +307,9 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
         }
       },
       currentIndex: 0,
-      selectedItemColor: Theme.of(context).primaryColor,
-      unselectedItemColor: Theme.of(context).primaryColor,
+      selectedItemColor: Colors.grey[600],
+      //Theme.of(context).primaryColor,
+      unselectedItemColor: Colors.grey[600],
     );
   }
 
@@ -315,15 +336,17 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     if (state.image == null) {
       return;
     }
-    var data = await state.image!.toByteData(format: ImageByteFormat.png);
-    if (data == null) {
-      return;
-    } // image.Image? src = decodePng(); final EditActionDetails action = state.editAction!;
+
     final EditActionDetails action = state.editAction!;
     final double radian = action.rotateAngle;
 
     final bool flipHorizontal = action.flipY;
     final bool flipVertical = action.flipX;
+
+    var data = await state.image!.toByteData(format: ImageByteFormat.png);
+    if (data == null) {
+      return;
+    } // image.Image? src = decodePng(); final EditActionDetails action = state.editAction!;
 
     final ImageEditorOption option = ImageEditorOption();
 
@@ -333,6 +356,10 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     if (action.hasRotateAngle) {
       option.addOption(RotateOption(radian.toInt()));
     }
+    option.addOption(ColorOption.saturation(saturation));
+    option.addOption(ColorOption.brightness(brightness + 1));
+    option.addOption(ColorOption.contrast(contrast));
+
     option.outputFormat = const OutputFormat.png(88);
     print(const JsonEncoder.withIndent('  ').convert(option.toJson()));
     final DateTime start = DateTime.now();
@@ -348,13 +375,17 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     image.writeAsBytesSync(result);
     print('image_editor time : $diff');
 
+    ApplicationLogger.getLogger('_EditPhotoScreenState', colors: true)
+        .d('Finished editing picture');
     Future.delayed(Duration(seconds: 0)).then(
       (value) => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => DescribePhotoScreen(
-              arguments: [image] //arguments: [image, widget.arguments[1]],
-          ),
+          builder: (context) => DescribePhotoScreen(arguments: [
+            image,
+            widget.arguments[1]
+          ] // picture and its coordinates
+              ),
         ),
       ),
     );
@@ -381,6 +412,8 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
           width: MediaQuery.of(context).size.width * 0.6,
           child: Slider(
             label: 'sat : ${saturation.toStringAsFixed(2)}',
+            activeColor: Colors.green[900],
+            inactiveColor: Colors.green[200],
             onChanged: (double value) {
               setState(() {
                 saturation = value;
@@ -410,6 +443,8 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
           width: MediaQuery.of(context).size.width * 0.6,
           child: Slider(
             label: '${brightness.toStringAsFixed(2)}',
+            activeColor: Colors.green[900],
+            inactiveColor: Colors.green[200],
             onChanged: (double value) {
               setState(() {
                 brightness = value;
@@ -439,6 +474,8 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
           width: MediaQuery.of(context).size.width * 0.6,
           child: Slider(
             label: 'con : ${contrast.toStringAsFixed(2)}',
+            activeColor: Colors.green[900],
+            inactiveColor: Colors.green[200],
             onChanged: (double value) {
               setState(() {
                 contrast = value;
@@ -477,7 +514,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
 
   Widget _createIconTap(String label, IconData icon, int id) {
     return Column(
-      children: <Widget>[
+      children: [
         IconButton(
           onPressed: () {
             _updateTabSelection(id);
@@ -512,4 +549,3 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     });
   }
 }
-

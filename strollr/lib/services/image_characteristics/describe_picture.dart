@@ -8,6 +8,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:strollr/model/picture_categories.dart';
 import 'package:strollr/utils/loading_screen.dart';
 import 'package:strollr/services/camera/save_picture.dart';
+import '../../logger.dart';
 import 'categories_section.dart';
 
 class DescribePhotoScreen extends StatefulWidget {
@@ -26,8 +27,8 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
       GlobalKey<ExtendedImageEditorState>();
   final double distanceBetweenElements = 50;
   bool _loading = true;
-  String color = '';
-  String size = '';
+  String genericInfo1 = '';
+  String genericInfo2 = '';
   String description = '';
 
   Categories chosenCategory = Categories.undefined;
@@ -47,27 +48,27 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
   Map<Categories, List<String>> questionsForCategory = {
     Categories.animal: [
       'Was für ein Tier ist das?',
-      'helperText1..tbd',
+      'zB Hase, Ameise,...',
       'Womit ernährt sich das Tier?',
-      'helperText2..tbd'
+      'zB ernähren sich Ameisen von Insekten, Pflanzensäften und dem Honigtau von Schildläusen oder Blattläusen'
     ],
     Categories.mushroom: [
       'Was für ein Pilz ist das?',
-      'helperText3..tbd',
+      'zB Pfifferling, Austernpilz',
       'Ist es giftig oder kann man es essen?',
-      'helperText4..tbd'
+      'Austernpilz ist essbar, kann aber mit Gelbstieligen Muschelseitling verwechelt werden, der auch Giftstoffe enthalten kann'
     ],
     Categories.plant: [
       'Was für eine Pflanze ist das?',
-      'helperText5..tbd',
-      'Wann und wie oft blühtet diese Pflanze?',
-      'helperText6..tbd'
+      'zB Goldtaler, Kapkörbchen, ... ',
+      'Wann und wie oft blüht diese Pflanze?',
+      'zB hat Kapkörbchen eine Blütezeit von Mai bis September'
     ],
     Categories.tree: [
       'Was für einen Baum ist das?',
-      'helperText7..tbd',
+      'zB Eiche, Tanne,...',
       'Wo wachsen solche Bäume nicht?',
-      'helperText8..tbd'
+      'zB kann die Eiche nicht im Schatten anderer Gehölze wachsen'
     ],
   };
 
@@ -111,17 +112,21 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
           IconButton(
             icon: Icon(Icons.check),
             onPressed: () async {
+              ApplicationLogger.getLogger('_DescribePhotoScreenState', colors: true)
+                  .d('saving image and info with path: ${image.path} ');
+              print('${CategoriesIcons.getChosenCategory()}');
               await Future.delayed(Duration(seconds: 0)).then(
                 (value) => Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => SavePhotoScreen(
-                      color: color,
-                      size: size,
+                      generic1: genericInfo1,
+                      generic2: genericInfo2,
                       description: description,
-                      category: CategoriesIcons.getChosenCategory(),
-                      imageBytes: _getImageData() as Uint8List,
+                      category: getChosenCategory(),
+                      image: image,
                       imagePath: image.path,
+                      location: widget.arguments[1],
                       //imageLocation: widget.arguments[1]
                     ),
                   ),
@@ -156,6 +161,7 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
                   // get all categories with icons, as a list that is horizontally scrollable
                   (chosenCategory != Categories.undefined)
                       // show the questions after the user has chosen a category -> animated widgets
+                      // if the user has not chosen a category -> show the picture the user took
                       ? SlideTransition(
                           position: Tween<Offset>(
                             begin: Offset(0, 1), // move from bottom to top
@@ -180,7 +186,7 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
                               image: FileImage(image),
                               fit: BoxFit.fill,
                             ),
-                          ), // just an empty TODO: show image here
+                          ),
                         ),
                 ],
               ),
@@ -189,7 +195,8 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
     // bottomNavigationBar: _buildFunctions(),
   }
 
-  Widget _generateQuestion(String question, String helpText) {
+  Widget _generateQuestion(
+      String question, String helpText, bool isFirstQuestion) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -208,12 +215,17 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
           textAlignVertical: TextAlignVertical.center,
           onEditingComplete: () => FocusScope.of(context).nextFocus(),
           onChanged: (value) {
-            this.color = value;
+            if (isFirstQuestion) {
+              this.genericInfo1 = value;
+            } else {
+              this.genericInfo2 = value;
+            }
           },
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
             helperText: helpText,
+            helperMaxLines: 3,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
               borderSide: BorderSide(
@@ -236,13 +248,26 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
 
   Widget _getQuestionsForCategory() {
     _animationController.forward();
-    return Column(children: [
-      _generateQuestion(questionsForCategory[chosenCategory]![0],
-          questionsForCategory[chosenCategory]![1]),
-      Padding(padding: EdgeInsets.only(top: distanceBetweenElements)),
-      _generateQuestion(questionsForCategory[chosenCategory]![2],
-          questionsForCategory[chosenCategory]![3]),
-    ]);
+    return Column(
+      children: [
+        _generateQuestion(questionsForCategory[chosenCategory]![0],
+            questionsForCategory[chosenCategory]![1], true),
+        Padding(padding: EdgeInsets.only(top: distanceBetweenElements)),
+        _generateQuestion(questionsForCategory[chosenCategory]![2],
+            questionsForCategory[chosenCategory]![3], false),
+      ],
+    );
+  }
+
+  Widget _getFirstQuestion() {
+    _animationController.forward();
+    return _generateQuestion(questionsForCategory[chosenCategory]![0],
+        questionsForCategory[chosenCategory]![1], true);
+  }
+
+  Widget _getSecondQuestion() {
+    return _generateQuestion(questionsForCategory[chosenCategory]![2],
+        questionsForCategory[chosenCategory]![3], false);
   }
 
   Widget _getDescriptionField() {
@@ -321,8 +346,11 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
               radioCategoryList
                   .forEach((element) => element.isSelected = false);
               radio.isSelected = true;
-              getChosenCategory();
-              print(getChosenCategory());
+              chosenCategory = getChosenCategory();
+              ApplicationLogger.getLogger('_DescribePhotoScreenState',
+                      colors: true)
+                  .d('chosen category: ${chosenCategory.toString()} ');
+              _animationController.reset();
             });
           },
           child: new RadioItem(radio),
@@ -408,97 +436,3 @@ class RadioModel {
 
   RadioModel(this.isSelected, this.buttonIcon, this.description);
 }
-
-/*
-Widget _getColorField() {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Was für Farben sind auf dem Bild? ',
-            style: TextStyle(
-              color: Colors.green,
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          TextField(
-            cursorColor: Colors.black,
-            textCapitalization: TextCapitalization.words,
-            textAlignVertical: TextAlignVertical.center,
-            onEditingComplete: () => FocusScope.of(context).nextFocus(),
-            onChanged: (value) {
-              this.color = value;
-            },
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              helperText: 'zB lila, grün, ...',
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
-                  color: Colors.green.shade300,
-                  width: 1.0,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
-                borderSide: BorderSide(
-                  color: Colors.green.shade500,
-                  width: 2.0,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _getSizeField() {
-    return Container(
-      margin: EdgeInsets.only(top: 50),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Wie groß ist es? (bessere Formulierung vllt) ',
-            style: TextStyle(
-              fontSize: 16.0,
-            ),
-          ),
-          TextField(
-            cursorColor: Colors.black,
-            textCapitalization: TextCapitalization.words,
-            textAlignVertical: TextAlignVertical.center,
-            onEditingComplete: () => FocusScope.of(context).nextFocus(),
-            onChanged: (value) {
-              this.size = value;
-            },
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              helperText: 'zB wie ein Elefant',
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
-                  color: Colors.green.shade300,
-                  width: 1.0,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
-                borderSide: BorderSide(
-                  color: Colors.green.shade500,
-                  width: 2.0,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
- */

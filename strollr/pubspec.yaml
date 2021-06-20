@@ -50,6 +50,9 @@ dependencies:
   geolocator: ^7.1.0
   gpx: ^2.1.0
   permission_handler: ^7.2.0
+  geocoding: ^2.0.0
+  shared_preferences: ^2.0.6
+  animated_check: ^1.0.2
 
 dev_dependencies:
   flutter_test:

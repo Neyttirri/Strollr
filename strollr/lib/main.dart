@@ -2,14 +2,19 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:strollr/db/database_manager.dart';
 import 'package:strollr/services/camera/edit_picture.dart';
+import 'package:strollr/utils/shared_prefs.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:strollr/logger.dart';
 
-void main() {
+
+void main() async {
   // used to interact with the Flutter engine -> make sure that you have an instance of the WidgetsBinding
   // for image_editor_pro
   WidgetsFlutterBinding.ensureInitialized();
+  await SharedPrefs.init();
+  await DatabaseManager.instance.database;
   runApp(RenameMeLater());
 }
 
@@ -29,34 +34,38 @@ class CameraMain extends StatefulWidget {
 
 class _CameraMainState extends State<CameraMain> {
   late File _imageFile;
-  // late Position _currentPosition;
+  late Position _currentPosition;
   final _picker = ImagePicker();
 
-  Future<void> _openGallery(BuildContext context) async {
-    var picture = (await _picker.getImage(source: ImageSource.gallery))!;
-    setState(() {
-      _imageFile = File(picture.path);
-    });
-    Navigator.of(context).pop();
-  }
-
   Future<void> _openCamera() async {
-    var picture = (await _picker.getImage(source: ImageSource.camera))!;
+    var picture = (await _picker.getImage(
+        source: ImageSource.camera,
+        imageQuality: 50,
+        maxHeight: 400,
+        maxWidth: 400))!;
+    // 400x400 is less than 40kB, imageQuality is also for compressing the image
+
+    // await Permission.locationWhenInUse.status;
+    // await Permission.location.request();
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    print('CURRENT POS: $position');
     /*
-    var positionImage;
-    await Permission.locationWhenInUse.status;
-    await Permission.location.request();
-    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+    await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.best,
+            forceAndroidLocationManager: true)
         .then((Position position) async {
-      positionImage = position;
+       setState(() {
+        _currentPosition = position;
+      });
     }).catchError((e) {
       print(e);
     });
 
      */
+
     setState(() {
       _imageFile = File(picture.path);
-     // _currentPosition = positionImage;
+      _currentPosition = position;
     });
 
     Future.delayed(Duration(seconds: 0)).then(
@@ -66,46 +75,14 @@ class _CameraMainState extends State<CameraMain> {
         MaterialPageRoute(
           builder: (context) => EditPhotoScreen(
             arguments: [
-              _imageFile
-            ],//arguments: [_imageFile, _currentPosition],
+              _imageFile,
+              _currentPosition,
+            ],
           ),
         ),
       ),
     );
   }
-
-/*
-  Future<void> showChoiceDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('choose source:'),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: [
-                  GestureDetector(
-                    child: Text('Gallery'),
-                    onTap: () {
-                      _openGallery(context);
-                    },
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                  ),
-                  GestureDetector(
-                    child: Text('Camera'),
-                    onTap: () {
-                      _openCamera(context);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
-  }
- */
 
   @override
   Widget build(BuildContext context) {

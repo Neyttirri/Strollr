@@ -1,84 +1,140 @@
-import 'dart:typed_data';
+import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
 import 'package:strollr/db/database_manager.dart';
+import 'package:strollr/model/picture.dart';
 import 'package:strollr/model/picture_categories.dart';
+import 'package:strollr/utils/shared_prefs.dart';
+import 'package:animated_check/animated_check.dart';
 
 class SavePhotoScreen extends StatelessWidget {
-  final Uint8List imageBytes;
-  final String color;
-  final String size;
+  final File image;
+  final String generic1;
+  final String generic2;
   final String description;
   final Categories category;
   final String imagePath;
   final DateTime createdAt = DateTime.now();
-  //final Position imageLocation;
+  final Position location;
+  late final int walkId;
+  late final String filename;
+  late final int categoryId;
 
-  late String filename;
-  var gpx = Gpx();
+  final gpx = Gpx();
 
-  SavePhotoScreen(
-      {required this.imageBytes,
-      required this.color,
-      required this.size,
-      required this.description,
-      required this.category,
-      required this.imagePath,
-      }); //required this.imageLocation
+  SavePhotoScreen({
+    required this.image,
+    required this.generic1,
+    required this.generic2,
+    required this.description,
+    required this.category,
+    required this.imagePath,
+    required this.location,
+  }) {
+    walkId = _getWalkId();
+    filename = _getFilename();
+  }
 
-  void getFilename() {
-    String categoryLabel = category.toString();
+  String _getFilename() {
+    String categoryLabel = category.toShortString();
     List<String> pathList = imagePath.split('/');
     String extension = pathList[pathList.length - 1].split('.')[1];
     String dateFormatted =
         "${createdAt.day.toString().padLeft(2, '0')}-${createdAt.month.toString().padLeft(2, '0')}-${createdAt.year.toString()}_${createdAt.hour.toString().padLeft(2, '0')}-${createdAt.minute.toString().padLeft(2, '0')}-${createdAt.second.toString().padLeft(2, '0')}";
-    filename = '${categoryLabel}_$dateFormatted.$extension';
-    print(filename);
+    return '${categoryLabel}_$dateFormatted.$extension';
   }
 
-  Future<int> getCategoryId() async {
+  Future<int> _getCategoryId() async {
+    var cat = category.toShortString();
     final db = await DatabaseManager.instance.database;
-    final map = await db.rawQuery(
-        'SELECT ID FROM categories WHERE description = ?',
-        [category.toString()]);
+    final List<Map> map = await db
+        .rawQuery('SELECT ID FROM categories WHERE description = ?', [cat]);
 
     if (map.isNotEmpty) {
-      return map.first[0] as int;
+      int id = -1;
+      map.forEach((element) {
+        id = element[PictureCategoriesField.id] as int;
+      });
+      return id;
     } else {
-      throw Exception('Category $category not found!');
+      throw Exception('Category ${category.toShortString()} not found!');
     }
   }
 
-  void getWalkId() {
-    // TODO: Shared preferences, save the current walk ID, read it from there for the pic -> maybe?
+  int _getWalkId() {
+    // get id from the shared prefs
+    return SharedPrefs.getCurrentWalkId();
   }
 
-  String getLocation() {
-    /*
+  String _getLocation() {
     gpx.creator = 'picture-location';
-    gpx.wpts = [ Wpt(lat: imageLocation.latitude, lon: imageLocation.longitude)];
+    gpx.wpts = [Wpt(lat: location.latitude, lon: location.longitude)];
     return GpxWriter().asString(gpx, pretty: true);
+  }
 
-     */
-    return '';
+  void _saveInDatabase() async {
+    Picture picture = Picture(
+        pictureData: await image.readAsBytes(),
+        createdAtTime: createdAt,
+        generic1: generic1,
+        generic2: generic2,
+        description: description,
+        location: _getLocation(),
+        category: await _getCategoryId(),
+        walk_id: walkId,
+        filename: filename);
+
+    await DatabaseManager.instance.insertPicture(picture);
   }
 
   @override
   Widget build(BuildContext context) {
-    print('save image file dart');
+    _saveInDatabase();
+    return ConfirmationAnimation();
+  }
+}
+
+class ConfirmationAnimation extends StatefulWidget {
+  @override
+  _ConfirmationAnimationState createState() => _ConfirmationAnimationState();
+}
+
+
+// TODO: Transition to next screen (return to walk?)
+class _ConfirmationAnimationState extends State<ConfirmationAnimation>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController =
+        AnimationController(vsync: this, duration: Duration(seconds: 2));
+
+    _animation = new Tween<double>(begin: 0, end: 1).animate(
+        new CurvedAnimation(
+            parent: _animationController, curve: Curves.easeInOutCirc));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _animationController.forward();
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      appBar: AppBar(
-        title: Text(
-          "Export Photo",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-      body: Container(
-        color: Colors.white,
+      body: Center(
         child: Column(
-          children: <Widget>[],
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              child: AnimatedCheck(
+                progress: _animation,
+                size: MediaQuery.of(context).size.width * 0.6,
+                color: Colors.green,
+              ),
+            ),
+          ],
         ),
       ),
     );

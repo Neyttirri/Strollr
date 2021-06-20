@@ -23,3 +23,9 @@ enum Categories {
   plant,
   mushroom
 }
+
+extension ParseToString on Categories {
+  String toShortString() {
+    return this.toString().split('.').last;
+  }
+}

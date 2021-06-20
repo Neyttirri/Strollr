@@ -8,8 +8,8 @@ class PictureField {
     data,
     filename,
     createdAt,
-    color,
-    size,
+    generic1,
+    generic2,
     description,
     location,
     category,
@@ -20,8 +20,8 @@ class PictureField {
   static final String data = 'data';
   static final String filename = 'filename';
   static final String createdAt = 'created_at';
-  static final String color = 'color';
-  static final String size = 'size';
+  static final String generic1 = 'color';
+  static final String generic2 = 'size';
   static final String description = 'description';
   static final String location = 'location';
   static final String category = 'categories';
@@ -34,8 +34,8 @@ class Picture {
   Uint8List pictureData;
   String filename;
   DateTime createdAtTime;
-  String color;
-  String size;
+  String generic1;
+  String generic2;
   String description;
   String location;
   int category;
@@ -47,8 +47,8 @@ class Picture {
     required this.pictureData,
     required this.filename,
     required this.createdAtTime,
-    required this.color,
-    required this.size,
+    required this.generic1,
+    required this.generic2,
     required this.description,
     required this.location,
     required this.category,
@@ -62,8 +62,8 @@ class Picture {
         PictureField.data: pictureData,
         PictureField.filename: filename,
         PictureField.createdAt: createdAtTime.toIso8601String(),
-        PictureField.color: color,
-        PictureField.size: size,
+        PictureField.generic1: generic1,
+        PictureField.generic2: generic2,
         PictureField.description: description,
         PictureField.location: location,
         PictureField.category: category,
@@ -76,8 +76,8 @@ class Picture {
         pictureData: json[PictureField.data] as Uint8List,
         filename: json[PictureField.filename] as String,
         createdAtTime: DateTime.parse(json[PictureField.createdAt] as String),
-        color: json[PictureField.color] as String,
-        size: json[PictureField.size] as String,
+        generic1: json[PictureField.generic1] as String,
+        generic2: json[PictureField.generic2] as String,
         description: json[PictureField.description] as String,
         location: json[PictureField.location] as String,
         category: json[PictureField.category] as int,
@@ -90,8 +90,8 @@ class Picture {
     Uint8List? pictureData,
     String? filename,
     DateTime? createdAtTime,
-    String? color,
-    String? size,
+    String? generic1,
+    String? generic2,
     String? description,
     String? location,
     int? category,
@@ -103,8 +103,8 @@ class Picture {
         pictureData: pictureData ?? this.pictureData,
         filename: filename ?? this.filename,
         createdAtTime: createdAtTime ?? this.createdAtTime,
-        color: color ?? this.color,
-        size: size ?? this.size,
+        generic1: generic1 ?? this.generic1,
+        generic2: generic2 ?? this.generic2,
         description: description ?? this.description,
         location: location ?? this.location,
         category: category ?? this.category,
