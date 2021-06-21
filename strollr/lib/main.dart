@@ -1,6 +1,7 @@
 // @dart=2.9
 import 'package:flutter/material.dart';
 import 'package:strollr/main_screen.dart';
+import 'package:strollr/route_pages/active_route.dart';
 import 'package:strollr/utils/shared_prefs.dart';
 
 import 'db/database_manager.dart';
@@ -13,15 +14,20 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Strollr',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
       home: MainScreen(),
+      routes: {
+        'main_screen': (BuildContext ctx) => MainScreen(),
+        'active_route': (BuildContext ctx) => ActiveRoute(),
+      },
     );
   }
 }

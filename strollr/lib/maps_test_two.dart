@@ -136,6 +136,7 @@ class _MapViewState extends State<MapView> {
     PolylineIf.gpx.wpts.forEach((element) {
       elementLat = element.lat;
       elementLon = element.lon;
+      // TODO what happens when null?
       if(elementLat == null || elementLon == null )
         throw Exception('_MapViewState | Should not happen: latitude or longitude is null!');
       if (southWest && elementLat < res.latitude) {

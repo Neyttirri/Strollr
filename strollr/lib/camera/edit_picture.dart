@@ -6,11 +6,11 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:strollr/services/image_characteristics/describe_picture.dart';
+import 'describe_picture.dart';
 import 'package:strollr/utils/loading_screen.dart';
 import 'package:image_editor/image_editor.dart' hide ImageSource;
 
-import '../../logger.dart';
+import '../logger.dart';
 
 class EditPhotoScreen extends StatefulWidget {
   final List arguments;
@@ -122,55 +122,56 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      appBar: AppBar(
-        title: Text(
-          "Bild bearbeiten",
-          style: TextStyle(color: Colors.green),
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
+        appBar: AppBar(
+          title: Text(
+            "Bild bearbeiten",
+            style: TextStyle(color: Colors.green),
+          ),
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.green),
+          actions: <Widget>[
+            // icon to reset made changes
+            IconButton(
+              icon: Icon(Icons.settings_backup_restore),
+              onPressed: () {
+                setState(() {
+                  saturation = 1;
+                  brightness = 0;
+                  contrast = 1;
+                });
+              },
+            ),
+            // icon to confirm and save edited image
+            IconButton(
+              icon: Icon(Icons.check),
+              onPressed: () async {
+                await crop();
+              },
+            ),
+          ],
         ),
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.green),
-        actions: <Widget>[
-          // icon to reset made changes
-          IconButton(
-            icon: Icon(Icons.settings_backup_restore),
-            onPressed: () {
-              setState(() {
-                saturation = 1;
-                brightness = 0;
-                contrast = 1;
-              });
-            },
-          ),
-          // icon to confirm and save edited image
-          IconButton(
-            icon: Icon(Icons.check),
-            onPressed: () async {
-              await crop();
-            },
-          ),
-        ],
-      ),
-      body: _loading
-          ? LoadingScreen()
-          : Container(
-              color: Color(0xFFDDDDDD),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: Column(
-                children: <Widget>[
-                  // the picture + crop option
-                  SizedBox(
-                    height: MediaQuery.of(context).size.width,
-                    width: MediaQuery.of(context).size.width,
-                    child: AspectRatio(
-                      aspectRatio: 1.0, // 16.0 / 9.0,
-                      child: buildImage(),
-                    ),
-                  ),
-                  Expanded(
-                    /*
+        body: _loading
+            ? LoadingScreen()
+            : Container(
+          color: Color(0xFFDDDDDD),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            children: <Widget>[
+              // the picture + crop option
+              SizedBox(
+                height: MediaQuery.of(context).size.width,
+                width: MediaQuery.of(context).size.width,
+                child: AspectRatio(
+                  aspectRatio: 1.0, // 16.0 / 9.0,
+                  child: buildImage(),
+                ),
+              ),
+              Expanded(
+                /*
                     sizedBox stuff
                     height: (MediaQuery.of(context).size.height -
                             MediaQuery.of(context).size.width) *
@@ -178,57 +179,58 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                     width: MediaQuery.of(context).size.width,
 
                      */
-                    child: SliderTheme(
-                      data: const SliderThemeData(
-                        showValueIndicator: ShowValueIndicator.never,
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.white,
-                              blurRadius: 30,
-                            ),
-                          ],
+                child: SliderTheme(
+                  data: const SliderThemeData(
+                    showValueIndicator: ShowValueIndicator.never,
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white,
+                          blurRadius: 30,
                         ),
-                        //color: Colors.white,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            // Sliders for editing picture
-                            Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: getCurrentSlider(selectedTabIndex),
-                                  )
-                                ]),
-                            // icons to choose editing option
-                            Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  //Spacer(),
-                                  _createIconTap('Helligkeit',
-                                      Icons.brightness_6, ID_BRIGHTNESS),
-                                  //Spacer(),
-                                  _createIconTap('Kontrast',
-                                      Icons.invert_colors_on, ID_CONTRAST),
-                                  //Spacer(),
-                                  _createIconTap(
-                                      'Sättigung', Icons.brush, ID_SATURATION),
-                                  //Spacer(),
-                                ]),
-                          ],
-                        ),
-                      ),
+                      ],
+                    ),
+                    //color: Colors.white,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        // Sliders for editing picture
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                child: getCurrentSlider(selectedTabIndex),
+                              )
+                            ]),
+                        // icons to choose editing option
+                        Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceEvenly,
+                            children: [
+                              //Spacer(),
+                              _createIconTap('Helligkeit',
+                                  Icons.brightness_6, ID_BRIGHTNESS),
+                              //Spacer(),
+                              _createIconTap('Kontrast',
+                                  Icons.invert_colors_on, ID_CONTRAST),
+                              //Spacer(),
+                              _createIconTap(
+                                  'Sättigung', Icons.brush, ID_SATURATION),
+                              //Spacer(),
+                            ]),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-      bottomNavigationBar: _buildFunctions(),
+            ],
+          ),
+        ),
+        bottomNavigationBar: _buildFunctions(),
+      )
     );
   }
 
@@ -378,8 +380,8 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     ApplicationLogger.getLogger('_EditPhotoScreenState', colors: true)
         .d('Finished editing picture');
     Future.delayed(Duration(seconds: 0)).then(
-      (value) => Navigator.push(
-        context,
+      (value) => Navigator.of(context).push(
+
         MaterialPageRoute(
           builder: (context) => DescribePhotoScreen(arguments: [
             image,

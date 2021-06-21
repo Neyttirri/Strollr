@@ -3,13 +3,12 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:strollr/model/picture_categories.dart';
 import 'package:strollr/utils/loading_screen.dart';
-import 'package:strollr/services/camera/save_picture.dart';
-import '../../logger.dart';
-import 'categories_section.dart';
+import 'save_picture.dart';
+import '../globals.dart';
+import '../logger.dart';
 
 class DescribePhotoScreen extends StatefulWidget {
   final List arguments;
@@ -35,12 +34,12 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
   late File image;
   late AnimationController _animationController;
 
-  // TODO: get categories from the DB and create RadioModels
+  // TODO: prob smarter
   List<RadioModel> radioCategoryList = [
-    new RadioModel(false, Icon(Icons.brush), 'Baum'),
-    new RadioModel(false, Icon(Icons.brush), 'Pflanze'),
-    new RadioModel(false, Icon(Icons.brush), 'Pilze'),
-    new RadioModel(false, Icon(Icons.brush), 'Tier')
+    new RadioModel(false, Image.asset(treeImagePath), 'Baum'),
+    new RadioModel(false, Image.asset(plantImagePath), 'Pflanze'),
+    new RadioModel(false, Image.asset(mushroomImagePath), 'Pilze'),
+    new RadioModel(false, Image.asset(animalImagePath), 'Tier')
   ];
 
   // for each category there are two questions
@@ -77,8 +76,9 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
     super.initState();
     __initializeAsync();
     _animationController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 1000));
-    //Timer(Duration(milliseconds: 200), () => _animationController.forward());
+      vsync: this,
+      duration: Duration(milliseconds: 1000),
+    );
   }
 
   @override
@@ -100,7 +100,6 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         elevation: 10,
-        // TODO makes sense?
         title: Text(
           "Steckbrief zum Bild",
           style: TextStyle(color: Colors.green),
@@ -112,11 +111,11 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
           IconButton(
             icon: Icon(Icons.check),
             onPressed: () async {
-              ApplicationLogger.getLogger('_DescribePhotoScreenState', colors: true)
+              ApplicationLogger.getLogger('_DescribePhotoScreenState',
+                      colors: true)
                   .d('saving image and info with path: ${image.path} ');
-              print('${CategoriesIcons.getChosenCategory()}');
               await Future.delayed(Duration(seconds: 0)).then(
-                (value) => Navigator.push(
+                (value) => Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => SavePhotoScreen(
@@ -148,7 +147,7 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
               ),
               // here are all the fields the user has to fill
               child: ListView(
-                children: <Widget>[
+                children: [
                   Text(
                     'Wähle eine Kategorie: ',
                     style: TextStyle(
@@ -385,10 +384,6 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
     }
     return chosenCategory;
   }
-
-  Future<Uint8List> _getImageData() async {
-    return await image.readAsBytes();
-  }
 }
 
 class RadioItem extends StatelessWidget {
@@ -404,8 +399,8 @@ class RadioItem extends StatelessWidget {
         children: <Widget>[
           Container(
             // TODO: % of the screen or hard coded?
-            height: MediaQuery.of(context).size.height * 0.07,
-            width: MediaQuery.of(context).size.height * 0.07,
+            height: MediaQuery.of(context).size.width * 0.16,
+            width: MediaQuery.of(context).size.width * 0.16,
             child: Center(
               child: _item.buttonIcon,
             ),

@@ -6,6 +6,7 @@ import 'package:gpx/gpx.dart';
 import 'package:strollr/db/database_manager.dart';
 import 'package:strollr/model/picture.dart';
 import 'package:strollr/model/picture_categories.dart';
+import 'package:strollr/route_pages/active_route.dart';
 import 'package:strollr/utils/shared_prefs.dart';
 import 'package:animated_check/animated_check.dart';
 
@@ -112,11 +113,21 @@ class _ConfirmationAnimationState extends State<ConfirmationAnimation>
   void initState() {
     super.initState();
     _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 2));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 1500));
 
     _animation = new Tween<double>(begin: 0, end: 1).animate(
         new CurvedAnimation(
             parent: _animationController, curve: Curves.easeInOutCirc));
+
+     Future.delayed(Duration(milliseconds: 1500)).then(
+          (value) => Navigator.push(
+            context,
+            // the transition
+            MaterialPageRoute(
+              builder: (context) => ActiveRoute()
+            ),
+          ),
+    );
   }
 
   @override

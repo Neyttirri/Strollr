@@ -1,10 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
 import 'package:strollr/route_pages/PolylineIf.dart';
-import 'package:strollr/services/camera/edit_picture.dart';
+import '../camera/edit_picture.dart';
 import '../globals.dart' as globals;
 import '../style.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
@@ -12,8 +11,9 @@ import '../maps_test_two.dart';
 import 'dart:math';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-
 import 'PolylineIf.dart';
+
+const routeName = '/extractArguments';
 
 final _isHours = true;
 final maps = new MapView();
@@ -28,7 +28,7 @@ Geolocator _geolocator = Geolocator();
 
 var gpx = Gpx();
 
-final overview =  DefaultTextStyle.merge(
+final overview = DefaultTextStyle.merge(
   style: TextStyle(
       color: Colors.black,
       fontWeight: FontWeight.w700,
@@ -51,7 +51,7 @@ final overview =  DefaultTextStyle.merge(
               children: [
                 Column(
                   children: [
-                    StreamBuilder<int> (
+                    StreamBuilder<int>(
                         stream: globals.stopWatchTimer.rawTime,
                         initialData: globals.stopWatchTimer.rawTime.value,
                         builder: (context, snapshot) {
@@ -138,13 +138,13 @@ class _ActiveRouteState extends State<ActiveRoute> {
   late Position _currentPosition;
   final _picker = ImagePicker();
 
-   @override
-   void initState() {
-     super.initState();
-     //initiate periodic Timer on init
-     _timer = startTracking();
-     gpx.creator = "track";
-   }
+  @override
+  void initState() {
+    super.initState();
+    //initiate periodic Timer on init
+    _timer = startTracking();
+    gpx.creator = "track";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,15 +162,24 @@ class _ActiveRouteState extends State<ActiveRoute> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        tooltip: 'Foto aufnehmen',
-        child: Icon(Icons.add_a_photo_outlined),
-        backgroundColor: Colors.grey[500],
-        onPressed: () {}
-        //Navigator.of(context).push(MaterialPageRoute(builder: (context) => ActiveRoute()));
-        // },
-      ),
+          tooltip: 'Foto aufnehmen',
+          child: Icon(Icons.add_a_photo_outlined),
+          backgroundColor: Colors.grey[500],
+          onPressed: () {
+            _openCamera();
+          }
+          //Navigator.of(context).push(MaterialPageRoute(builder: (context) => ActiveRoute()));
+          // },
+          ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
+  }
+
+  void makeRoutePage({required BuildContext context, required Widget pageRef}) {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => pageRef),
+        (Route<dynamic> route) => false);
   }
 
   Future<void> _openCamera() async {
@@ -181,16 +190,18 @@ class _ActiveRouteState extends State<ActiveRoute> {
         maxWidth: 400))!;
     // 400x400 is less than 40kB, imageQuality is also for compressing the image
 
-    Position position = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    print('CURRENT POS: $position');
+    Position position = await _geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
 
     setState(() {
       _imageFile = File(picture.path);
       _currentPosition = position;
     });
 
+    // Navigator.popUntil(context, ModalRoute.withName('main_screen'));
+    // TODO figure out the Navigator and the context so the persistent bottom navigation bar is not there anymore
     Future.delayed(Duration(seconds: 0)).then(
-          (value) => Navigator.push(
+      (value) => Navigator.push(
         context,
         // the transition
         MaterialPageRoute(
@@ -211,35 +222,42 @@ class _ActiveRouteState extends State<ActiveRoute> {
   * new entry is written
   * updates covered distance
    */
-   Timer startTracking(){
-     return Timer.periodic(_trackingInterval, (timer) async {
-       if (_paused) return;
+  Timer startTracking() {
+    return Timer.periodic(_trackingInterval, (timer) async {
+      if (_paused) return;
 
-       Position currentPosition = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      Position currentPosition = await _geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
 
-       double distanceToLastPosition = 0;
+      double distanceToLastPosition = 0;
 
-       if (gpx.wpts.isNotEmpty) distanceToLastPosition = calcDistance((gpx.wpts[gpx.wpts.length - 1]).lat as double, currentPosition.latitude,
-                                    gpx.wpts[gpx.wpts.length - 1].lon as double, currentPosition.longitude);
+      if (gpx.wpts.isNotEmpty)
+        distanceToLastPosition = calcDistance(
+            (gpx.wpts[gpx.wpts.length - 1]).lat as double,
+            currentPosition.latitude,
+            gpx.wpts[gpx.wpts.length - 1].lon as double,
+            currentPosition.longitude);
 
-       if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.2) return;
+      if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.2) return;
 
-       double lat1 = gpx.wpts.isEmpty ? currentPosition.latitude : gpx.wpts[gpx.wpts.length - 1].lat as double;
-       double lat2 = currentPosition.latitude;
+      double lat1 = gpx.wpts.isEmpty
+          ? currentPosition.latitude
+          : gpx.wpts[gpx.wpts.length - 1].lat as double;
+      double lat2 = currentPosition.latitude;
 
-       double lon1 = gpx.wpts.isEmpty ? currentPosition.longitude : gpx.wpts[gpx.wpts.length - 1].lon as double;
-       double lon2 = currentPosition.longitude;
+      double lon1 = gpx.wpts.isEmpty
+          ? currentPosition.longitude
+          : gpx.wpts[gpx.wpts.length - 1].lon as double;
+      double lon2 = currentPosition.longitude;
 
-       distance += calcDistance(lat1, lat2, lon1, lon2);
+      distance += calcDistance(lat1, lat2, lon1, lon2);
 
-       writeGpxFile(currentPosition);
-     });
-   }
+      writeGpxFile(currentPosition);
+    });
+  }
 
-  void writeGpxFile(Position current){
-     gpx.wpts.add(
-       Wpt(lat: current.latitude, lon: current.longitude)
-     );
+  void writeGpxFile(Position current) {
+    gpx.wpts.add(Wpt(lat: current.latitude, lon: current.longitude));
   }
 
   //calculates distance between two coordinates
@@ -255,8 +273,10 @@ class _ActiveRouteState extends State<ActiveRoute> {
     double distLon = rLon1 - rLon2;
     double distLat = rLat1 - rLat2;
 
-    double a = pow(sin(distLat / 2), 2) + cos(rLat1) * cos(rLat2) *
-        pow(sin(distLon / 2), 2); //some weird math hyper brain stuff
+    double a = pow(sin(distLat / 2), 2) +
+        cos(rLat1) *
+            cos(rLat2) *
+            pow(sin(distLon / 2), 2); //some weird math hyper brain stuff
     double c = 2 * atan2(sqrt(a), sqrt(1 - a));
 
     double d = r * c;
