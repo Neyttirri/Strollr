@@ -150,6 +150,10 @@ class _ActiveRouteState extends State<ActiveRoute> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: Text("Aktive Route", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
