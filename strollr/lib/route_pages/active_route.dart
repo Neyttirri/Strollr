@@ -151,7 +151,7 @@ class _ActiveRouteState extends State<ActiveRoute> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: headerGreen),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text("Aktive Route", style: TextStyle(color: headerGreen)),
