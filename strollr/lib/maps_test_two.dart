@@ -38,7 +38,7 @@ class _MapViewState extends State<MapView> {
   final Set<Marker> _itemMarkers = {};
 
   final _locationUpdateIntervall = Duration(seconds: 3);
-  Timer? _timer;
+  static Timer? _timer;
 
 
   //lines to be drawn in maps
@@ -49,37 +49,46 @@ class _MapViewState extends State<MapView> {
    PolylinePoints? polylinePoints;
 
   // For storing the current position
-   Position? _currentPosition;
+  Position? _currentPosition;
+
+  static bool paused = false;
 
   Timer _getCurrentLocation() {
     return Timer.periodic(_locationUpdateIntervall, (timer) async {
 
-      Position currentPosition = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-
-      if (PolylineIf.walkFinished) _createPolylines();
-
-      print(PolylineIf.gpx);
+      if (paused) return;
 
 
-      if (mounted && !PolylineIf.walkFinished) {
-        setState(() {
-          // Store the position in the variable
-          _currentPosition = currentPosition;
 
-          print('CURRENT POS: $_currentPosition');
-
-          // For moving the camera to current location
-          mapController.animateCamera(
-            CameraUpdate.newCameraPosition(
-              CameraPosition(
-                target: LatLng(
-                    currentPosition.latitude, currentPosition.longitude),
-                zoom: 18.0,
-              ),
-            ),
-          );
-        });
+      if (PolylineIf.walkFinished) {
+        _createPolylines();
+        _timer!.cancel();
       }
+
+        //print(PolylineIf.gpx);
+
+
+        if (mounted && !PolylineIf.walkFinished) {
+          Position? myPosition = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+          setState(() {
+            // Store the position in the variable
+            PolylineIf.currentPosition = myPosition;
+
+            print('CURRENT POS: $myPosition');
+
+            // For moving the camera to current location
+            mapController.animateCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(
+                  target: LatLng(
+                      myPosition.latitude, myPosition.longitude),
+                  zoom: 18.0,
+                ),
+              ),
+            );
+          });
+        }
     });
   }
 
@@ -138,7 +147,7 @@ class _MapViewState extends State<MapView> {
       elementLon = element.lon;
       // TODO what happens when null?
       if(elementLat == null || elementLon == null )
-        throw Exception('_MapViewState | Should not happen: latitude or longitude is null!');
+        throw Exception('_MapViewState | Should not happen: latitude is null!');
       if (southWest && elementLat < res.latitude) {
         resLat = elementLat;
         res = LatLng(elementLat, elementLon);
@@ -154,7 +163,7 @@ class _MapViewState extends State<MapView> {
       elementLat = element.lat;
       elementLon = element.lon;
       if(elementLat == null || elementLon == null )
-        throw Exception('_MapViewState | Should not happen: latitude or longitude is null!');
+        throw Exception('_MapViewState | Should not happen: longitude is null!');
       if (southWest && elementLon < res.longitude) {
         resLon = elementLon;
         res = LatLng(elementLat, elementLon);
@@ -195,7 +204,8 @@ class _MapViewState extends State<MapView> {
     super.initState();
     _getCurrentLocation();
     getMarkerIcon();
-    _createPolylines();
+
+    _timer = _getCurrentLocation();
 
     polylinePoints = PolylinePoints();
   }

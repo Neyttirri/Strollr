@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
 import 'package:strollr/route_pages/PolylineIf.dart';
+import 'package:strollr/route_pages/dbInterface.dart';
 import '../camera/edit_picture.dart';
 import '../globals.dart' as globals;
 import '../style.dart';
@@ -21,6 +22,8 @@ final maps = new MapView();
 final _trackingInterval = Duration(seconds: 5);
 late Timer _timer;
 bool _paused = false;
+
+int? walkId;
 
 double distance = 0;
 
@@ -71,7 +74,7 @@ final overview = DefaultTextStyle.merge(
                   child: Column(
                     children: [
                       Padding(
-                          padding: EdgeInsets.all(8), child: Text('0.0 km')),
+                          padding: EdgeInsets.all(8), child: Text(distance.toString() + 'km')),
                       Icon(Icons.directions_walk_outlined,
                           color: Colors.green[500]),
                     ],
@@ -144,6 +147,7 @@ class _ActiveRouteState extends State<ActiveRoute> {
     //initiate periodic Timer on init
     _timer = startTracking();
     gpx.creator = "track";
+    walkId = DbInterface.generateWalk(gpx);
   }
 
   @override
@@ -226,31 +230,35 @@ class _ActiveRouteState extends State<ActiveRoute> {
     return Timer.periodic(_trackingInterval, (timer) async {
       if (_paused) return;
 
-      Position currentPosition = await _geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+      Position? currentPosition = PolylineIf().getPosition();
+      print('You are here: $currentPosition');
 
       double distanceToLastPosition = 0;
 
       if (gpx.wpts.isNotEmpty)
         distanceToLastPosition = calcDistance(
             (gpx.wpts[gpx.wpts.length - 1]).lat as double,
-            currentPosition.latitude,
+            currentPosition!.latitude,
             gpx.wpts[gpx.wpts.length - 1].lon as double,
             currentPosition.longitude);
 
       if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.2) return;
 
       double lat1 = gpx.wpts.isEmpty
-          ? currentPosition.latitude
+          ? currentPosition!.latitude
           : gpx.wpts[gpx.wpts.length - 1].lat as double;
-      double lat2 = currentPosition.latitude;
+      double lat2 = currentPosition!.latitude;
 
       double lon1 = gpx.wpts.isEmpty
           ? currentPosition.longitude
           : gpx.wpts[gpx.wpts.length - 1].lon as double;
       double lon2 = currentPosition.longitude;
 
-      distance += calcDistance(lat1, lat2, lon1, lon2);
+
+
+      setState(() {
+        distance += calcDistance(lat1, lat2, lon1, lon2);
+      });
 
       writeGpxFile(currentPosition);
     });
@@ -265,7 +273,7 @@ class _ActiveRouteState extends State<ActiveRoute> {
     double dToR = 0.017453293; //Degree to radius
     double r = 6371.393; //earth radius
 
-    double rLat1 = lat1 * dToR;
+    double rLat1 = lat1 * dToR; //convert degree to radius
     double rLat2 = lat2 * dToR;
     double rLon1 = lon1 * dToR;
     double rLon2 = lon2 * dToR;
