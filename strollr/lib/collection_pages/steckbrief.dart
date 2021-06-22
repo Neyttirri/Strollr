@@ -52,7 +52,7 @@ class Steckbrief extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            title,
+                            "Eiche",
                             style: TextStyle(
                               color: headerGreen,
                               fontSize: 30,
@@ -63,7 +63,7 @@ class Steckbrief extends StatelessWidget {
                             height: 20,
                           ),
                           Text(
-                            "Frage 1",
+                            "Was für einen Baum ist das?",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -73,7 +73,7 @@ class Steckbrief extends StatelessWidget {
                             height: 15,
                           ),
                           Text(
-                            "Antwort 1",
+                            "Eiche",
                             style: TextStyle(
                               fontSize: 16,
                             ),
@@ -82,7 +82,7 @@ class Steckbrief extends StatelessWidget {
                             height: 30,
                           ),
                           Text(
-                            "Frage 2",
+                            "Wo wachsen solche Bäume nicht?",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -92,7 +92,7 @@ class Steckbrief extends StatelessWidget {
                             height: 15,
                           ),
                           Text(
-                            "Antwort 2",
+                            "In hohen Gebirgen und der Wüste, außerdem können Eichen nicht im Schatten anderer Gehölze wachsen",
                             style: TextStyle(
                               fontSize: 16,
                             ),
@@ -101,7 +101,7 @@ class Steckbrief extends StatelessWidget {
                             height: 30,
                           ),
                           Text(
-                            "Frage 3",
+                            "Erzähl was du darüber weißt!",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -111,63 +111,25 @@ class Steckbrief extends StatelessWidget {
                             height: 15,
                           ),
                           Text(
-                            "Antwort 3",
+                            "Eichen-Arten sind sommergrüne oder immergrüne Bäume, seltener auch Sträucher",
                             style: TextStyle(
                               fontSize: 16,
                             ),
                           ),
                           SizedBox(
                             height: 30,
-                          ),
-                          Text(
-                            "Frage 4",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Text(
-                            "Antwort 4",
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Text(
-                            "Frage 5",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Text(
-                            "Antwort 5",
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
                           ),
                         ],
                       ),
                     ),
 // ---------------- UNTEN LEISTE
                     Center(
-                      child: TextButton(
+                      child: OutlinedButton(
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails()));
                         },
                         child: Text('Zeige Route'),
-                        style: TextButton.styleFrom(
+                        style: OutlinedButton.styleFrom(
                             padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                             primary: Colors.white,
                             textStyle: TextStyle(fontSize: 20),
