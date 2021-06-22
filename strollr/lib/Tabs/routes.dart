@@ -39,7 +39,7 @@ class Routes extends StatelessWidget {
         child: Icon(Icons.add),
         backgroundColor: Colors.green,
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewRoute()));
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => ActiveRoute()));
           //onPressed: () => Navigator.pushNamed(context, 'newRoute')
         },
       ),
