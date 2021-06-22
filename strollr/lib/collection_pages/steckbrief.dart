@@ -11,10 +11,10 @@ class Steckbrief extends StatelessWidget {
   final int index;
 
   Steckbrief({
-    @required this.index,
-    @required this.imagePath,
-    @required this.title,
-    @required this.details,
+    required this.index,
+    required this.imagePath,
+    required this.title,
+    required this.details,
   });
 
   @override

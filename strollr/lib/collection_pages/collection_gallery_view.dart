@@ -9,7 +9,7 @@ class GalleryView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: headerGreen),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text("Gallery View", style: TextStyle(color: headerGreen)),
@@ -42,7 +42,12 @@ class GalleryView extends StatelessWidget {
         return new GestureDetector(
           onTap: () {
             Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => Steckbrief()));
+                .push(MaterialPageRoute(builder: (context) => Steckbrief(
+              index: 0,
+              imagePath:"assets/images/treeIcon.png",
+              title:"Baum",
+              details: "Großer Baum",
+            )));
           },
           child: Container(
             child: Image.asset("assets/images/treeIcon.png"),
