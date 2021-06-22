@@ -6,9 +6,7 @@ import 'Tabs/collectionTwo.dart';
 import 'Tabs/routes.dart';
 import 'Tabs/stats.dart';
 
-
 class MainScreen extends StatefulWidget {
-
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -24,11 +22,10 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
       onWillPop: () async {
         final isFirstRouteInCurrentTab =
-        !await _navigatorKeys[_selectedIndex].currentState!.maybePop();
+            !await _navigatorKeys[_selectedIndex].currentState!.maybePop();
 
         print(
             'isFirstRouteInCurrentTab: ' + isFirstRouteInCurrentTab.toString());
@@ -47,14 +44,11 @@ class _MainScreenState extends State<MainScreen> {
           showUnselectedLabels: false,
           items: [
             BottomNavigationBarItem(
-                icon: const Icon(Icons.collections),
-                label: "Sammlung"),
+                icon: const Icon(Icons.collections), label: "Sammlung"),
             BottomNavigationBarItem(
-                icon: const Icon(Icons.directions_walk),
-                label: "Routen"),
+                icon: const Icon(Icons.directions_walk), label: "Routen"),
             BottomNavigationBarItem(
-                icon: const Icon(Icons.bar_chart),
-                label: "Statistik"),
+                icon: const Icon(Icons.bar_chart), label: "Statistik"),
           ],
           onTap: (index) {
             setState(() {

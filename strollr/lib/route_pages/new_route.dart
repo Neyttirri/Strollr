@@ -14,6 +14,10 @@ class _NewRouteState extends State<NewRoute> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: Text("Neue Route starten", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),

@@ -8,6 +8,10 @@ class GalleryView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: headerGreen),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: Text("Gallery View", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
@@ -31,12 +35,19 @@ class GalleryView extends StatelessWidget {
 
   Widget gridBuild() {
     return GridView.builder(
-      gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+      gridDelegate:
+          new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
       itemCount: 45,
       itemBuilder: (BuildContext context, int index) {
         return new GestureDetector(
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => Steckbrief()));
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => Steckbrief(
+              index: 0,
+              imagePath:"assets/images/treeIcon.png",
+              title:"Baum",
+              details: "Großer Baum",
+            )));
           },
           child: Container(
             child: Image.asset("assets/images/treeIcon.png"),
@@ -48,7 +59,7 @@ class GalleryView extends StatelessWidget {
 }
 
 List<Container> _buildGridList(int i) => List.generate(
-    i, (index) => Container(
-  child: Image.asset("assets/images/mushroomIcon.png"),
-)
-);
+    i,
+    (index) => Container(
+          child: Image.asset("assets/images/mushroomIcon.png"),
+        ));
