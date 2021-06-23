@@ -51,16 +51,14 @@ class _MapViewState extends State<MapView> {
   // For storing the current position
   Position? _currentPosition;
 
-  static bool paused = false;
-
   Timer _getCurrentLocation() {
     return Timer.periodic(_locationUpdateIntervall, (timer) async {
 
-      if (paused) return;
+      if (MapRouteInterface.walkPaused) return;
 
 
 
-      if (PolylineIf.walkFinished) {
+      if (MapRouteInterface.walkFinished) {
         _createPolylines();
         _timer!.cancel();
       }
@@ -68,12 +66,12 @@ class _MapViewState extends State<MapView> {
         //print(PolylineIf.gpx);
 
 
-        if (mounted && !PolylineIf.walkFinished) {
+        if (mounted && !MapRouteInterface.walkFinished) {
           Position? myPosition = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
           setState(() {
             // Store the position in the variable
-            PolylineIf.currentPosition = myPosition;
+            MapRouteInterface.currentPosition = myPosition;
 
             print('CURRENT POS: $myPosition');
 
@@ -98,7 +96,7 @@ class _MapViewState extends State<MapView> {
   * connect them via _polylines.add
    */
   _createPolylines() async{
-    PolylineIf.gpx.wpts.forEach((element)  {
+    MapRouteInterface.gpx.wpts.forEach((element)  {
       polylineCoordinates.add(LatLng(element.lat as double,  element.lon  as double));
     });
 
@@ -135,14 +133,14 @@ class _MapViewState extends State<MapView> {
   * to find southwest or northwest most points
    */
   _getBound(bool southWest){
-    LatLng res = LatLng(PolylineIf.gpx.wpts[0].lat as double, PolylineIf.gpx.wpts[0].lon as double);
+    LatLng res = LatLng(MapRouteInterface.gpx.wpts[0].lat as double, MapRouteInterface.gpx.wpts[0].lon as double);
 
     double resLat = res.latitude;
     double resLon = res.longitude;
     var elementLat;
     var elementLon;
 
-    PolylineIf.gpx.wpts.forEach((element) {
+    MapRouteInterface.gpx.wpts.forEach((element) {
       elementLat = element.lat;
       elementLon = element.lon;
       // TODO what happens when null?
@@ -159,7 +157,7 @@ class _MapViewState extends State<MapView> {
       }
     });
 
-    PolylineIf.gpx.wpts.forEach((element) {
+    MapRouteInterface.gpx.wpts.forEach((element) {
       elementLat = element.lat;
       elementLon = element.lon;
       if(elementLat == null || elementLon == null )
@@ -271,7 +269,7 @@ class _MapViewState extends State<MapView> {
                 _addMarker(latlang);
               },
               onMapCreated: (GoogleMapController controller) {
-                PolylineIf.walkFinished = false;
+                MapRouteInterface.walkFinished = false;
                 mapController = controller;
                 changeMapStyle();
 

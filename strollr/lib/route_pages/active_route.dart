@@ -9,7 +9,6 @@ import '../globals.dart' as globals;
 import '../style.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import '../maps_test_two.dart';
-import 'dart:math';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'PolylineIf.dart';
@@ -21,7 +20,6 @@ final maps = new MapView();
 
 final _trackingInterval = Duration(seconds: 5);
 late Timer _timer;
-bool _paused = false;
 
 int? walkId;
 
@@ -88,7 +86,9 @@ final overview = DefaultTextStyle.merge(
                 child: CustomButton(
                     label: 'Start',
                     onPress: () {
-                      _paused = false;
+                      MapRouteInterface.walkPaused = false;
+
+                      MapRouteInterface.walkFinished = false;
 
                       globals.stopWatchTimer.onExecute
                           .add(StopWatchExecute.start);
@@ -99,7 +99,7 @@ final overview = DefaultTextStyle.merge(
                 child: CustomButton(
                     label: 'Pause',
                     onPress: () {
-                      _paused = true;
+                      MapRouteInterface.walkPaused = true;
 
                       globals.stopWatchTimer.onExecute
                           .add(StopWatchExecute.stop);
@@ -110,14 +110,7 @@ final overview = DefaultTextStyle.merge(
                 child: CustomButton(
                     label: 'Walk beenden',
                     onPress: () {
-                      _timer.cancel();
-
-                      var gpxString = GpxWriter().asString(gpx, pretty: true);
-                      print(gpxString);
-                      print('Distance: $distance' + 'km');
-
-                      PolylineIf.gpx = gpx;
-                      PolylineIf.walkFinished = true;
+                      finishedWalk();
 
                       globals.stopWatchTimer.onExecute
                           .add(StopWatchExecute.stop);
@@ -130,6 +123,18 @@ final overview = DefaultTextStyle.merge(
     ),
   ),
 );
+
+void finishedWalk(){
+  _timer.cancel();
+
+  if (gpx.wpts.isNotEmpty) _ActiveRouteState.writeGpxFile(MapRouteInterface.currentPosition);
+
+  MapRouteInterface.gpx = gpx;
+  MapRouteInterface.walkFinished = true;
+
+  gpx.creator = "new route";
+}
+
 
 class ActiveRoute extends StatefulWidget {
   @override
@@ -146,8 +151,8 @@ class _ActiveRouteState extends State<ActiveRoute> {
     super.initState();
     //initiate periodic Timer on init
     _timer = startTracking();
-    gpx.creator = "track";
-    walkId = DbInterface.generateWalk(gpx);
+    gpx.creator = "route";
+     DbRouteInterface.generateWalk(gpx);
   }
 
   @override
@@ -232,68 +237,29 @@ class _ActiveRouteState extends State<ActiveRoute> {
    */
   Timer startTracking() {
     return Timer.periodic(_trackingInterval, (timer) async {
-      if (_paused) return;
+      if (MapRouteInterface.walkPaused) return;
 
-      Position? currentPosition = PolylineIf().getPosition();
+      Position? currentPosition = MapRouteInterface().getPosition();
       print('You are here: $currentPosition');
 
       double distanceToLastPosition = 0;
 
       if (gpx.wpts.isNotEmpty)
-        distanceToLastPosition = calcDistance(
+        distanceToLastPosition = DbRouteInterface.calcDistance(
             (gpx.wpts[gpx.wpts.length - 1]).lat as double,
             currentPosition!.latitude,
             gpx.wpts[gpx.wpts.length - 1].lon as double,
             currentPosition.longitude);
 
-      if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.2) return;
+      if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.05) return;
 
-      double lat1 = gpx.wpts.isEmpty
-          ? currentPosition!.latitude
-          : gpx.wpts[gpx.wpts.length - 1].lat as double;
-      double lat2 = currentPosition!.latitude;
-
-      double lon1 = gpx.wpts.isEmpty
-          ? currentPosition.longitude
-          : gpx.wpts[gpx.wpts.length - 1].lon as double;
-      double lon2 = currentPosition.longitude;
-
-
-
-      setState(() {
-        distance += calcDistance(lat1, lat2, lon1, lon2);
-      });
-
-      writeGpxFile(currentPosition);
+    writeGpxFile(currentPosition!);
     });
   }
 
-  void writeGpxFile(Position current) {
-    gpx.wpts.add(Wpt(lat: current.latitude, lon: current.longitude));
-  }
-
-  //calculates distance between two coordinates
-  double calcDistance(double lat1, double lat2, double lon1, double lon2) {
-    double dToR = 0.017453293; //Degree to radius
-    double r = 6371.393; //earth radius
-
-    double rLat1 = lat1 * dToR; //convert degree to radius
-    double rLat2 = lat2 * dToR;
-    double rLon1 = lon1 * dToR;
-    double rLon2 = lon2 * dToR;
-
-    double distLon = rLon1 - rLon2;
-    double distLat = rLat1 - rLat2;
-
-    double a = pow(sin(distLat / 2), 2) +
-        cos(rLat1) *
-            cos(rLat2) *
-            pow(sin(distLon / 2), 2); //some weird math hyper brain stuff
-    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-
-    double d = r * c;
-
-    return double.parse((d).toStringAsFixed(2));
+  static void writeGpxFile(Position? current) {
+    gpx.wpts.add(Wpt(lat: current!.latitude, lon: current.longitude));
+    DbRouteInterface.updateWalkRoute(gpx);
   }
 }
 
