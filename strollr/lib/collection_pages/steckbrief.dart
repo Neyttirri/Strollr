@@ -123,21 +123,42 @@ class Steckbrief extends StatelessWidget {
                       ),
                     ),
 // ---------------- UNTEN LEISTE
-                    Center(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails()));
-                        },
-                        child: Text('Zeige Route'),
-                        style: OutlinedButton.styleFrom(
-                            padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                            primary: Colors.white,
-                            textStyle: TextStyle(fontSize: 20),
-                            backgroundColor: headerGreen,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15)
-                            )
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
+                      child: Row(
+                        children: [
+                          OutlinedButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails()));
+                            },
+                            child: Text('Bearbeiten'),
+                            style: OutlinedButton.styleFrom(
+                                padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+                                primary: Colors.white,
+                                textStyle: TextStyle(fontSize: 20),
+                                backgroundColor: headerGreen,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15)
+                                )
+                            ),
+                          ),
+                          Spacer(),
+                          OutlinedButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails()));
+                            },
+                            child: Text('Zeige Route'),
+                            style: OutlinedButton.styleFrom(
+                                padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+                                primary: Colors.white,
+                                textStyle: TextStyle(fontSize: 20),
+                                backgroundColor: headerGreen,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15)
+                                )
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     SizedBox(

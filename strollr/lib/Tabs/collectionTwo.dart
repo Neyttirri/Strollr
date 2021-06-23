@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 
 class CollectionTwo extends StatelessWidget {
 
+  int indexTemp = 0;
 
   final List<CollectionListCard> categoryList = [
     CollectionListCard("assets/images/treeIcon.png", "Bäume", 14),
@@ -31,7 +32,8 @@ class CollectionTwo extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             return new GestureDetector(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView()));
+                indexTemp = index;
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(indexTemp : indexTemp)));
               },
               child: buildRouteListCard(context, index),
             );

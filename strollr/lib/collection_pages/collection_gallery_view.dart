@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:strollr/collection_pages/steckbrief.dart';
+import 'package:strollr/db/database_manager.dart';
+import 'package:strollr/model/picture.dart';
+import 'package:strollr/model/picture_categories.dart';
 
 import '../style.dart';
 
 class GalleryView extends StatelessWidget {
+
+  int indexTemp;
+
+  //List<Picture> allPicturesInCategory;
+
+  GalleryView({required this.indexTemp});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,20 +30,25 @@ class GalleryView extends StatelessWidget {
   }
 
   Widget mainWidget() {
+    //print("Index = " + indexTemp.toString());
     return gridBuild();
   }
 
+  /*
   Widget gridView() {
     return GridView.extent(
       maxCrossAxisExtent: 150,
       padding: const EdgeInsets.all(4),
       mainAxisSpacing: 4,
       crossAxisSpacing: 4,
-      children: _buildGridList(25),
+      children: _buildGridList(indexTemp),
     );
   }
+   */
 
   Widget gridBuild() {
+    print("Index = " + indexTemp.toString());
+
     return GridView.builder(
       gridDelegate:
           new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
@@ -50,16 +65,28 @@ class GalleryView extends StatelessWidget {
             )));
           },
           child: Container(
+            padding: EdgeInsets.all(4),
             child: Image.asset("assets/images/treeIcon.png"),
           ),
         );
       },
     );
   }
+
+  readAllPictures(int index) {
+    if(index == 0) {
+      //readALlPicturesFromCategory(index, )
+    }
+  }
 }
 
+
+
+/*
 List<Container> _buildGridList(int i) => List.generate(
     i,
     (index) => Container(
           child: Image.asset("assets/images/mushroomIcon.png"),
         ));
+
+ */
