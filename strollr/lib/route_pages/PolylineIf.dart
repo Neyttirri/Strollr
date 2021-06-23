@@ -1,9 +1,10 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
 
-class PolylineIf{
+class MapRouteInterface{
   static Gpx gpx = Gpx();
-  static bool walkFinished = false;
+  static bool walkFinished = true;
+  static bool walkPaused = true;
   static Position? currentPosition;
 
   Position? getPosition(){
