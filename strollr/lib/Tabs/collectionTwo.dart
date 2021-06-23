@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:strollr/collection_pages/collection_category_card.dart';
 import 'package:strollr/collection_pages/collection_gallery_view.dart';
+import 'package:strollr/model/picture_categories.dart';
 import 'package:strollr/route_pages/active_route.dart';
 import 'package:strollr/route_pages/new_route.dart';
 import 'package:strollr/route_pages/route_details.dart';
@@ -12,6 +13,8 @@ import 'package:intl/intl.dart';
 class CollectionTwo extends StatelessWidget {
 
   int indexTemp = 0;
+  late Categories category;
+  late int categoryID;
 
   final List<CollectionListCard> categoryList = [
     CollectionListCard("assets/images/treeIcon.png", "Bäume", 14),
@@ -32,8 +35,21 @@ class CollectionTwo extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             return new GestureDetector(
               onTap: () {
+                categoryID = index;
                 indexTemp = index;
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(indexTemp : indexTemp)));
+                if(index == 0) {
+                  category = Categories.tree;
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category, categoryID: categoryID)));
+                } else if(index == 1) {
+                  category = Categories.plant;
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category, categoryID: categoryID)));
+                } else if(index == 2) {
+                  category = Categories.animal;
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category, categoryID: categoryID)));
+                } else if(index == 3) {
+                  category = Categories.mushroom;
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category, categoryID: categoryID)));
+                }
               },
               child: buildRouteListCard(context, index),
             );

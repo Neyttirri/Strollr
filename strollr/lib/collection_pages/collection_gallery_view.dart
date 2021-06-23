@@ -8,14 +8,26 @@ import '../style.dart';
 
 class GalleryView extends StatelessWidget {
 
-  int indexTemp;
+  //int indexTemp;
+  Categories category;
 
-  //List<Picture> allPicturesInCategory;
+  late int categoryID;
+  late int walkID;
+  late int pictureID;
 
-  GalleryView({required this.indexTemp});
+  late Future<List<Picture>> allPicturesInCategory;
+  late List<Picture> allPictures;
+
+  late Picture selectedPicture;
+
+  GalleryView({
+    required this.category,
+    required this.categoryID,
+  });
 
   @override
   Widget build(BuildContext context) {
+    allPicturesInCategory = DatabaseManager.instance.readALlPicturesFromCategory(categoryID);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -47,21 +59,21 @@ class GalleryView extends StatelessWidget {
    */
 
   Widget gridBuild() {
-    print("Index = " + indexTemp.toString());
+    print("Index = " + category.toString());
 
     return GridView.builder(
       gridDelegate:
           new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
-      itemCount: 45,
+      itemCount: allPicturesInCategory.toString().length,
       itemBuilder: (BuildContext context, int index) {
         return new GestureDetector(
           onTap: () {
+            //selectedPicture = allPicturesInCategory;
+            pictureID = selectedPicture.id!;
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => Steckbrief(
-              index: 0,
-              imagePath:"assets/images/treeIcon.png",
-              title:"Baum",
-              details: "Großer Baum",
+              walkID: walkID,
+              selectedPicture: selectedPicture,
             )));
           },
           child: Container(
@@ -73,11 +85,20 @@ class GalleryView extends StatelessWidget {
     );
   }
 
-  readAllPictures(int index) {
+  /*
+  Future<List<Picture>> readAllPictures(int index) {
+    Future<List<Picture>> allPicturesInCategory;
     if(index == 0) {
-      //readALlPicturesFromCategory(index, )
+      return allPicturesInCategory = DatabaseManager.instance.readALlPicturesFromCategory(0);
+    } else if(index == 1) {
+      return allPicturesInCategory = DatabaseManager.instance.readALlPicturesFromCategory(0);
+    } else if(index == 2) {
+      return allPicturesInCategory = DatabaseManager.instance.readALlPicturesFromCategory(0);
+    } else if(index == 3) {
+      return allPicturesInCategory = DatabaseManager.instance.readALlPicturesFromCategory(0);
     }
   }
+   */
 }
 
 

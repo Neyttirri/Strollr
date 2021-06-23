@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:strollr/model/picture.dart';
 import 'package:strollr/route_pages/route_details.dart';
 
 import '../style.dart';
 
 class Steckbrief extends StatelessWidget {
 
-  final String imagePath;
-  final String title;
-  final String details;
-  final int index;
+  final int walkID;
+
+  final Picture selectedPicture;
 
   Steckbrief({
-    required this.index,
-    required this.imagePath,
-    required this.title,
-    required this.details,
+    required this.walkID,
+    required this.selectedPicture,
   });
 
   @override
@@ -52,7 +50,7 @@ class Steckbrief extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            "Eiche",
+                            selectedPicture.filename,
                             style: TextStyle(
                               color: headerGreen,
                               fontSize: 30,
@@ -73,7 +71,7 @@ class Steckbrief extends StatelessWidget {
                             height: 15,
                           ),
                           Text(
-                            "Eiche",
+                            selectedPicture.generic1,
                             style: TextStyle(
                               fontSize: 16,
                             ),
@@ -92,7 +90,7 @@ class Steckbrief extends StatelessWidget {
                             height: 15,
                           ),
                           Text(
-                            "In hohen Gebirgen und der Wüste, außerdem können Eichen nicht im Schatten anderer Gehölze wachsen",
+                            selectedPicture.generic2,
                             style: TextStyle(
                               fontSize: 16,
                             ),
@@ -111,7 +109,7 @@ class Steckbrief extends StatelessWidget {
                             height: 15,
                           ),
                           Text(
-                            "Eichen-Arten sind sommergrüne oder immergrüne Bäume, seltener auch Sträucher",
+                            selectedPicture.description,
                             style: TextStyle(
                               fontSize: 16,
                             ),
@@ -129,7 +127,7 @@ class Steckbrief extends StatelessWidget {
                         children: [
                           OutlinedButton(
                             onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails()));
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(walkID : walkID)));
                             },
                             child: Text('Bearbeiten'),
                             style: OutlinedButton.styleFrom(
@@ -145,7 +143,7 @@ class Steckbrief extends StatelessWidget {
                           Spacer(),
                           OutlinedButton(
                             onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails()));
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(walkID : walkID)));
                             },
                             child: Text('Zeige Route'),
                             style: OutlinedButton.styleFrom(
