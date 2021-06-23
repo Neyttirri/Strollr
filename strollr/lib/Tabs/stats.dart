@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../style.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:strollr/Tabs/chart.dart';
-import 'package:strollr/Tabs/kilometer_chart.dart';
+import 'package:strollr/statistic/kilometerSeries.dart';
+import 'package:strollr/statistic/kilometer_chart.dart';
+import 'package:strollr/statistic/timeSeries.dart';
+import 'package:strollr/statistic/time_chart.dart';
 
 class Stats extends StatelessWidget {
   final List<KilometerSeries> kilometers = [
@@ -28,6 +30,29 @@ class Stats extends StatelessWidget {
     ),
   ];
 
+  final List<TimeSeries> minutes = [
+    TimeSeries(
+      "Mai",
+      5,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    TimeSeries(
+      "Juni",
+      10,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    TimeSeries(
+      "Juli",
+      5,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    TimeSeries(
+      "August",
+      12,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +60,8 @@ class Stats extends StatelessWidget {
         title: Text("Statistiken", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
-      body: Center(child: KilometerChart(kilometers)),
+      body:
+          PageView(children: [KilometerChart(kilometers), TimeChart(minutes)]),
     );
   }
 }
