@@ -112,6 +112,9 @@ final overview = DefaultTextStyle.merge(
                     onPress: () {
                       finishedWalk();
 
+                      MapRouteInterface.walkFinished = true;
+                      //gpx.wpts.clear();
+
                       globals.stopWatchTimer.onExecute
                           .add(StopWatchExecute.stop);
                     }),
@@ -239,27 +242,35 @@ class _ActiveRouteState extends State<ActiveRoute> {
     return Timer.periodic(_trackingInterval, (timer) async {
       if (MapRouteInterface.walkPaused) return;
 
+      if (MapRouteInterface.walkFinished && MapRouteInterface.gpx.wpts.isNotEmpty) {
+        timer.cancel();
+      }
+
       Position? currentPosition = MapRouteInterface().getPosition();
       print('You are here: $currentPosition');
 
       double distanceToLastPosition = 0;
 
-      if (gpx.wpts.isNotEmpty)
+      if (gpx.wpts.isNotEmpty) {
         distanceToLastPosition = DbRouteInterface.calcDistance(
             (gpx.wpts[gpx.wpts.length - 1]).lat as double,
             currentPosition!.latitude,
             gpx.wpts[gpx.wpts.length - 1].lon as double,
             currentPosition.longitude);
+      }
 
-      if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.05) return;
+      if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.02) return;
 
-    writeGpxFile(currentPosition!);
+      writeGpxFile(currentPosition!);
     });
   }
 
   static void writeGpxFile(Position? current) {
     gpx.wpts.add(Wpt(lat: current!.latitude, lon: current.longitude));
-    DbRouteInterface.updateWalkRoute(gpx);
+
+    MapRouteInterface.gpx = gpx;
+
+    //DbRouteInterface.updateWalkRoute(gpx);
   }
 }
 

@@ -57,10 +57,9 @@ class _MapViewState extends State<MapView> {
       if (MapRouteInterface.walkPaused) return;
 
 
-
-      if (MapRouteInterface.walkFinished) {
+      if (MapRouteInterface.walkFinished && MapRouteInterface.gpx.wpts.isNotEmpty) {
         _createPolylines();
-        _timer!.cancel();
+        timer.cancel();
       }
 
         //print(PolylineIf.gpx);
@@ -126,6 +125,8 @@ class _MapViewState extends State<MapView> {
         );
       });
     }
+
+    MapRouteInterface.gpx.wpts.clear();
   }
 
   /*

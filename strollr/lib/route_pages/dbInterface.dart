@@ -1,12 +1,9 @@
 import 'dart:math';
 
-import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
 import 'package:intl/intl.dart';
 import 'package:strollr/db/database_manager.dart';
 import 'package:strollr/model/walk.dart';
-
-import 'PolylineIf.dart';
 
 class DbRouteInterface{
   static late Walk walk;
@@ -32,29 +29,40 @@ class DbRouteInterface{
     return walk.id;
   }
 
-  static Future<int> updateWalkRoute(Gpx gpx) async {
+  static Future<int> finishWalk(Gpx gpx) async {
     String updatedRoute = GpxWriter().asString(gpx, pretty: false);
 
     Walk updatedWalk = walk.copy();
 
     updatedWalk.route = updatedRoute;
 
-    Position? currentPosition = MapRouteInterface().getPosition();
+    double totalDistance = 0;
 
-    double lat1 = gpx.wpts.isEmpty
-        ? currentPosition!.latitude
-        : gpx.wpts[gpx.wpts.length - 1].lat as double;
-    double lat2 = currentPosition!.latitude;
+    if (gpx.wpts.length > 1){
+      for (int i = 1; i < gpx.wpts.length; i++){
 
-    double lon1 = gpx.wpts.isEmpty
-        ? currentPosition.longitude
-        : gpx.wpts[gpx.wpts.length - 1].lon as double;
-    double lon2 = currentPosition.longitude;
+        double lat1 =gpx.wpts[i - 1].lat as double;
+        double lat2 = gpx.wpts[i].lat as double;
+
+        double lon1 =  gpx.wpts[i - 1].lon as double;
+        double lon2 = gpx.wpts[i].lat as double;
+
+        totalDistance += calcDistance(lat1, lat2, lon1, lon2);
+      }
+    }
 
 
 
-    updatedWalk.distanceInKm += calcDistance(lat1, lat2, lon1, lon2);
+    updatedWalk.distanceInKm = totalDistance;
 
+    updatedWalk.endedAtTime = DateTime.now();
+
+    Duration walkDuration = updatedWalk.endedAtTime.difference(updatedWalk.startedAtTime);
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(walkDuration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(walkDuration.inSeconds.remainder(60));
+
+    updatedWalk.durationTime = "${twoDigits(walkDuration.inHours)}:$twoDigitMinutes:$twoDigitSeconds" as DateTime;
 
     return await DatabaseManager.instance.updateWalk(updatedWalk);
   }
