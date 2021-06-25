@@ -46,7 +46,7 @@ class DbRouteInterface{
         double lat2 = gpx.wpts[i].lat as double;
 
         double lon1 =  gpx.wpts[i - 1].lon as double;
-        double lon2 = gpx.wpts[i].lat as double;
+        double lon2 = gpx.wpts[i].lon as double;
 
         totalDistance += calcDistance(lat1, lat2, lon1, lon2);
       }

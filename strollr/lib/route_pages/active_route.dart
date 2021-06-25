@@ -115,9 +115,7 @@ final overview = DefaultTextStyle.merge(
                       MapRouteInterface.walkFinished = true;
                       //gpx.wpts.clear();
 
-                      print(DbRouteInterface.getWalkName());
-                      print(DbRouteInterface.getWalkDistance());
-                      print(DbRouteInterface.getWalkDuration());
+                      printDbValues();
 
                       globals.stopWatchTimer.onExecute
                           .add(StopWatchExecute.stop);
@@ -131,10 +129,22 @@ final overview = DefaultTextStyle.merge(
   ),
 );
 
+void printDbValues() async {
+  String name = await DbRouteInterface.getWalkName();
+  double distance = await DbRouteInterface.getWalkDistance();
+  String duration = await DbRouteInterface.getWalkDuration();
+
+  print('Name: $name');
+  print('Distance: $distance km');
+  print('Duration: $duration h');
+}
+
 void finishedWalk(){
   _timer.cancel();
 
   if (gpx.wpts.isNotEmpty) _ActiveRouteState.writeGpxFile(MapRouteInterface.currentPosition);
+
+  DbRouteInterface.finishWalk(gpx);
 
   MapRouteInterface.gpx = gpx;
   MapRouteInterface.walkFinished = true;
@@ -156,6 +166,7 @@ class _ActiveRouteState extends State<ActiveRoute> {
   @override
   void initState() {
     super.initState();
+    MapRouteInterface.walkFinished = true;
     //initiate periodic Timer on init
     _timer = startTracking();
     gpx.creator = "route";

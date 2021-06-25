@@ -59,33 +59,36 @@ class _MapViewState extends State<MapView> {
 
       if (MapRouteInterface.walkFinished && MapRouteInterface.gpx.wpts.isNotEmpty) {
         _createPolylines();
-        timer.cancel();
+        _timer?.cancel();
+        MapRouteInterface.walkPaused = true;
       }
 
         //print(PolylineIf.gpx);
 
+      print(MapRouteInterface.walkFinished);
 
-        if (mounted && !MapRouteInterface.walkFinished) {
-          Position? myPosition = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-          setState(() {
-            // Store the position in the variable
-            MapRouteInterface.currentPosition = myPosition;
+      if (mounted && !MapRouteInterface.walkFinished) {
+        Position? myPosition = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-            print('CURRENT POS: $myPosition');
+        setState(() {
+          // Store the position in the variable
+          MapRouteInterface.currentPosition = myPosition;
 
-            // For moving the camera to current location
-            mapController.animateCamera(
-              CameraUpdate.newCameraPosition(
-                CameraPosition(
-                  target: LatLng(
-                      myPosition.latitude, myPosition.longitude),
-                  zoom: 18.0,
-                ),
+          print('CURRENT POS: $myPosition');
+
+          // For moving the camera to current location
+          mapController.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: LatLng(
+                    myPosition.latitude, myPosition.longitude),
+                zoom: 18.0,
               ),
-            );
-          });
-        }
+            ),
+          );
+        });
+      }
     });
   }
 
@@ -207,6 +210,7 @@ class _MapViewState extends State<MapView> {
     _timer = _getCurrentLocation();
 
     polylinePoints = PolylinePoints();
+    _polylines = {};
   }
 
   void dispose() {
