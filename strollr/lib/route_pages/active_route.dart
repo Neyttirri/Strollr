@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
@@ -6,6 +7,7 @@ import 'package:strollr/route_pages/PolylineIf.dart';
 import 'package:strollr/route_pages/dbInterface.dart';
 import '../camera/edit_picture.dart';
 import '../globals.dart' as globals;
+import '../logger.dart';
 import '../style.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import '../maps_test_two.dart';
@@ -142,7 +144,7 @@ class ActiveRoute extends StatefulWidget {
 }
 
 class _ActiveRouteState extends State<ActiveRoute> {
-  late File _imageFile;
+  late File _imageBytes;
   late Position _currentPosition;
   final _picker = ImagePicker();
 
@@ -196,21 +198,21 @@ class _ActiveRouteState extends State<ActiveRoute> {
   }
 
   Future<void> _openCamera() async {
-    var picture = (await _picker.getImage(
-        source: ImageSource.camera,
-        imageQuality: 50,
-        maxHeight: 400,
-        maxWidth: 400))!;
-    // 400x400 is less than 40kB, imageQuality is also for compressing the image
-
+    final PickedFile? pickedImage = await _picker.getImage(source: ImageSource.camera);
+    if(pickedImage == null) {
+      ApplicationLogger.getLogger('ActiveRoute', colors: true).d(
+          '_openCamera | picked image was null');
+      return;
+    }
     Position position = await _geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-
-    setState(() {
-      _imageFile = File(picture.path);
+    setState(()  {
+      _imageBytes = File(pickedImage.path);
       _currentPosition = position;
     });
 
+    print('ACTIVE ROUTE: size of image before compression:  ${(_imageBytes.readAsBytesSync().lengthInBytes) / 1024} kB' );
+    print('${pickedImage.path}');
     // Navigator.popUntil(context, ModalRoute.withName('main_screen'));
     // TODO figure out the Navigator and the context so the persistent bottom navigation bar is not there anymore
     Future.delayed(Duration(seconds: 0)).then(
@@ -220,7 +222,7 @@ class _ActiveRouteState extends State<ActiveRoute> {
         MaterialPageRoute(
           builder: (context) => EditPhotoScreen(
             arguments: [
-              _imageFile,
+              _imageBytes,
               _currentPosition,
             ],
           ),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'describe_picture.dart';
 import 'package:strollr/utils/loading_screen.dart';
@@ -345,11 +346,12 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     final bool flipHorizontal = action.flipY;
     final bool flipVertical = action.flipX;
 
-    var data = await state.image!.toByteData(format: ImageByteFormat.png);
+    var data = await state.image!.toByteData();
     if (data == null) {
+      ApplicationLogger.getLogger('EditPhotoScreen', colors: true).i(
+          'crop | image bytes null!');
       return;
-    } // image.Image? src = decodePng(); final EditActionDetails action = state.editAction!;
-
+    }
     final ImageEditorOption option = ImageEditorOption();
 
     option.addOption(ClipOption.fromRect(rect));
@@ -362,9 +364,11 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     option.addOption(ColorOption.brightness(brightness + 1));
     option.addOption(ColorOption.contrast(contrast));
 
-    option.outputFormat = const OutputFormat.png(88);
+    option.outputFormat = const OutputFormat.jpeg(100);
     print(const JsonEncoder.withIndent('  ').convert(option.toJson()));
     final DateTime start = DateTime.now();
+    ApplicationLogger.getLogger('EditPhotoScreen', colors: true).d(
+        'crop | image bytes as uint8list null -> ${data.buffer.asUint8List() == null}!');
 
     final Uint8List result = (await ImageEditor.editImage(
       image: data.buffer.asUint8List(),
