@@ -30,6 +30,10 @@ class DbRouteInterface{
     return walk.id;
   }
 
+  static getAllWalks(){
+    return DatabaseManager.instance.readALlWalks();
+  }
+
   static Future<int> finishWalk(Gpx gpx) async {
     String updatedRoute = GpxWriter().asString(gpx, pretty: false);
 
@@ -70,20 +74,26 @@ class DbRouteInterface{
     return await DatabaseManager.instance.updateWalk(updatedWalk);
   }
 
-  static getWalkName() async {
-    Walk getWalk = await DatabaseManager.instance.readWalkFromId(walk.id as int);
+  static getWalkName({int walkId = -1}) async {
+    if (walkId == -1) walkId = walk.id as int;
+
+    Walk getWalk = await DatabaseManager.instance.readWalkFromId(walkId);
 
     return getWalk.name;
   }
 
-  static getWalkDistance() async {
-    Walk getWalk = await DatabaseManager.instance.readWalkFromId(walk.id as int);
+  static getWalkDistance({int walkId = -1}) async {
+    if (walkId == -1) walkId = walk.id as int;
+
+    Walk getWalk = await DatabaseManager.instance.readWalkFromId(walkId);
 
     return getWalk.distanceInKm;
   }
 
-  static getWalkDuration() async {
-    Walk getWalk = await DatabaseManager.instance.readWalkFromId(walk.id as int);
+  static getWalkDuration({int walkId = -1}) async {
+    if (walkId == -1) walkId = walk.id as int;
+
+    Walk getWalk = await DatabaseManager.instance.readWalkFromId(walkId);
 
     return getWalk.durationTime;
   }

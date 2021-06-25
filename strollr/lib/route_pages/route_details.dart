@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
 
+
 import '../style.dart';
 
 class RouteDetails extends StatelessWidget {
+  /*double distance = 0;
+  String duration = "";
+
+  RouteDetails(int walkId) {
+    setDetails(walkId);
+  }
+
+  void setDetails(int walkId) async {
+    distance = await DbRouteInterface.getWalkDistance();
+    duration = await DbRouteInterface.getWalkDuration();
+  }*/
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
