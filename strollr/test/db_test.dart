@@ -99,7 +99,7 @@ void main() {
 Walk _createTestWalk(String name) {
   return Walk(
     name: name,
-    durationTime: DateTime.parse("2021-05-22 01:30:00Z"),
+    durationTime: '01:30:00',
     distanceInKm: 3.56,
     route: 'should be a xml file',
     startedAtTime: DateTime.parse("2021-05-22 11:30:00Z"),

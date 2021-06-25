@@ -22,7 +22,7 @@ class DbRouteInterface{
       distanceInKm: 0.0,
       startedAtTime: now,
       endedAtTime: new DateTime(2021),
-      durationTime: DateTime.parse("2021-05-22 01:30:00Z"),
+      durationTime: '01:30:00',
     );
 
     walk = await DatabaseManager.instance.insertWalk(walk);
@@ -63,7 +63,7 @@ class DbRouteInterface{
     String twoDigitMinutes = twoDigits(walkDuration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(walkDuration.inSeconds.remainder(60));
 
-    updatedWalk.durationTime = "${twoDigits(walkDuration.inHours)}:$twoDigitMinutes:$twoDigitSeconds" as DateTime;
+    updatedWalk.durationTime = "${twoDigits(walkDuration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
 
     walk = updatedWalk;
 

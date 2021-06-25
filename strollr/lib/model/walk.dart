@@ -20,10 +20,12 @@ class WalkField {
   static final String endedAt = 'ended_at';
 }
 
+// duration is a String with format "hh:mm:ss"
+// route is a String -> the xml file from Gpx
 class Walk {
   int? id;
   String name;
-  DateTime durationTime;
+  String durationTime;
   double distanceInKm;
   String route;
   DateTime startedAtTime;
@@ -43,7 +45,7 @@ class Walk {
   Map<String, Object?> toJson() => {
         WalkField.id: id,
         WalkField.name: name,
-        WalkField.duration: durationTime.toIso8601String(),
+        WalkField.duration: durationTime,
         WalkField.distance: distanceInKm,
         WalkField.route: route,
         WalkField.startedAt: startedAtTime.toIso8601String(),
@@ -54,7 +56,7 @@ class Walk {
   static Walk fromJson(Map<String, Object?> json) => Walk(
         id: json[WalkField.id] as int?,
         name: json[WalkField.name] as String,
-        durationTime: DateTime.parse(json[WalkField.duration] as String),
+        durationTime: json[WalkField.duration] as String,
         distanceInKm: json[WalkField.distance] as double,
         route: json[WalkField.route] as String,
         startedAtTime: DateTime.parse(json[WalkField.startedAt] as String),
@@ -65,7 +67,7 @@ class Walk {
   Walk copy({
     int? id,
     String? name,
-    DateTime? durationTime,
+    String? durationTime,
     double? distanceInKm,
     String? route,
     DateTime? startedAtTime,
