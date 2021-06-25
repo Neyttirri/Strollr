@@ -68,12 +68,12 @@ final overview = DefaultTextStyle.merge(
                   ],
                 ),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                  padding: EdgeInsets.fromLTRB(50, 0, 0, 0),
                   child: Column(
                     children: [
                       Padding(
                           padding: EdgeInsets.all(8),
-                          child: Text(distance.toString() + 'km')),
+                          child: Text(distance.toString() + ' km')),
                       Icon(Icons.directions_walk_outlined,
                           color: Colors.green[500]),
                     ],
@@ -83,34 +83,17 @@ final overview = DefaultTextStyle.merge(
             ),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Padding(
-                padding: EdgeInsets.fromLTRB(10, 10, 3, 5),
-                child: CustomButton(
-                    label: 'Start',
-                    onPress: () {
-                      MapRouteInterface.walkPaused = false;
-
-                      MapRouteInterface.walkFinished = false;
-
-                      globals.stopWatchTimer.onExecute
-                          .add(StopWatchExecuted.start);
-                    }),
+                padding: EdgeInsets.fromLTRB(45, 10, 3, 5),
+                child: CustomButton(),
               ),
               Padding(
-                padding: EdgeInsets.fromLTRB(10, 10, 40, 5),
-                child: CustomButton(
-                    label: 'Pause',
-                    onPress: () {
-                      MapRouteInterface.walkPaused = true;
-
-                      globals.stopWatchTimer.onExecute
-                          .add(StopWatchExecuted.stop);
-                    }),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                child: CustomButton(
-                    label: 'Route beenden',
-                    onPress: () {
+                padding: EdgeInsets.fromLTRB(60, 10, 0, 5),
+                child: ElevatedButton(
+                    child: Text('Route beenden'),
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.grey[500])),
+                    onPressed: () {
                       finishedWalk();
                       globals.stopWatchTimer.onExecute
                           .add(StopWatchExecuted.stop);
@@ -265,19 +248,51 @@ class _ActiveRouteState extends State<ActiveRoute> {
   }
 }
 
-class CustomButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onPress;
+class CustomButton extends StatefulWidget {
+  //String label = 'Start';
+  //VoidCallback onPress;
 
-  CustomButton({required this.onPress, required this.label});
+  //CustomButton({required this.onPress, required this.label});
+  _CustomButtonState createState() => _CustomButtonState();
+}
+
+class _CustomButtonState extends State<CustomButton> {
+  String label = 'Start';
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.grey[500]),
+        backgroundColor: MaterialStateProperty.all(Colors.green),
       ),
-      onPressed: onPress,
+      onPressed: () {
+        if (label == 'Start') {
+          setState(() {
+            label = 'Pause';
+            MapRouteInterface.walkPaused = false;
+
+            MapRouteInterface.walkFinished = false;
+
+            globals.stopWatchTimer.onExecute.add(StopWatchExecuted.start);
+          });
+        } else if (label == 'Pause') {
+          setState(() {
+            label = 'Weiter';
+            MapRouteInterface.walkPaused = true;
+
+            globals.stopWatchTimer.onExecute.add(StopWatchExecuted.stop);
+          });
+        } else if (label == 'Weiter') {
+          setState(() {
+            label = 'Pause';
+            MapRouteInterface.walkPaused = false;
+
+            MapRouteInterface.walkFinished = false;
+
+            globals.stopWatchTimer.onExecute.add(StopWatchExecuted.start);
+          });
+        }
+      },
       child: Text(
         label,
         style: TextStyle(color: Colors.white),
