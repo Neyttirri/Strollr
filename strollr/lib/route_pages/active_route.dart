@@ -7,7 +7,7 @@ import 'package:strollr/route_pages/dbInterface.dart';
 import '../camera/edit_picture.dart';
 import '../globals.dart' as globals;
 import '../style.dart';
-import 'package:stop_watch_timer/stop_watch_timer.dart';
+import 'package:strollr/stop_watch_timer.dart';
 import '../maps_test_two.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -72,7 +72,8 @@ final overview = DefaultTextStyle.merge(
                   child: Column(
                     children: [
                       Padding(
-                          padding: EdgeInsets.all(8), child: Text(distance.toString() + 'km')),
+                          padding: EdgeInsets.all(8),
+                          child: Text(distance.toString() + 'km')),
                       Icon(Icons.directions_walk_outlined,
                           color: Colors.green[500]),
                     ],
@@ -91,7 +92,7 @@ final overview = DefaultTextStyle.merge(
                       MapRouteInterface.walkFinished = false;
 
                       globals.stopWatchTimer.onExecute
-                          .add(StopWatchExecute.start);
+                          .add(StopWatchExecuted.start);
                     }),
               ),
               Padding(
@@ -102,18 +103,17 @@ final overview = DefaultTextStyle.merge(
                       MapRouteInterface.walkPaused = true;
 
                       globals.stopWatchTimer.onExecute
-                          .add(StopWatchExecute.stop);
+                          .add(StopWatchExecuted.stop);
                     }),
               ),
               Padding(
                 padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
                 child: CustomButton(
-                    label: 'Walk beenden',
+                    label: 'Route beenden',
                     onPress: () {
                       finishedWalk();
-
                       globals.stopWatchTimer.onExecute
-                          .add(StopWatchExecute.stop);
+                          .add(StopWatchExecuted.stop);
                     }),
               ),
             ])
@@ -124,17 +124,17 @@ final overview = DefaultTextStyle.merge(
   ),
 );
 
-void finishedWalk(){
+void finishedWalk() {
   _timer.cancel();
 
-  if (gpx.wpts.isNotEmpty) _ActiveRouteState.writeGpxFile(MapRouteInterface.currentPosition);
+  if (gpx.wpts.isNotEmpty)
+    _ActiveRouteState.writeGpxFile(MapRouteInterface.currentPosition);
 
   MapRouteInterface.gpx = gpx;
   MapRouteInterface.walkFinished = true;
 
   gpx.creator = "new route";
 }
-
 
 class ActiveRoute extends StatefulWidget {
   @override
@@ -152,7 +152,7 @@ class _ActiveRouteState extends State<ActiveRoute> {
     //initiate periodic Timer on init
     _timer = startTracking();
     gpx.creator = "route";
-     DbRouteInterface.generateWalk(gpx);
+    DbRouteInterface.generateWalk(gpx);
   }
 
   @override
@@ -160,9 +160,11 @@ class _ActiveRouteState extends State<ActiveRoute> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: headerGreen),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+            icon: Icon(Icons.arrow_back, color: headerGreen),
+            onPressed: () {
+              Navigator.of(context).pop();
+              globals.stopWatchTimer.onExecute.add(StopWatchExecuted.reset);
+            }),
         title: Text("Aktive Route", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
@@ -253,7 +255,7 @@ class _ActiveRouteState extends State<ActiveRoute> {
 
       if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.05) return;
 
-    writeGpxFile(currentPosition!);
+      writeGpxFile(currentPosition!);
     });
   }
 

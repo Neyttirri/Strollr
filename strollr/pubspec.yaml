@@ -28,7 +28,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   intl: 0.15.7
-  stop_watch_timer: ^1.2.0+1
+  #stop_watch_timer: ^1.2.0+1
 
   #for maps implementation google_maps package and locations package
   # google_maps_flutter: ^2.0.6
@@ -58,6 +58,7 @@ dependencies:
   shared_preferences: ^2.0.6
   animated_check: ^1.0.2
   charts_flutter: ^0.10.0
+  rxdart: ^0.27.1
 
 dev_dependencies:
   flutter_test:

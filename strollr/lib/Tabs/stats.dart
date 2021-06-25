@@ -9,22 +9,62 @@ import 'package:strollr/statistic/time_chart.dart';
 class Stats extends StatelessWidget {
   final List<KilometerSeries> kilometers = [
     KilometerSeries(
-      "Mai",
+      "JAN",
       5,
       charts.ColorUtil.fromDartColor(Colors.green),
     ),
     KilometerSeries(
-      "Juni",
+      "FEB",
+      5,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    KilometerSeries(
+      "MRZ",
+      5,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    KilometerSeries(
+      "APR",
+      5,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    KilometerSeries(
+      "MAI",
+      5,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    KilometerSeries(
+      "JUN",
       10,
       charts.ColorUtil.fromDartColor(Colors.green),
     ),
     KilometerSeries(
-      "Juli",
+      "JUL",
       5,
       charts.ColorUtil.fromDartColor(Colors.green),
     ),
     KilometerSeries(
-      "August",
+      "AUG",
+      12,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    KilometerSeries(
+      "SEP",
+      12,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    KilometerSeries(
+      "OKT",
+      12,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    KilometerSeries(
+      "NOV",
+      12,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    KilometerSeries(
+      "DEZ",
       12,
       charts.ColorUtil.fromDartColor(Colors.green),
     ),
@@ -32,22 +72,62 @@ class Stats extends StatelessWidget {
 
   final List<TimeSeries> minutes = [
     TimeSeries(
-      "Mai",
+      "JAN",
       5,
       charts.ColorUtil.fromDartColor(Colors.green),
     ),
     TimeSeries(
-      "Juni",
+      "FEB",
+      5,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    TimeSeries(
+      "MRZ",
+      5,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    TimeSeries(
+      "APR",
+      5,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    TimeSeries(
+      "MAI",
+      5,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    TimeSeries(
+      "JUN",
       10,
       charts.ColorUtil.fromDartColor(Colors.green),
     ),
     TimeSeries(
-      "Juli",
+      "JUL",
       5,
       charts.ColorUtil.fromDartColor(Colors.green),
     ),
     TimeSeries(
-      "August",
+      "AUG",
+      12,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    TimeSeries(
+      "SEP",
+      12,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    TimeSeries(
+      "OKT",
+      12,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    TimeSeries(
+      "NOV",
+      12,
+      charts.ColorUtil.fromDartColor(Colors.green),
+    ),
+    TimeSeries(
+      "DEZ",
       12,
       charts.ColorUtil.fromDartColor(Colors.green),
     ),
