@@ -115,6 +115,10 @@ final overview = DefaultTextStyle.merge(
                       MapRouteInterface.walkFinished = true;
                       //gpx.wpts.clear();
 
+                      print(DbRouteInterface.getWalkName());
+                      print(DbRouteInterface.getWalkDistance());
+                      print(DbRouteInterface.getWalkDuration());
+
                       globals.stopWatchTimer.onExecute
                           .add(StopWatchExecute.stop);
                     }),
@@ -155,7 +159,7 @@ class _ActiveRouteState extends State<ActiveRoute> {
     //initiate periodic Timer on init
     _timer = startTracking();
     gpx.creator = "route";
-     DbRouteInterface.generateWalk(gpx);
+    DbRouteInterface.generateWalk(gpx);
   }
 
   @override

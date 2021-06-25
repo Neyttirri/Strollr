@@ -12,12 +12,13 @@ class DbRouteInterface{
     final DateTime now = DateTime.now();
     final DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm');
     final String formatted = formatter.format(now);
+    final String route = GpxWriter().asString(gpx, pretty: false);
 
     print('Your Walk will be saved under follwing name: $formatted');
 
     walk = Walk(
       name: formatted,
-      route: 'gpx',
+      route: route,
       distanceInKm: 0.0,
       startedAtTime: now,
       endedAtTime: new DateTime(2021),
@@ -64,7 +65,27 @@ class DbRouteInterface{
 
     updatedWalk.durationTime = "${twoDigits(walkDuration.inHours)}:$twoDigitMinutes:$twoDigitSeconds" as DateTime;
 
+    walk = updatedWalk;
+
     return await DatabaseManager.instance.updateWalk(updatedWalk);
+  }
+
+  static getWalkName() async {
+    Walk getWalk = await DatabaseManager.instance.readWalkFromId(walk.id as int);
+
+    return getWalk.name;
+  }
+
+  static getWalkDistance() async {
+    Walk getWalk = await DatabaseManager.instance.readWalkFromId(walk.id as int);
+
+    return getWalk.distanceInKm;
+  }
+
+  static getWalkDuration() async {
+    Walk getWalk = await DatabaseManager.instance.readWalkFromId(walk.id as int);
+
+    return getWalk.durationTime;
   }
 
   //calculates distance between two coordinates
