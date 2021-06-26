@@ -4,11 +4,14 @@ import 'package:gpx/gpx.dart';
 import 'package:intl/intl.dart';
 import 'package:strollr/db/database_manager.dart';
 import 'package:strollr/model/walk.dart';
+import 'package:strollr/utils/shared_prefs.dart';
 
 class DbRouteInterface{
   static late Walk walk;
 
   static Future<int?> generateWalk(Gpx gpx) async {
+    //TODO insert shared prefs
+
     final DateTime now = DateTime.now();
     final DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm');
     final String formatted = formatter.format(now);
@@ -27,6 +30,8 @@ class DbRouteInterface{
 
     walk = await DatabaseManager.instance.insertWalk(walk);
 
+    SharedPrefs.setCurrentWalkId(walk.id as int);
+
     return walk.id;
   }
 
@@ -37,7 +42,7 @@ class DbRouteInterface{
   static Future<int> finishWalk(Gpx gpx) async {
     String updatedRoute = GpxWriter().asString(gpx, pretty: false);
 
-    Walk updatedWalk = walk.copy();
+    Walk updatedWalk = await DatabaseManager.instance.readWalkFromId(SharedPrefs.getCurrentWalkId());
 
     updatedWalk.route = updatedRoute;
 
@@ -96,6 +101,16 @@ class DbRouteInterface{
     Walk getWalk = await DatabaseManager.instance.readWalkFromId(walkId);
 
     return getWalk.durationTime;
+  }
+
+  static getWalkRoute({int walkId = -1}) async {
+    if (walkId == -1) walkId = walk.id as int;
+
+    Walk getWalk = await DatabaseManager.instance.readWalkFromId(walkId);
+
+    Gpx resGpx = GpxReader().fromString(getWalk.route);
+
+    return resGpx;
   }
 
   //calculates distance between two coordinates

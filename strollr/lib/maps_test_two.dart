@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:gpx/gpx.dart';
 import 'package:strollr/route_pages/PolylineIf.dart';
 
 
@@ -25,8 +26,14 @@ class MyApp extends StatelessWidget {
 }
 
 class MapView extends StatefulWidget {
+  _MapViewState map = _MapViewState();
+
+  void createPolyLines(Gpx gpx){
+    map._createPolylines(gpx);
+  }
+
   @override
-  _MapViewState createState() => _MapViewState();
+  _MapViewState createState() => map;
 }
 
 class _MapViewState extends State<MapView> {
@@ -58,7 +65,7 @@ class _MapViewState extends State<MapView> {
 
 
       if (MapRouteInterface.walkFinished && MapRouteInterface.gpx.wpts.isNotEmpty) {
-        _createPolylines();
+        _createPolylines(MapRouteInterface.gpx);
         _timer?.cancel();
         MapRouteInterface.walkPaused = true;
       }
@@ -97,8 +104,8 @@ class _MapViewState extends State<MapView> {
   * when finished, method will take list of recorded locations
   * connect them via _polylines.add
    */
-  _createPolylines() async{
-    MapRouteInterface.gpx.wpts.forEach((element)  {
+  _createPolylines(Gpx gpx) async{
+    gpx.wpts.forEach((element)  {
       polylineCoordinates.add(LatLng(element.lat as double,  element.lon  as double));
     });
 
@@ -129,7 +136,7 @@ class _MapViewState extends State<MapView> {
       });
     }
 
-    MapRouteInterface.gpx.wpts.clear();
+    if (gpx == MapRouteInterface.gpx) MapRouteInterface.gpx.wpts.clear();
   }
 
   /*
