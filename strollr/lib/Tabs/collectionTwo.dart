@@ -8,9 +8,7 @@ import 'package:strollr/style.dart';
 import 'package:strollr/route_pages/route_list_card.dart';
 import 'package:intl/intl.dart';
 
-
 class CollectionTwo extends StatelessWidget {
-
   int indexTemp = 0;
 
   final List<CollectionListCard> categoryList = [
@@ -24,6 +22,7 @@ class CollectionTwo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text("Kategorien", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
@@ -33,13 +32,12 @@ class CollectionTwo extends StatelessWidget {
             return new GestureDetector(
               onTap: () {
                 indexTemp = index;
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(indexTemp : indexTemp)));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => GalleryView(indexTemp: indexTemp)));
               },
               child: buildRouteListCard(context, index),
             );
-
-          }
-      ),
+          }),
     );
   }
 
