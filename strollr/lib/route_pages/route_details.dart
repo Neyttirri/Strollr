@@ -13,8 +13,7 @@ class RouteDetails extends StatelessWidget {
           title: Text("Routen Details", style: TextStyle(color: headerGreen)),
           backgroundColor: Colors.white,
         ),
-        body: infoCard(context)
-    );
+        body: infoCard(context));
   }
 
   Widget infoCard(BuildContext context) {
@@ -114,7 +113,7 @@ class RouteDetails extends StatelessWidget {
           Padding(
             padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Row(
-              children: <Widget> [
+              children: <Widget>[
                 Text("Stecke in km:"),
                 Spacer(),
                 Text("12,42 km"),
@@ -124,7 +123,7 @@ class RouteDetails extends StatelessWidget {
           Padding(
             padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Row(
-              children: <Widget> [
+              children: <Widget>[
                 Text("Zeit in Stunden:"),
                 Spacer(),
                 Text("4:32 h"),
