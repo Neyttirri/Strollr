@@ -249,20 +249,22 @@ class DatabaseManager {
           'strftime(\'%Y\', ${WalkField.endedAt}) AS ${YearlyDistancesField.year}',
           'SUM(${WalkField.distance}) AS ${YearlyDistancesField.distKm} '
         ],
-        orderBy: WalkField.endedAt,
+        orderBy: '${WalkField.endedAt} DESC',
         groupBy: '${YearlyDistancesField.year}');
     return result.map((json) => YearlyDistance.fromJson(json)).toList();
   }
 
-  Future<List<MonthlyDistance>> readAllWalkDistancesMonthly() async {
+  Future<List<MonthlyDistance>> readAllWalkDistancesMonthly(String year) async {
     final db = await instance.database;
     final result = await db.query(tableWalks,
         columns: [
-          'strftime(\'%m-%Y\', ${WalkField.endedAt}) AS ${MonthlyDistancesField.monthInYear}',
+          'strftime(\'%m\', ${WalkField.endedAt}) AS ${MonthlyDistancesField.monthInYear}',
           'SUM(${WalkField.distance}) AS ${MonthlyDistancesField.distKm} '
         ],
-        orderBy: WalkField.endedAt,
-        groupBy: '${MonthlyDistancesField.monthInYear}');
+        where: 'strftime(\'%Y\', ${WalkField.endedAt}) = ?',
+        orderBy: '${WalkField.endedAt}',
+        groupBy: '${MonthlyDistancesField.monthInYear}',
+        whereArgs: [year]);
     return result.map((json) => MonthlyDistance.fromJson(json)).toList();
   }
 
@@ -271,13 +273,27 @@ class DatabaseManager {
     final result = await db.query(tableWalks,
         columns: [
           'strftime(\'%d\', ${WalkField.endedAt}) AS ${DailyDistancesField.day}',
-          'SUM(${WalkField.distance}) AS ${DailyDistancesField.distKm} '
+          'strftime(\'%m\', ${WalkField.endedAt}) AS ${DailyDistancesField.month}',
+          'strftime(\'%Y\', ${WalkField.endedAt}) AS ${DailyDistancesField.year}',
+          'SUM(${WalkField.distance}) AS ${DailyDistancesField.distKm}'
         ],
         where: 'strftime(\'%m\', ${WalkField.endedAt}) = ? AND strftime(\'%Y\', ${WalkField.endedAt}) = ?',
-        orderBy: WalkField.endedAt,
+        orderBy: '${WalkField.endedAt} ASC',
         groupBy: '${DailyDistancesField.day}',
-        whereArgs: [month, year]);
+        whereArgs: [
+          month, year]);
+
+
     return result.map((json) => DailyDistance.fromJson(json)).toList();
+    // where: 'strftime(\'%m\', ${WalkField.endedAt}) = ? AND strftime(\'%Y\', ${WalkField.endedAt}) = ?',
+    // groupBy: '${DailyDistancesField.day}');
+    // orderBy: WalkField.endedAt,
+    /*
+    where: 'strftime(\'%m\', ${WalkField.endedAt}) = ? AND strftime(\'%Y\', ${WalkField.endedAt}) = ?',
+
+        groupBy: '${DailyDistancesField.day}',
+        whereArgs: [month, year]
+     */
   }
 
 

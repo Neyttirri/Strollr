@@ -23,11 +23,11 @@ void main() {
     Walk walk1 = _createTestWalk('second test walk');
     Walk walk2 = Walk(
       name: 'third walk ',
-      durationTime: DateTime.parse("2021-04-22 01:30:00Z"),
+      durationTime: DateTime.parse("2021-04-12 01:30:00Z"),
       distanceInKm: 4.1,
       route: 'should be a xml file',
-      startedAtTime: DateTime.parse("2022-04-22 11:30:00Z"),
-      endedAtTime: DateTime.parse("2022-04-22 13:00:00Z"),
+      startedAtTime: DateTime.parse("2022-04-23 11:30:00Z"),
+      endedAtTime: DateTime.parse("2023-04-03 13:00:00Z"),
     );
     late Picture picture;
     test('Insert walk', () async {
@@ -38,7 +38,7 @@ void main() {
       //expect((await DatabaseManager.instance.readALlWalks()).length,
        //   DatabaseOperations.walksCounter);
 
-      List<DailyDistance> res = await DatabaseManager.instance.readAllWalkDistancesInAMonth('04', '2021');
+      List<DailyDistance> res = await DatabaseManager.instance.readAllWalkDistancesInAMonth('04', '2023');
       print(res.length);
       for( DailyDistance dist in res) {
         print('day: ${dist.day}, distance: ${dist.distance}');
@@ -126,8 +126,8 @@ Walk _createTestWalk(String name) {
     durationTime: DateTime.parse("2021-05-22 01:30:00Z"),
     distanceInKm: 3.56,
     route: 'should be a xml file',
-    startedAtTime: DateTime.parse("2021-05-22 11:30:00Z"),
-    endedAtTime: DateTime.parse("2021-05-22 13:00:00Z"),
+    startedAtTime: DateTime.parse("2021-04-22 11:30:00Z"),
+    endedAtTime: DateTime.parse("2021-04-22 13:00:00Z"),
   );
 }
 
