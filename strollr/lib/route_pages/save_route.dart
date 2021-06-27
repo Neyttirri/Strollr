@@ -118,12 +118,10 @@ Widget deleteButton(BuildContext context) {
       backgroundColor: MaterialStateProperty.all(Colors.grey),
     ),
     onPressed: () {
-      if (_formKey.currentState!.validate()) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Route wird gelöscht')));
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => Routes()));
-      }
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Route wird gelöscht')));
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => Routes()));
     },
     child: Text(' Route löschen'),
   );
@@ -131,8 +129,9 @@ Widget deleteButton(BuildContext context) {
 
 Widget buttonRow(BuildContext context) {
   return Container(
+      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: [deleteButton(context), saveButton(context)],
-  ));
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [deleteButton(context), saveButton(context)],
+      ));
 }
