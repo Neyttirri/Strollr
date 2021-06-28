@@ -32,7 +32,7 @@ class DbHelper {
     }
     return yearDist;
   }
-  
+
   static int getMonthOrDayFromString(String date) {
     int monthOrDay = 0;
     if (date[0] == '0')

@@ -246,11 +246,12 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
               ? Colors.white.withOpacity(brightness)
               : Colors.black.withOpacity(-brightness),
           colorBlendMode: brightness > 0 ? BlendMode.lighten : BlendMode.darken,
-          image: ExtendedFileImageProvider(image),
+          image: ExtendedFileImageProvider(image, cacheRawData: true),
           height: MediaQuery.of(context).size.width,
           width: MediaQuery.of(context).size.width,
           extendedImageEditorKey: editorKey,
           mode: ExtendedImageMode.editor,
+          enableMemoryCache: true,
           fit: BoxFit.contain,
           initEditorConfigHandler: (state) {
             return EditorConfig(
@@ -321,6 +322,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
       _loading = true;
     });
     final ExtendedImageEditorState? state = editorKey.currentState;
+
     if (state == null) {
       return;
     }
@@ -339,21 +341,12 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     if (state.image == null) {
       return;
     }
-
     final EditActionDetails action = state.editAction!;
     final double radian = action.rotateAngle;
-
     final bool flipHorizontal = action.flipY;
     final bool flipVertical = action.flipX;
 
-    var data = await state.image!.toByteData();
-    if (data == null) {
-      ApplicationLogger.getLogger('EditPhotoScreen', colors: true).i(
-          'crop | image bytes null!');
-      return;
-    }
     final ImageEditorOption option = ImageEditorOption();
-
     option.addOption(ClipOption.fromRect(rect));
     option.addOption(
         FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
@@ -364,21 +357,21 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     option.addOption(ColorOption.brightness(brightness + 1));
     option.addOption(ColorOption.contrast(contrast));
 
-    option.outputFormat = const OutputFormat.jpeg(100);
+    //option.outputFormat = const OutputFormat.jpeg(100);
     print(const JsonEncoder.withIndent('  ').convert(option.toJson()));
+
+    var imageList = state.rawImageData;
+
     final DateTime start = DateTime.now();
-    ApplicationLogger.getLogger('EditPhotoScreen', colors: true).d(
-        'crop | image bytes as uint8list null -> ${data.buffer.asUint8List() == null}!');
-
-    final Uint8List result = (await ImageEditor.editImage(
-      image: data.buffer.asUint8List(),
+    final result = await ImageEditor.editImage(
+      image: imageList,
       imageEditorOption: option,
-    ))!;
+    );
 
-    print('result.length = ${result.length}');
+    // print('result.length = ${result.length}');
 
     final Duration diff = DateTime.now().difference(start);
-    image.writeAsBytesSync(result);
+    image.writeAsBytesSync(result!);
     print('image_editor time : $diff');
 
     ApplicationLogger.getLogger('_EditPhotoScreenState', colors: true)
