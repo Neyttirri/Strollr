@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:strollr/Tabs/stats.dart';
 import 'package:strollr/statistic/kilometerSeries.dart';
 
 class KilometerChart extends StatefulWidget {

@@ -1,120 +1,98 @@
 import 'package:flutter/material.dart';
-
+import 'package:strollr/Tabs/routes.dart';
 import '../style.dart';
 
-class RouteDetails extends StatelessWidget {
+final _formKey = GlobalKey<FormState>();
+TextEditingController _controller =
+    TextEditingController(text: "An der Schleise");
+bool _isEnable = false;
+
+class RouteDetails extends StatefulWidget {
+  _RouteDetailsState createState() => _RouteDetailsState();
+}
+
+class _RouteDetailsState extends State<RouteDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          iconTheme: IconThemeData(
-            color: headerGreen, //change your color here
-          ),
-          title: Text("Routen Details", style: TextStyle(color: headerGreen)),
+          title: const Text('Routenübersicht',
+              style: TextStyle(color: headerGreen)),
           backgroundColor: Colors.white,
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: headerGreen),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
         ),
-        body: infoCard(context));
+        body: Center(
+            child: Container(
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [RouteForm(), buttonRow(context)],
+                  ),
+                ))));
   }
+}
 
-  Widget infoCard(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 30, 20, 20),
+class RouteForm extends StatefulWidget {
+  @override
+  RouteFormState createState() => RouteFormState();
+}
+
+class RouteFormState extends State<RouteForm> {
+  //related to WalkID
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey, // walkID
       child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: <Widget>[
-              Container(
-                width: 70,
-                height: 70,
-                child: Image.asset("assets/images/treeIcon.png"),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(children: [
+            Expanded(
+              child: TextFormField(
+                controller: _controller,
+                enabled: _isEnable,
+                decoration: const InputDecoration(
+                    hintText: 'Gib deiner Route einen Namen',
+                    labelText: 'Routenname'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Bitte gib einen Routennamen ein';
+                  }
+                  return null;
+                },
               ),
-              Spacer(),
-              Container(
-                width: 70,
-                height: 70,
-                child: Image.asset("assets/images/plantIcon.png"),
-              ),
-              Spacer(),
-              Container(
-                width: 70,
-                height: 70,
-                child: Image.asset("assets/images/animalFootstepIcon.png"),
-              ),
-              Spacer(),
-              Container(
-                width: 70,
-                height: 70,
-                child: Image.asset("assets/images/mushroomIcon.png"),
-              ),
-            ],
-          ),
+            ),
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    _isEnable = true;
+                  });
+                },
+                icon: Icon(Icons.edit))
+          ]),
           SizedBox(
-            height: 20,
-          ),
-          Row(
-            children: <Widget>[
-              Container(
-                width: 70,
-                height: 20,
-                child: Center(
-                  child: Text(
-                    "Bäume",
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-              Spacer(),
-              Container(
-                width: 70,
-                height: 20,
-                child: Center(
-                  child: Text(
-                    "Planzen",
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-              Spacer(),
-              Container(
-                width: 70,
-                height: 20,
-                child: Center(
-                  child: Text(
-                    "Tiere",
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-              Spacer(),
-              Container(
-                width: 70,
-                height: 20,
-                child: Center(
-                  child: Text(
-                    "Pilze",
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 20,
+            height: 250,
+          ), //insert map
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
+            child: Row(
+              children: <Widget>[
+                Text("Berlin"),
+                Spacer(),
+                Text("2020"),
+              ],
+            ),
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Row(
               children: <Widget>[
-                Text("Stecke in km:"),
+                Text("Strecke in km:"),
                 Spacer(),
                 Text("12,42 km"),
               ],
@@ -130,12 +108,57 @@ class RouteDetails extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
-            height: 200,
-          ),
-          Text("Map")
         ],
       ),
     );
   }
+}
+
+class SaveButton extends StatefulWidget {
+  _SaveButtonState createState() => _SaveButtonState();
+}
+
+class _SaveButtonState extends State<SaveButton> {
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.green),
+      ),
+      onPressed: () {
+        if (_formKey.currentState!.validate()) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Route wird gespeichert')));
+          setState(() {
+            _isEnable = false;
+          });
+          // neuen Routennamen in Datenbank übernehmen
+        }
+      },
+      child: Text('speichern'),
+    );
+  }
+}
+
+Widget deleteButton(BuildContext context) {
+  return ElevatedButton(
+    style: ButtonStyle(
+      backgroundColor: MaterialStateProperty.all(Colors.grey),
+    ),
+    onPressed: () {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Route wird gelöscht')));
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => Routes()));
+    },
+    child: Text(' Route löschen'),
+  );
+}
+
+Widget buttonRow(BuildContext context) {
+  return Container(
+      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [deleteButton(context), SaveButton()],
+      ));
 }

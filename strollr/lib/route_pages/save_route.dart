@@ -19,7 +19,7 @@ class _RouteSaverState extends State<RouteSaver> {
         ),
         body: Center(
             child: Container(
-                padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: SingleChildScrollView(
                   child: Column(
                     children: [RouteForm(), buttonRow(context)],
