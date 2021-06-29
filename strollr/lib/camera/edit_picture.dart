@@ -7,6 +7,8 @@ import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:strollr/main_screen.dart';
 import 'describe_picture.dart';
 import 'package:strollr/utils/loading_screen.dart';
 import 'package:image_editor/image_editor.dart' hide ImageSource;
@@ -32,6 +34,9 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
   double saturation = 1;
   double brightness = 0;
   double contrast = 1;
+  bool extraQuality = false;
+  final int defaultQuality = 75;
+  final int highQuality = 88;
 
   // the identity matrix, 5th row is implicitly added
   // to create a new color -> [R', G', B', A'] = the matrix * [R, G, B, A]
@@ -62,13 +67,19 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
   static const int ID_CONTRAST = 1;
   static const int ID_SATURATION = 2;
   static const int ID_FILTERS = 3;
+  static const int ID_FLIP = 4;
+  static const int ID_ROTATE_LEFT = 5;
+  static const int ID_ROTATE_RIGHT = 6;
 
   int selectedTabIndex = 0;
   Map<int, bool> tabSelectionMap = {
     ID_BRIGHTNESS: true,
     ID_CONTRAST: false,
     ID_SATURATION: false,
-    ID_FILTERS: false
+    ID_FILTERS: false,
+    ID_FLIP: false,
+    ID_ROTATE_LEFT: false,
+    ID_ROTATE_RIGHT: false
   };
 
   late File image;
@@ -124,115 +135,134 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
-        appBar: AppBar(
-          title: Text(
-            "Bild bearbeiten",
-            style: TextStyle(color: Colors.green),
-          ),
-          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Colors.green),
-          actions: <Widget>[
-            // icon to reset made changes
-            IconButton(
-              icon: Icon(Icons.settings_backup_restore),
-              onPressed: () {
-                setState(() {
-                  saturation = 1;
-                  brightness = 0;
-                  contrast = 1;
-                });
-              },
-            ),
-            // icon to confirm and save edited image
-            IconButton(
-              icon: Icon(Icons.check),
-              onPressed: () async {
-                await crop();
-              },
-            ),
-          ],
+        //navigatorKey: MainScree().,
+        home: Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
+      appBar: AppBar(
+        title: Text(
+          "Bild bearbeiten",
+          style: TextStyle(color: Colors.green),
         ),
-        body: _loading
-            ? LoadingScreen()
-            : Container(
-          color: Color(0xFFDDDDDD),
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            children: <Widget>[
-              // the picture + crop option
-              SizedBox(
-                height: MediaQuery.of(context).size.width,
-                width: MediaQuery.of(context).size.width,
-                child: AspectRatio(
-                  aspectRatio: 1.0, // 16.0 / 9.0,
-                  child: buildImage(),
-                ),
-              ),
-              Expanded(
-                /*
-                    sizedBox stuff
-                    height: (MediaQuery.of(context).size.height -
-                            MediaQuery.of(context).size.width) *
-                        0.57,
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.green),
+        actions: <Widget>[
+          // icon to reset made changes
+          IconButton(
+            icon: Icon(Icons.settings_backup_restore),
+            onPressed: () {
+              setState(() {
+                saturation = 1;
+                brightness = 0;
+                contrast = 1;
+              });
+            },
+          ),
+          // icon to confirm and save edited image
+          IconButton(
+            icon: Icon(Icons.check),
+            onPressed: () async {
+              await crop();
+            },
+          ),
+        ],
+      ),
+      body: _loading
+          ? LoadingScreen()
+          : Container(
+              color: Color(0xFFDDDDDD),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                children: <Widget>[
+                  // the picture + crop option
+                  SizedBox(
+                    height: MediaQuery.of(context).size.width,
                     width: MediaQuery.of(context).size.width,
-
-                     */
-                child: SliderTheme(
-                  data: const SliderThemeData(
-                    showValueIndicator: ShowValueIndicator.never,
+                    child: AspectRatio(
+                      aspectRatio: 1.0, // 16.0 / 9.0,
+                      child: buildImage(),
+                    ),
                   ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.white,
-                          blurRadius: 30,
+                  Expanded(
+                    child: SliderTheme(
+                      data: const SliderThemeData(
+                        showValueIndicator: ShowValueIndicator.never,
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.white,
+                              blurRadius: 30,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    //color: Colors.white,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        // Sliders for editing picture
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                child: getCurrentSlider(selectedTabIndex),
-                              )
-                            ]),
-                        // icons to choose editing option
-                        Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceEvenly,
-                            children: [
-                              //Spacer(),
-                              _createIconTap('Helligkeit',
-                                  Icons.brightness_6, ID_BRIGHTNESS),
-                              //Spacer(),
-                              _createIconTap('Kontrast',
-                                  Icons.invert_colors_on, ID_CONTRAST),
-                              //Spacer(),
-                              _createIconTap(
-                                  'Sättigung', Icons.brush, ID_SATURATION),
-                              //Spacer(),
-                            ]),
-                      ],
+                        //color: Colors.white,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            // Sliders for editing picture
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.center,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: getCurrentSlider(selectedTabIndex),
+                                  )
+                                ]),
+                            // icons to choose editing option
+                            Expanded(
+                              child: Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.2,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: ListView(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        children: [
+                                          _createIconTap(
+                                              'Helligkeit',
+                                              Icons.brightness_6,
+                                              ID_BRIGHTNESS),
+                                          _createIconTap(
+                                              'Kontrast',
+                                              Icons.invert_colors_on,
+                                              ID_CONTRAST),
+                                          _createIconTap('Sättigung',
+                                              Icons.brush, ID_SATURATION),
+                                          _createIconTap(
+                                              'Flip', Icons.flip, ID_FLIP),
+                                          _createIconTap(
+                                              'Rotate left',
+                                              Icons.rotate_left,
+                                              ID_ROTATE_LEFT),
+                                          _createIconTap(
+                                              'Rotate right',
+                                              Icons.rotate_right,
+                                              ID_ROTATE_RIGHT),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            _createCheckBox(),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: _buildFunctions(),
-      )
-    );
+            ),
+      // bottomNavigationBar: _buildFunctions(),
+    ));
   }
 
   Widget buildImage() {
@@ -374,11 +404,22 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     image.writeAsBytesSync(result!);
     print('image_editor time : $diff');
 
+    Uint8List compressedImage = (await FlutterImageCompress.compressWithFile(
+      image.absolute.path,
+      quality: extraQuality ? highQuality : defaultQuality,
+    ))!;
+
+    ApplicationLogger.getLogger('_EditPhotoScreenState', colors: true).i(
+        'Finished compression. Size before: ${image.readAsBytesSync().lengthInBytes / 1024}. Size after: ${compressedImage.lengthInBytes / 1024}');
+    image.writeAsBytesSync(
+        compressedImage); // = await File(image.path).writeAsBytes(compressedImage);
+
     ApplicationLogger.getLogger('_EditPhotoScreenState', colors: true)
         .d('Finished editing picture');
+    //File compressedFile = File.fromRawPath(compressedImage);
+    //print('compressed file path: ${compressedFile.path}');
     Future.delayed(Duration(seconds: 0)).then(
       (value) => Navigator.of(context).push(
-
         MaterialPageRoute(
           builder: (context) => DescribePhotoScreen(arguments: [
             image,
@@ -404,7 +445,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
 
   Widget _buildSatSlider() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         Container(
@@ -435,7 +476,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
 
   Widget _buildBrightnessSlider() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         Container(
@@ -466,7 +507,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
 
   Widget _buildConSlider() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         Container(
@@ -507,31 +548,72 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
         return Text('create filters!! ');
 
       default:
-        throw Exception('no such tab!! ');
+        return Container();
     }
   }
 
   Widget _createIconTap(String label, IconData icon, int id) {
-    return Column(
-      children: [
-        IconButton(
-          onPressed: () {
-            _updateTabSelection(id);
-          },
-          icon: Icon(icon),
-          color: tabSelectionMap[id] as bool
-              ? Colors.green[900]
-              : Colors.green[300],
-        ),
-        Text(
-          label,
-          style: TextStyle(
+    return Container(
+        width: 80,
+        child: Column(
+          children: [
+            IconButton(
+              onPressed: () {
+                switch (id) {
+                  case ID_FLIP:
+                    flip();
+                    break;
+                  case ID_ROTATE_RIGHT:
+                    rotate(true);
+                    break;
+                  case ID_ROTATE_LEFT:
+                    rotate(false);
+                    break;
+                  default:
+                    _updateTabSelection(id);
+                }
+              },
+              icon: Icon(icon),
               color: tabSelectionMap[id] as bool
                   ? Colors.green[900]
-                  : Colors.green[
-                      300]), // TextStyle(color: Theme.of(context).accentColor),
-        ),
-      ],
+                  : Colors.green[300],
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                  color: tabSelectionMap[id] as bool
+                      ? Colors.green[900]
+                      : Colors.green[
+                          300]), // TextStyle(color: Theme.of(context).accentColor),
+            ),
+          ],
+        ));
+  }
+
+  Widget _createCheckBox() {
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Checkbox(
+            value: extraQuality,
+            activeColor: Colors.green,
+            onChanged: (newValue) {
+              setState(() {
+                extraQuality = newValue!;
+              });
+            },
+          ),
+          Flexible(
+            child: Text(
+              'Speichern in extra guter Qualität! Braucht natürlich mehr Platz... ^.^',
+              maxLines: 2,
+              softWrap: true,
+              //overflow: TextOverflow.fade,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

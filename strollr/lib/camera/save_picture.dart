@@ -93,6 +93,7 @@ class SavePhotoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _saveInDatabase();
+    image.deleteSync();
     return ConfirmationAnimation();
   }
 }
