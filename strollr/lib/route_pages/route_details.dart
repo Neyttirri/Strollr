@@ -1,8 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:gpx/gpx.dart';
+import 'package:strollr/maps_test_two.dart';
+
 
 import '../style.dart';
+import 'dbInterface.dart';
 
 class RouteDetails extends StatelessWidget {
+  int walkId = 0;
+  String routeName = "";
+  double distance = 0;
+  String duration = "";
+  Gpx route = Gpx();
+  MapView map = new MapView();
+
+
+  RouteDetails(int walkId) {
+    this.walkId = walkId;
+  }
+
+  Future<bool> setDetails(int walkId) async {
+    routeName = await DbRouteInterface.getWalkName(walkId: walkId);
+    distance = await DbRouteInterface.getWalkDistance(walkId: walkId);
+    duration = await DbRouteInterface.getWalkDuration(walkId: walkId);
+    route = await DbRouteInterface.getWalkRoute(walkId: walkId);
+    map.createPolyLines(route);
+
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,7 +39,15 @@ class RouteDetails extends StatelessWidget {
           title: Text("Routen Details", style: TextStyle(color: headerGreen)),
           backgroundColor: Colors.white,
         ),
-        body: infoCard(context)
+        body: FutureBuilder(
+          future: setDetails(walkId),
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            if (snapshot.hasData){
+              return infoCard(context);
+            }
+            else return infoCard(context);
+          },
+        )
     );
   }
 
@@ -115,9 +149,19 @@ class RouteDetails extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Row(
               children: <Widget> [
+                Text("Routen Name"),
+                Spacer(),
+                Text(routeName),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
+            child: Row(
+              children: <Widget> [
                 Text("Stecke in km:"),
                 Spacer(),
-                Text("12,42 km"),
+                Text(distance.toString() + 'km'),
               ],
             ),
           ),
@@ -127,7 +171,7 @@ class RouteDetails extends StatelessWidget {
               children: <Widget> [
                 Text("Zeit in Stunden:"),
                 Spacer(),
-                Text("4:32 h"),
+                Text('$duration h'),
               ],
             ),
           ),

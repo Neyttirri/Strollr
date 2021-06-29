@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:gpx/gpx.dart';
 import 'package:strollr/route_pages/PolylineIf.dart';
 
 
@@ -25,8 +26,14 @@ class MyApp extends StatelessWidget {
 }
 
 class MapView extends StatefulWidget {
+  late _MapViewState map = new _MapViewState();
+
+  void createPolyLines(Gpx gpx){
+    map._createPolylines(gpx);
+  }
+
   @override
-  _MapViewState createState() => _MapViewState();
+  _MapViewState createState() => map;
 }
 
 class _MapViewState extends State<MapView> {
@@ -57,36 +64,38 @@ class _MapViewState extends State<MapView> {
       if (MapRouteInterface.walkPaused) return;
 
 
-
-      if (MapRouteInterface.walkFinished) {
-        _createPolylines();
-        _timer!.cancel();
+      if (MapRouteInterface.walkFinished && MapRouteInterface.gpx.wpts.isNotEmpty) {
+        _createPolylines(MapRouteInterface.gpx);
+        _timer?.cancel();
+        MapRouteInterface.walkPaused = true;
       }
 
         //print(PolylineIf.gpx);
 
+      print(MapRouteInterface.walkFinished);
 
-        if (mounted && !MapRouteInterface.walkFinished) {
-          Position? myPosition = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-          setState(() {
-            // Store the position in the variable
-            MapRouteInterface.currentPosition = myPosition;
+      if (mounted && !MapRouteInterface.walkFinished) {
+        Position? myPosition = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-            print('CURRENT POS: $myPosition');
+        setState(() {
+          // Store the position in the variable
+          MapRouteInterface.currentPosition = myPosition;
 
-            // For moving the camera to current location
-            mapController.animateCamera(
-              CameraUpdate.newCameraPosition(
-                CameraPosition(
-                  target: LatLng(
-                      myPosition.latitude, myPosition.longitude),
-                  zoom: 18.0,
-                ),
+          print('CURRENT POS: $myPosition');
+
+          // For moving the camera to current location
+          mapController.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: LatLng(
+                    myPosition.latitude, myPosition.longitude),
+                zoom: 18.0,
               ),
-            );
-          });
-        }
+            ),
+          );
+        });
+      }
     });
   }
 
@@ -95,8 +104,8 @@ class _MapViewState extends State<MapView> {
   * when finished, method will take list of recorded locations
   * connect them via _polylines.add
    */
-  _createPolylines() async{
-    MapRouteInterface.gpx.wpts.forEach((element)  {
+  _createPolylines(Gpx gpx) async{
+    gpx.wpts.forEach((element)  {
       polylineCoordinates.add(LatLng(element.lat as double,  element.lon  as double));
     });
 
@@ -126,6 +135,8 @@ class _MapViewState extends State<MapView> {
         );
       });
     }
+
+    if (gpx == MapRouteInterface.gpx) MapRouteInterface.gpx.wpts.clear();
   }
 
   /*
@@ -206,6 +217,7 @@ class _MapViewState extends State<MapView> {
     _timer = _getCurrentLocation();
 
     polylinePoints = PolylinePoints();
+    _polylines = {};
   }
 
   void dispose() {

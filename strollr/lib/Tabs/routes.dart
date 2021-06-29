@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:strollr/route_pages/active_route.dart';
-import 'package:strollr/route_pages/new_route.dart';
 import 'package:strollr/route_pages/route_details.dart';
 import 'package:strollr/style.dart';
 import 'package:strollr/route_pages/route_list_card.dart';
@@ -14,6 +13,16 @@ class Routes extends StatelessWidget {
     RouteListCard(DateTime.now(), "Hamburg", "Hamburg Garten", 24.43, 5.1),
   ];
 
+  /*buildRouteList() async {
+    List<Walk> walks = await DbRouteInterface.getAllWalks();
+
+    walks.forEach((element) {
+      routeList.add(new RouteListCard(element.id as int, element.startedAtTime, "Berlin", element.name, element.durationTime, element.distanceInKm));
+    });
+
+    return true;
+  }*/
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,9 +35,19 @@ class Routes extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             return new GestureDetector(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(37)));
               },
-              child: buildRouteListCard(context, index),
+              child: /*FutureBuilder(
+                future: buildRouteList(),
+                builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                  if (snapshot.hasData){
+                    return buildRouteListCard(context, index);
+                  }
+                  else return buildRouteListCard(context, index);
+                },
+              )*/
+
+              buildRouteListCard(context, index),
             );
 
           }

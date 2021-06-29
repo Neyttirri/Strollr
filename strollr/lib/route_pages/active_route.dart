@@ -16,7 +16,6 @@ import 'PolylineIf.dart';
 const routeName = '/extractArguments';
 
 final _isHours = true;
-final maps = new MapView();
 
 final _trackingInterval = Duration(seconds: 5);
 late Timer _timer;
@@ -95,6 +94,12 @@ final overview = DefaultTextStyle.merge(
                             MaterialStateProperty.all(Colors.grey[500])),
                     onPressed: () {
                       finishedWalk();
+
+                      MapRouteInterface.walkFinished = true;
+                      //gpx.wpts.clear();
+
+                      printDbValues();
+
                       globals.stopWatchTimer.onExecute
                           .add(StopWatchExecuted.stop);
                     }),
@@ -108,10 +113,25 @@ final overview = DefaultTextStyle.merge(
 );
 
 void finishedWalk() {
+void printDbValues() async {
+  String name = await DbRouteInterface.getWalkName();
+  double distance = await DbRouteInterface.getWalkDistance();
+  String duration = await DbRouteInterface.getWalkDuration();
+
+  distance = double.parse((distance).toStringAsFixed(2));;
+
+  print('Name: $name');
+  print('Distance: $distance km');
+  print('Duration: $duration h');
+}
+
+void finishedWalk(){
   _timer.cancel();
 
   if (gpx.wpts.isNotEmpty)
     _ActiveRouteState.writeGpxFile(MapRouteInterface.currentPosition);
+
+  DbRouteInterface.finishWalk(gpx);
 
   MapRouteInterface.gpx = gpx;
   MapRouteInterface.walkFinished = true;
@@ -125,6 +145,7 @@ class ActiveRoute extends StatefulWidget {
 }
 
 class _ActiveRouteState extends State<ActiveRoute> {
+  final maps = new MapView();
   late File _imageFile;
   late Position _currentPosition;
   final _picker = ImagePicker();
@@ -132,6 +153,7 @@ class _ActiveRouteState extends State<ActiveRoute> {
   @override
   void initState() {
     super.initState();
+    MapRouteInterface.walkFinished = true;
     //initiate periodic Timer on init
     _timer = startTracking();
     gpx.creator = "route";
@@ -224,19 +246,24 @@ class _ActiveRouteState extends State<ActiveRoute> {
     return Timer.periodic(_trackingInterval, (timer) async {
       if (MapRouteInterface.walkPaused) return;
 
+      if (MapRouteInterface.walkFinished && MapRouteInterface.gpx.wpts.isNotEmpty) {
+        timer.cancel();
+      }
+
       Position? currentPosition = MapRouteInterface().getPosition();
       print('You are here: $currentPosition');
 
       double distanceToLastPosition = 0;
 
-      if (gpx.wpts.isNotEmpty)
+      if (gpx.wpts.isNotEmpty) {
         distanceToLastPosition = DbRouteInterface.calcDistance(
             (gpx.wpts[gpx.wpts.length - 1]).lat as double,
             currentPosition!.latitude,
             gpx.wpts[gpx.wpts.length - 1].lon as double,
             currentPosition.longitude);
+      }
 
-      if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.05) return;
+      if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.02) return;
 
       writeGpxFile(currentPosition!);
     });
@@ -244,7 +271,10 @@ class _ActiveRouteState extends State<ActiveRoute> {
 
   static void writeGpxFile(Position? current) {
     gpx.wpts.add(Wpt(lat: current!.latitude, lon: current.longitude));
-    DbRouteInterface.updateWalkRoute(gpx);
+
+    MapRouteInterface.gpx = gpx;
+
+    //DbRouteInterface.updateWalkRoute(gpx);
   }
 }
 
