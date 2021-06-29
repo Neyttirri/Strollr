@@ -16,7 +16,6 @@ import 'PolylineIf.dart';
 const routeName = '/extractArguments';
 
 final _isHours = true;
-final maps = new MapView();
 
 final _trackingInterval = Duration(seconds: 5);
 late Timer _timer;
@@ -134,6 +133,8 @@ void printDbValues() async {
   double distance = await DbRouteInterface.getWalkDistance();
   String duration = await DbRouteInterface.getWalkDuration();
 
+  distance = double.parse((distance).toStringAsFixed(2));;
+
   print('Name: $name');
   print('Distance: $distance km');
   print('Duration: $duration h');
@@ -159,6 +160,7 @@ class ActiveRoute extends StatefulWidget {
 }
 
 class _ActiveRouteState extends State<ActiveRoute> {
+  final maps = new MapView();
   late File _imageFile;
   late Position _currentPosition;
   final _picker = ImagePicker();

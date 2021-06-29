@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MapView extends StatefulWidget {
-  _MapViewState map = _MapViewState();
+  late _MapViewState map = new _MapViewState();
 
   void createPolyLines(Gpx gpx){
     map._createPolylines(gpx);

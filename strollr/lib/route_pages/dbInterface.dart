@@ -7,7 +7,6 @@ import 'package:strollr/model/walk.dart';
 import 'package:strollr/utils/shared_prefs.dart';
 
 class DbRouteInterface{
-  static late Walk walk;
 
   static Future<int?> generateWalk(Gpx gpx) async {
     //TODO insert shared prefs
@@ -19,7 +18,7 @@ class DbRouteInterface{
 
     print('Your Walk will be saved under follwing name: $formatted');
 
-    walk = Walk(
+    Walk walk = Walk(
       name: formatted,
       route: route,
       distanceInKm: 0.0,
@@ -74,13 +73,11 @@ class DbRouteInterface{
 
     updatedWalk.durationTime = "${twoDigits(walkDuration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
 
-    walk = updatedWalk;
-
     return await DatabaseManager.instance.updateWalk(updatedWalk);
   }
 
   static getWalkName({int walkId = -1}) async {
-    if (walkId == -1) walkId = walk.id as int;
+    if (walkId == -1) walkId = await SharedPrefs.getCurrentWalkId();
 
     Walk getWalk = await DatabaseManager.instance.readWalkFromId(walkId);
 
@@ -88,7 +85,7 @@ class DbRouteInterface{
   }
 
   static getWalkDistance({int walkId = -1}) async {
-    if (walkId == -1) walkId = walk.id as int;
+    if (walkId == -1) walkId = SharedPrefs.getCurrentWalkId();
 
     Walk getWalk = await DatabaseManager.instance.readWalkFromId(walkId);
 
@@ -96,7 +93,7 @@ class DbRouteInterface{
   }
 
   static getWalkDuration({int walkId = -1}) async {
-    if (walkId == -1) walkId = walk.id as int;
+    if (walkId == -1) walkId = SharedPrefs.getCurrentWalkId();
 
     Walk getWalk = await DatabaseManager.instance.readWalkFromId(walkId);
 
@@ -104,7 +101,7 @@ class DbRouteInterface{
   }
 
   static getWalkRoute({int walkId = -1}) async {
-    if (walkId == -1) walkId = walk.id as int;
+    if (walkId == -1) walkId = SharedPrefs.getCurrentWalkId();
 
     Walk getWalk = await DatabaseManager.instance.readWalkFromId(walkId);
 
