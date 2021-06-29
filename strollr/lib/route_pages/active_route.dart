@@ -112,7 +112,6 @@ final overview = DefaultTextStyle.merge(
   ),
 );
 
-void finishedWalk() {
 void printDbValues() async {
   String name = await DbRouteInterface.getWalkName();
   double distance = await DbRouteInterface.getWalkDistance();
