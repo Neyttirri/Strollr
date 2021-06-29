@@ -158,7 +158,7 @@ class RouteDetails extends StatelessWidget {
           Padding(
             padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Row(
-              children: <Widget> [
+              children: <Widget>[
                 Text("Stecke in km:"),
                 Spacer(),
                 Text(distance.toString() + 'km'),
@@ -168,7 +168,7 @@ class RouteDetails extends StatelessWidget {
           Padding(
             padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Row(
-              children: <Widget> [
+              children: <Widget>[
                 Text("Zeit in Stunden:"),
                 Spacer(),
                 Text('$duration h'),

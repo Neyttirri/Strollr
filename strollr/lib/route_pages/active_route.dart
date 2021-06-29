@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
 import 'package:strollr/route_pages/PolylineIf.dart';
 import 'package:strollr/route_pages/dbInterface.dart';
+import 'package:strollr/route_pages/save_route.dart';
 import '../camera/edit_picture.dart';
 import '../globals.dart' as globals;
 import '../style.dart';
@@ -22,95 +23,106 @@ late Timer _timer;
 
 int? walkId;
 
-double distance = 0;
+double distance = 0.0;
 
 Geolocator _geolocator = Geolocator();
 
 var gpx = Gpx();
 
-final overview = DefaultTextStyle.merge(
-  style: TextStyle(
-      color: Colors.black,
-      fontWeight: FontWeight.w700,
-      fontFamily: 'Roboto',
-      letterSpacing: 0.5,
-      fontSize: 25),
-  child: Container(
-    padding: EdgeInsets.fromLTRB(3, 10, 10, 5),
-    decoration: BoxDecoration(
-      border: Border(
-        bottom: BorderSide(width: 1.0, color: Colors.black),
-      ),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Column(
+class Overview extends StatefulWidget {
+  _OverviewState createState() => _OverviewState();
+}
+
+class _OverviewState extends State<Overview> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(3, 10, 10, 5),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(width: 1.0, color: Colors.black),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Row(
+            Column(
               children: [
-                Column(
+                Row(
                   children: [
-                    StreamBuilder<int>(
-                        stream: globals.stopWatchTimer.rawTime,
-                        initialData: globals.stopWatchTimer.rawTime.value,
-                        builder: (context, snapshot) {
-                          final value = snapshot.data;
-                          final displayTime = StopWatchTimer.getDisplayTime(
-                              value!,
-                              hours: _isHours);
-                          return Padding(
+                    Column(
+                      children: [
+                        StreamBuilder<int>(
+                            stream: globals.stopWatchTimer.rawTime,
+                            initialData: globals.stopWatchTimer.rawTime.value,
+                            builder: (context, snapshot) {
+                              final value = snapshot.data;
+                              final displayTime = StopWatchTimer.getDisplayTime(
+                                  value!,
+                                  hours: _isHours);
+                              return Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Text(displayTime,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w700,
+                                          fontFamily: 'Roboto',
+                                          letterSpacing: 0.5,
+                                          fontSize: 25)));
+                            }),
+                        Icon(Icons.timer, color: Colors.green[500]),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(50, 0, 0, 0),
+                      child: Column(
+                        children: [
+                          Padding(
                               padding: EdgeInsets.all(8),
-                              child: Text(displayTime));
-                        }),
-                    Icon(Icons.timer, color: Colors.green[500]),
+                              child: Text(distance.toString() + ' km',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: 'Roboto',
+                                      letterSpacing: 0.5,
+                                      fontSize: 25))),
+                          Icon(Icons.directions_walk_outlined,
+                              color: Colors.green[500]),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(50, 0, 0, 0),
-                  child: Column(
-                    children: [
-                      Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Text(distance.toString() + ' km')),
-                      Icon(Icons.directions_walk_outlined,
-                          color: Colors.green[500]),
-                    ],
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(45, 10, 3, 5),
+                    child: CustomButton(),
                   ),
-                ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(60, 10, 0, 5),
+                    child: ElevatedButton(
+                        child: Text('Route beenden'),
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.grey[500])),
+                        onPressed: () {
+                          finishedWalk();
+                          globals.stopWatchTimer.onExecute
+                              .add(StopWatchExecuted.stop);
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => RouteSaver()));
+                        }),
+                  ),
+                ])
               ],
             ),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(45, 10, 3, 5),
-                child: CustomButton(),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(60, 10, 0, 5),
-                child: ElevatedButton(
-                    child: Text('Route beenden'),
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.grey[500])),
-                    onPressed: () {
-                      finishedWalk();
-
-                      MapRouteInterface.walkFinished = true;
-                      //gpx.wpts.clear();
-
-                      printDbValues();
-
-                      globals.stopWatchTimer.onExecute
-                          .add(StopWatchExecuted.stop);
-                    }),
-              ),
-            ])
           ],
         ),
-      ],
-    ),
-  ),
-);
+      ),
+    );
+  }
+}
 
 void printDbValues() async {
   String name = await DbRouteInterface.getWalkName();
@@ -176,7 +188,7 @@ class _ActiveRouteState extends State<ActiveRoute> {
         child: Container(
           padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
           child: Column(
-            children: [overview, new Expanded(child: maps)],
+            children: [Overview(), new Expanded(child: maps)],
           ),
         ),
       ),
@@ -260,6 +272,8 @@ class _ActiveRouteState extends State<ActiveRoute> {
             currentPosition!.latitude,
             gpx.wpts[gpx.wpts.length - 1].lon as double,
             currentPosition.longitude);
+      distance += distanceToLastPosition;
+      print(distanceToLastPosition);
       }
 
       if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.02) return;
@@ -278,10 +292,6 @@ class _ActiveRouteState extends State<ActiveRoute> {
 }
 
 class CustomButton extends StatefulWidget {
-  //String label = 'Start';
-  //VoidCallback onPress;
-
-  //CustomButton({required this.onPress, required this.label});
   _CustomButtonState createState() => _CustomButtonState();
 }
 
