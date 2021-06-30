@@ -1,13 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:strollr/Tabs/routes.dart';
+import 'package:strollr/route_pages/active_route.dart';
 import '../style.dart';
+import 'package:gpx/gpx.dart';
+import 'package:strollr/maps_test_two.dart';
+import '../style.dart';
+import 'dbInterface.dart';
 
 final _formKey = GlobalKey<FormState>();
 TextEditingController _controller =
-    TextEditingController(text: "An der Schleise");
+    TextEditingController(text: routeName); // Name aus Datenbank
 bool _isEnable = false;
 
 class RouteDetails extends StatefulWidget {
+  int walkId = 0;
+  String routeName = "";
+  double distance = 0;
+  String duration = "";
+  Gpx route = Gpx();
+  MapView map = new MapView();
+
+  RouteDetails(int walkId) {
+    this.walkId = walkId;
+  }
+
+  Future<bool> setDetails(int walkId) async {
+    routeName = await DbRouteInterface.getWalkName(walkId: walkId);
+    distance = await DbRouteInterface.getWalkDistance(walkId: walkId);
+    duration = await DbRouteInterface.getWalkDuration(walkId: walkId);
+    route = await DbRouteInterface.getWalkRoute(walkId: walkId);
+    map.createPolyLines(route);
+
+    return true;
+  }
+
   _RouteDetailsState createState() => _RouteDetailsState();
 }
 
@@ -94,7 +120,7 @@ class RouteFormState extends State<RouteForm> {
               children: <Widget>[
                 Text("Strecke in km:"),
                 Spacer(),
-                Text("12,42 km"),
+                Text(distance.toString() + ' km'),
               ],
             ),
           ),
@@ -104,7 +130,7 @@ class RouteFormState extends State<RouteForm> {
               children: <Widget>[
                 Text("Zeit in Stunden:"),
                 Spacer(),
-                Text("4:32 h"),
+                Text('2:00 h'), //Text('$duration h')
               ],
             ),
           ),

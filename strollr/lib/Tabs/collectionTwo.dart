@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:strollr/collection_pages/collection_category_card.dart';
 import 'package:strollr/collection_pages/collection_gallery_view.dart';
-import 'package:strollr/route_pages/active_route.dart';
-import 'package:strollr/route_pages/new_route.dart';
-import 'package:strollr/route_pages/route_details.dart';
 import 'package:strollr/style.dart';
-import 'package:strollr/route_pages/route_list_card.dart';
-import 'package:intl/intl.dart';
 
 class CollectionTwo extends StatelessWidget {
   int indexTemp = 0;
