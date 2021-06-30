@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:strollr/Tabs/routes.dart';
 import 'package:strollr/maps_test_two.dart';
+import 'package:strollr/route_pages/dbInterface.dart';
 import '../style.dart';
 import 'PolylineIf.dart';
 
@@ -40,6 +41,9 @@ class RouteForm extends StatefulWidget {
 class RouteFormState extends State<RouteForm> {
   //related to WalkID
   late MapView map;
+  late String started;
+  late double distance;
+  late String duration;
 
   @override
   void initState() {
@@ -47,6 +51,26 @@ class RouteFormState extends State<RouteForm> {
     map = new MapView();
     WidgetsBinding.instance!
         .addPostFrameCallback((_) => map.createPolyLines(MapRouteInterface.gpx));
+  }
+
+  Future<bool> setDistance() async {
+    distance = await DbRouteInterface.getWalkDistance();
+
+    distance = double.parse((distance).toStringAsFixed(2));
+
+    return true;
+  }
+
+  Future<bool> setDuration() async {
+    duration = await DbRouteInterface.getWalkDuration();
+
+    return true;
+  }
+
+  Future<bool> setStarted() async {
+    started = await DbRouteInterface.getWalkName();
+
+    return true;
   }
 
   @override
@@ -71,34 +95,81 @@ class RouteFormState extends State<RouteForm> {
              children: [new Expanded(child: map)],
            ),
           //insert map
+          FutureBuilder(
+            future: setStarted(),
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+              if (snapshot.hasData){
+                print(snapshot.data.toString());
+
+                return Row(
+                  children: <Widget>[
+                    Text("Start am/um:"),
+                    Spacer(),
+                    Text(started.toString() + ' Uhr'),
+                  ],
+                );
+              }
+              else {
+                return Row(
+                  children: <Widget>[
+                    Text("Start am/um:"),
+                    Spacer(),
+                    Text(started.toString() + ' Uhr'),
+                  ],
+                );
+              }
+            },
+          ),
           Padding(
             padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
-            child: Row(
-              children: <Widget>[
-                Text("Datum:"),
-                Spacer(),
-                Text("2020"),
-              ],
+            child: FutureBuilder(
+              future: setDistance(),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.hasData){
+                  return Row(
+                    children: <Widget>[
+                      Text("Distanz:"),
+                      Spacer(),
+                      Text(distance.toString() + 'km'),
+                    ],
+                  );
+                }
+                else {
+                  return Row(
+                    children: <Widget>[
+                      Text("Distatnz:"),
+                      Spacer(),
+                      Text(snapshot.data.toString() + 'km'),
+                    ],
+                  );
+                }
+              },
             ),
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
-            child: Row(
-              children: <Widget>[
-                Text("Strecke in km:"),
-                Spacer(),
-                Text("12,42 km"),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
-            child: Row(
-              children: <Widget>[
-                Text("Zeit in Stunden:"),
-                Spacer(),
-                Text("4:32 h"),
-              ],
+            child: FutureBuilder(
+              future: setDuration(),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.hasData){
+                  return Row(
+                    children: <Widget>[
+                      Text("Dauer:"),
+                      Spacer(),
+                      Text(duration.toString() + 'h'),
+                    ],
+                  );
+                }
+                else {
+                  return Row(
+                    children: <Widget>[
+                      Text("Dauer:"),
+                      Spacer(),
+                      Text(duration.toString() + 'h'),
+                    ],
+                  );
+                }
+              },
             ),
           ),
         ],

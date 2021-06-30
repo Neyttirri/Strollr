@@ -34,6 +34,16 @@ class DbRouteInterface{
     return walk.id;
   }
 
+  static setWalkName({int walkId = -1, required String name}) async {
+    if (walkId == -1) walkId = await SharedPrefs.getCurrentWalkId();
+
+    Walk updatedWalk = await DatabaseManager.instance.readWalkFromId(walkId);
+
+    updatedWalk.name = name;
+
+    await DatabaseManager.instance.updateWalk(updatedWalk);
+  }
+
   static getAllWalks(){
     return DatabaseManager.instance.readALlWalks();
   }
@@ -84,7 +94,7 @@ class DbRouteInterface{
     return getWalk.name;
   }
 
-  static getWalkDistance({int walkId = -1}) async {
+  static Future<double> getWalkDistance({int walkId = -1}) async {
     if (walkId == -1) walkId = SharedPrefs.getCurrentWalkId();
 
     Walk getWalk = await DatabaseManager.instance.readWalkFromId(walkId);

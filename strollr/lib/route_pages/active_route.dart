@@ -107,11 +107,11 @@ class _OverviewState extends State<Overview> {
                         style: ButtonStyle(
                             backgroundColor:
                                 MaterialStateProperty.all(Colors.grey[500])),
-                        onPressed: () {
-                          finishedWalk();
+                        onPressed: () async {
                           globals.stopWatchTimer.onExecute
                               .add(StopWatchExecuted.stop);
 
+                          await finishedWalk();
                           MapRouteInterface.walkFinished = true;
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => RouteSaver()));
@@ -132,20 +132,20 @@ void printDbValues() async {
   double distance = await DbRouteInterface.getWalkDistance();
   String duration = await DbRouteInterface.getWalkDuration();
 
-  distance = double.parse((distance).toStringAsFixed(2));;
+  distance = double.parse((distance).toStringAsFixed(2));
 
   print('Name: $name');
   print('Distance: $distance km');
   print('Duration: $duration h');
 }
 
-void finishedWalk(){
+Future<bool> finishedWalk() async {
   _timer.cancel();
 
   if (gpx.wpts.isNotEmpty)
     _ActiveRouteState.writeGpxFile(MapRouteInterface.currentPosition);
 
-  DbRouteInterface.finishWalk(gpx);
+  await DbRouteInterface.finishWalk(gpx);
   printDbValues();
 
   MapRouteInterface.gpx = gpx;
@@ -153,6 +153,8 @@ void finishedWalk(){
   //MapRouteInterface.walkPaused = true;
 
   gpx.creator = "new route";
+
+  return true;
 }
 
 class ActiveRoute extends StatefulWidget {
@@ -278,7 +280,6 @@ class _ActiveRouteState extends State<ActiveRoute> {
             gpx.wpts[gpx.wpts.length - 1].lon as double,
             currentPosition.longitude);
       distance += distanceToLastPosition;
-      print(distanceToLastPosition);
       }
 
       if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.02) return;
