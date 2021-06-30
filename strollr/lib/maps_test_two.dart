@@ -53,10 +53,7 @@ class _MapViewState extends State<MapView> {
   //recorded locations of user
   List<LatLng> polylineCoordinates = [];
 
-   PolylinePoints? polylinePoints;
-
-  // For storing the current position
-  Position? _currentPosition;
+  PolylinePoints? polylinePoints;
 
   Timer _getCurrentLocation() {
     return Timer.periodic(_locationUpdateIntervall, (timer) async {
@@ -291,50 +288,6 @@ class _MapViewState extends State<MapView> {
 
                 _timer = _getCurrentLocation();
               },
-            ),
-            //Current location button
-            SafeArea(
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 15.0, bottom: 15.0),
-                  child: ClipOval(
-                    child: Material(
-                      color: Colors.green, // button color
-                      child: InkWell(
-                        splashColor: Colors.grey, // inkwell color
-                        child: SizedBox(
-                          width: 56,
-                          height: 56,
-                          child: Icon(Icons.my_location),
-                        ),
-                        onTap: () {
-                          _getCurrentLocation();
-                          /*
-                          * may be redundant
-                          * l. 50-54
-                           */
-                          mapController.animateCamera(
-                            CameraUpdate.newCameraPosition(
-                              CameraPosition(
-                                target: LatLng(
-                                  _currentPosition!.latitude,
-                                  _currentPosition!.longitude,
-                                ),
-                                zoom: 18.0,
-                              ),
-                            ),
-                          );
-                          /*
-                          *
-                          *
-                           */
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ),
             ),
           ],
         ),

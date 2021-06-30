@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:strollr/model/walk.dart';
 import 'package:strollr/route_pages/active_route.dart';
+import 'package:strollr/route_pages/dbInterface.dart';
 import 'package:strollr/route_pages/route_details.dart';
 import 'package:strollr/style.dart';
 import 'package:strollr/route_pages/route_list_card.dart';
@@ -8,12 +10,9 @@ import 'package:intl/intl.dart';
 
 class Routes extends StatelessWidget {
 
-  final List<RouteListCard> routeList = [
-    RouteListCard(DateTime.now(), "Berlin", "Botanischer Garten", 34.43, 6.3),
-    RouteListCard(DateTime.now(), "Hamburg", "Hamburg Garten", 24.43, 5.1),
-  ];
+  final List<RouteListCard> routeList = [];
 
-  /*buildRouteList() async {
+  Future<bool> buildRouteList() async {
     List<Walk> walks = await DbRouteInterface.getAllWalks();
 
     walks.forEach((element) {
@@ -21,7 +20,7 @@ class Routes extends StatelessWidget {
     });
 
     return true;
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,27 +29,41 @@ class Routes extends StatelessWidget {
         title: Text("Routen", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
-      body: ListView.builder(
-          itemCount: routeList.length, //Database length
-          itemBuilder: (BuildContext context, int index) {
-            return new GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(37)));
-              },
-              child: /*FutureBuilder(
-                future: buildRouteList(),
-                builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                  if (snapshot.hasData){
-                    return buildRouteListCard(context, index);
-                  }
-                  else return buildRouteListCard(context, index);
-                },
-              )*/
-
-              buildRouteListCard(context, index),
+      body: FutureBuilder(
+        future: buildRouteList(),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+                itemCount: routeList.length, //Database length
+                itemBuilder: (BuildContext context, int index) {
+                  return new GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) =>
+                              RouteDetails(37)));
+                    },
+                    child: buildRouteListCard(context, index),
+                  );
+                }
             );
-
           }
+
+          else {
+            return ListView.builder(
+                itemCount: routeList.length, //Database length
+                itemBuilder: (BuildContext context, int index) {
+                  return new GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) =>
+                              RouteDetails(37)));
+                    },
+                    child: buildRouteListCard(context, index),
+                  );
+                }
+            );
+          }
+        }
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Neue Route',

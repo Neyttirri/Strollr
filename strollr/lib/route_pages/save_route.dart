@@ -118,7 +118,7 @@ class RouteFormState extends State<RouteForm> {
                   children: <Widget>[
                     Text("Start am/um:"),
                     Spacer(),
-                    Text(started.toString() + ' Uhr'),
+                    Text(''),
                   ],
                 );
               }
@@ -143,7 +143,7 @@ class RouteFormState extends State<RouteForm> {
                     children: <Widget>[
                       Text("Distanz:"),
                       Spacer(),
-                      Text(snapshot.data.toString() + 'km'),
+                      Text(''),
                     ],
                   );
                 }
@@ -169,7 +169,7 @@ class RouteFormState extends State<RouteForm> {
                     children: <Widget>[
                       Text("Dauer:"),
                       Spacer(),
-                      Text(duration.toString() + 'h'),
+                      Text(''),
                     ],
                   );
                 }

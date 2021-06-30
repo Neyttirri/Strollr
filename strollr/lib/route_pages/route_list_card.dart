@@ -1,11 +1,11 @@
-import 'dart:ffi';
 
 class RouteListCard {
+  int routeId;
   DateTime routeTime;
   String routeLocation;
   String routeName;
-  double routeDuration;
+  String routeDuration;
   double routeDistance;
 
-  RouteListCard(this.routeTime, this.routeLocation, this.routeName, this.routeDuration, this.routeDistance);
+  RouteListCard(this.routeId, this.routeTime, this.routeLocation, this.routeName, this.routeDuration, this.routeDistance);
 }
