@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:strollr/Tabs/routes.dart';
+import 'package:strollr/maps_test_two.dart';
 import '../style.dart';
+import 'PolylineIf.dart';
 
 final _formKey = GlobalKey<FormState>();
 
@@ -37,6 +39,15 @@ class RouteForm extends StatefulWidget {
 
 class RouteFormState extends State<RouteForm> {
   //related to WalkID
+  late MapView map;
+
+  @override
+  void initState() {
+    super.initState();
+    map = new MapView();
+    WidgetsBinding.instance!
+        .addPostFrameCallback((_) => map.createPolyLines(MapRouteInterface.gpx));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +67,10 @@ class RouteFormState extends State<RouteForm> {
               return null;
             },
           ),
-          SizedBox(
-            height: 250,
-          ), //insert map
+           Row(
+             children: [new Expanded(child: map)],
+           ),
+          //insert map
           Padding(
             padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
             child: Row(

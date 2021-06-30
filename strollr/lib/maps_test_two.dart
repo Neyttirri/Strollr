@@ -29,7 +29,7 @@ class MapView extends StatefulWidget {
   late _MapViewState map = new _MapViewState();
 
   void createPolyLines(Gpx gpx){
-    map._createPolylines(gpx);
+    Timer(Duration (seconds: 2), () => map._createPolylines(gpx));
   }
 
   @override
@@ -65,14 +65,12 @@ class _MapViewState extends State<MapView> {
 
 
       if (MapRouteInterface.walkFinished && MapRouteInterface.gpx.wpts.isNotEmpty) {
-        _createPolylines(MapRouteInterface.gpx);
+        //_createPolylines(MapRouteInterface.gpx);
         _timer?.cancel();
         MapRouteInterface.walkPaused = true;
       }
 
         //print(PolylineIf.gpx);
-
-      print(MapRouteInterface.walkFinished);
 
 
       if (mounted && !MapRouteInterface.walkFinished) {
@@ -104,7 +102,7 @@ class _MapViewState extends State<MapView> {
   * when finished, method will take list of recorded locations
   * connect them via _polylines.add
    */
-  _createPolylines(Gpx gpx) async{
+  void _createPolylines(Gpx gpx) async {
     gpx.wpts.forEach((element)  {
       polylineCoordinates.add(LatLng(element.lat as double,  element.lon  as double));
     });
@@ -112,8 +110,14 @@ class _MapViewState extends State<MapView> {
     LatLng southWestBound = _getBound(true);
     LatLng northEastBound = _getBound(false);
 
+    print(mounted);
+
     if (mounted) {
       setState(() {
+
+        var gpxString = GpxWriter().asString(MapRouteInterface.gpx, pretty: true);
+        print(gpxString);
+
         _polylines.add(
             Polyline(
                 width: 5,
@@ -281,7 +285,7 @@ class _MapViewState extends State<MapView> {
                 _addMarker(latlang);
               },
               onMapCreated: (GoogleMapController controller) {
-                MapRouteInterface.walkFinished = false;
+                MapRouteInterface.walkFinished = true;
                 mapController = controller;
                 changeMapStyle();
 

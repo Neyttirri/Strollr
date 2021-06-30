@@ -34,6 +34,7 @@ class Overview extends StatefulWidget {
 }
 
 class _OverviewState extends State<Overview> {
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -110,6 +111,8 @@ class _OverviewState extends State<Overview> {
                           finishedWalk();
                           globals.stopWatchTimer.onExecute
                               .add(StopWatchExecuted.stop);
+
+                          MapRouteInterface.walkFinished = true;
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => RouteSaver()));
                         }),
@@ -143,9 +146,11 @@ void finishedWalk(){
     _ActiveRouteState.writeGpxFile(MapRouteInterface.currentPosition);
 
   DbRouteInterface.finishWalk(gpx);
+  printDbValues();
 
   MapRouteInterface.gpx = gpx;
-  MapRouteInterface.walkFinished = true;
+
+  //MapRouteInterface.walkPaused = true;
 
   gpx.creator = "new route";
 }
