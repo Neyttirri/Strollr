@@ -7,6 +7,8 @@ import 'PolylineIf.dart';
 
 final _formKey = GlobalKey<FormState>();
 
+late String nValue;
+
 class RouteSaver extends StatefulWidget {
   _RouteSaverState createState() => _RouteSaverState();
 }
@@ -88,6 +90,8 @@ class RouteFormState extends State<RouteForm> {
               if (value == null || value.isEmpty) {
                 return 'Bitte gib einen Routennamen ein';
               }
+              nValue = value;
+
               return null;
             },
           ),
@@ -137,7 +141,7 @@ class RouteFormState extends State<RouteForm> {
                 else {
                   return Row(
                     children: <Widget>[
-                      Text("Distatnz:"),
+                      Text("Distanz:"),
                       Spacer(),
                       Text(snapshot.data.toString() + 'km'),
                     ],
@@ -183,8 +187,10 @@ Widget saveButton(BuildContext context) {
     style: ButtonStyle(
       backgroundColor: MaterialStateProperty.all(Colors.green),
     ),
-    onPressed: () {
+    onPressed: () async {
       if (_formKey.currentState!.validate()) {
+        await DbRouteInterface.setWalkName(name: nValue);
+
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Route wird gespeichert')));
         Navigator.of(context)
