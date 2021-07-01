@@ -236,13 +236,13 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                                           _createIconTap('Sättigung',
                                               Icons.brush, ID_SATURATION),
                                           _createIconTap(
-                                              'Flip', Icons.flip, ID_FLIP),
+                                              'spiegeln ', Icons.flip, ID_FLIP),
                                           _createIconTap(
-                                              'Rotate left',
+                                              'links drehen ',
                                               Icons.rotate_left,
                                               ID_ROTATE_LEFT),
                                           _createIconTap(
-                                              'Rotate right',
+                                              'rechts drehen',
                                               Icons.rotate_right,
                                               ID_ROTATE_RIGHT),
                                         ],
@@ -554,7 +554,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
 
   Widget _createIconTap(String label, IconData icon, int id) {
     return Container(
-        width: 80,
+        width: 90,
         child: Column(
           children: [
             IconButton(
