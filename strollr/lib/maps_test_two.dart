@@ -189,6 +189,10 @@ class _MapViewState extends State<MapView> {
     return res;
   }
 
+  _setMarkers(List<LatLng> positions){
+
+  }
+
   _addMarker(latlong) {
     setState(
       () {

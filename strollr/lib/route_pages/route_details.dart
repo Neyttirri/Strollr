@@ -10,12 +10,22 @@ final _formKey = GlobalKey<FormState>();
 TextEditingController _controller =
     TextEditingController(text: routeName); // Name aus Datenbank
 bool _isEnable = false;
+late int walkId;
+late String nName;
 
 class RouteDetails extends StatefulWidget {
   late int walkId;
 
   RouteDetails(int walkId) {
     this.walkId = walkId;
+
+    setTextEditor();
+  }
+
+  setTextEditor() async {
+    String name = await DbRouteInterface.getWalkName(walkId: walkId);
+
+    _controller = TextEditingController(text: name);
   }
 
   _RouteDetailsState createState() => _RouteDetailsState(walkId);
@@ -67,15 +77,14 @@ class RouteFormState extends State<RouteForm> {
   //related to WalkID
   late MapView map;
 
-  late int walkId;
   late String name;
   late String started;
   late double distance;
   late String duration;
   late Gpx route;
 
-  RouteFormState(int walkId){
-    this.walkId = walkId;
+  RouteFormState(int id){
+    walkId = id;
 
     setRoute();
   }
@@ -107,6 +116,8 @@ class RouteFormState extends State<RouteForm> {
   ///returns true when each attribute is set
   Future<bool> setName() async {
     name = await DbRouteInterface.getWalkName(walkId: walkId);
+
+    print(name);
 
     return true;
   }
@@ -145,7 +156,7 @@ class RouteFormState extends State<RouteForm> {
                 if (snapshot.hasData){
                   return nameWidget(context);
                 }
-                return nameWidget(context);
+                return Row();
               }),
           Row(
             children: [new Expanded(child: map)],
@@ -217,13 +228,12 @@ class RouteFormState extends State<RouteForm> {
               hintText: 'Gib deiner Route einen Namen',
               labelText: 'Routenname'),
           validator: (value) {
-            value = name;
-            print(value);
+            nName = value!;
 
             if (value.isEmpty) {
               return 'Bitte gib einen Routennamen ein';
             }
-            return value;
+            return null;
           },
         ),
       ),
@@ -248,13 +258,17 @@ class _SaveButtonState extends State<SaveButton> {
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(Colors.green),
       ),
-      onPressed: () {
+      onPressed: () async {
         if (_formKey.currentState!.validate()) {
+          await DbRouteInterface.setWalkName(walkId: walkId, name: nName);
+
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text('Route wird gespeichert')));
           setState(() {
             _isEnable = false;
           });
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => Routes()));
           // neuen Routennamen in Datenbank übernehmen
         }
       },
@@ -268,7 +282,9 @@ Widget deleteButton(BuildContext context) {
     style: ButtonStyle(
       backgroundColor: MaterialStateProperty.all(Colors.grey),
     ),
-    onPressed: () {
+    onPressed: () async {
+      await DbRouteInterface.deleteWalk(walkId: walkId);
+
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Route wird gelöscht')));
       Navigator.of(context)

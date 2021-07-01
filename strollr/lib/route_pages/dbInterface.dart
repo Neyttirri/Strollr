@@ -120,6 +120,12 @@ class DbRouteInterface{
     return resGpx;
   }
 
+  static deleteWalk({int walkId = -1}) async {
+    if (walkId == -1) walkId = SharedPrefs.getCurrentWalkId();
+
+    await DatabaseManager.instance.deleteWalk(walkId);
+  }
+
   //calculates distance between two coordinates
   static double calcDistance(double lat1, double lat2, double lon1, double lon2) {
     double dToR = 0.017453293; //Degree to radius
