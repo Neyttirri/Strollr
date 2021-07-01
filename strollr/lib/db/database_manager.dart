@@ -98,8 +98,6 @@ class DatabaseManager {
     _insertCategories(db);
     ApplicationLogger.getLogger('DatabaseManager', colors: true)
         .i('Table $tablePictureCategories filled.');
-
-    print(idToCategory.keys);
   }
 
   void _insertCategories(Database db) {
@@ -112,6 +110,23 @@ class DatabaseManager {
           [v.toShortString()]); // id is automatically created
       idToCategoryMap[id] = v;
     });
+  }
+
+  Future<int> getCategoryIdFromCategory(Categories category) async {
+    var cat = category.toShortString();
+    final db = await DatabaseManager.instance.database;
+    final List<Map> map = await db
+        .rawQuery('SELECT ID FROM categories WHERE description = ?', [cat]);
+
+    if (map.isNotEmpty) {
+      int id = -1;
+      map.forEach((element) {
+        id = element[PictureCategoriesField.id] as int;
+      });
+      return id;
+    } else {
+      throw Exception('Category ${category.toShortString()} not found!');
+    }
   }
 
   /// insert a picture into the database

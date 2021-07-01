@@ -12,9 +12,10 @@ import 'package:gallery_saver/gallery_saver.dart';
 import '../globals.dart';
 import '../logger.dart';
 import '../style.dart';
+import 'edit_steckbrief.dart';
 
 class Steckbrief_2 extends StatelessWidget {
-  final Picture picture;
+  late Picture picture;
   late final Categories categoryPicture;
   final int ID_SHARE = 0;
   final int ID_DELETE = 1;
@@ -126,8 +127,7 @@ class Steckbrief_2 extends StatelessWidget {
                         children: [
                           OutlinedButton(
                             onPressed: () {
-                              // TODO
-                              // Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails()));
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditSteckbriefScreen(picture: picture,)));
                             },
                             child: Text('Bearbeiten'),
                             style: OutlinedButton.styleFrom(
@@ -252,9 +252,7 @@ class Steckbrief_2 extends StatelessWidget {
   }
 
   _deleteImage(BuildContext context) async {
-    ApplicationLogger.getLogger('Steckbrief', colors: true)
-        .d('_deleteImage | Deleting image with id ${picture.id}...');
-    //await DatabaseManager.instance.deletePicture(picture.id as int);
+    await DatabaseManager.instance.deletePicture(picture.id as int);
     Fluttertoast.showToast(
       msg: 'Gelöscht',
       toastLength: Toast.LENGTH_SHORT,
@@ -264,7 +262,7 @@ class Steckbrief_2 extends StatelessWidget {
     );
   }
 
-  Future<void> _confirmDeleting(BuildContext context) async {
+  _confirmDeleting(BuildContext context) async {
     return showDialog<void>(
       context: context,
       // barrierDismissible: false, // user must tap button!

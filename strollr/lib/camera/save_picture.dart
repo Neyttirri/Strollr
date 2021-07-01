@@ -83,7 +83,7 @@ class SavePhotoScreen extends StatelessWidget {
         generic2: generic2,
         description: description,
         location: _getLocation(),
-        category: await _getCategoryId(),
+        category: await DatabaseManager.instance.getCategoryIdFromCategory(category),
         walk_id: walkId,
         filename: filename);
 
