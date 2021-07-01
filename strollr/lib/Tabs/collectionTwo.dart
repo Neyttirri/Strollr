@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:strollr/collection_pages/collection_category_card.dart';
 import 'package:strollr/collection_pages/collection_gallery_view.dart';
+import 'package:strollr/model/picture.dart';
 import 'package:strollr/route_pages/active_route.dart';
 import 'package:strollr/route_pages/new_route.dart';
 import 'package:strollr/route_pages/route_details.dart';
@@ -8,16 +10,18 @@ import 'package:strollr/style.dart';
 import 'package:strollr/route_pages/route_list_card.dart';
 import 'package:intl/intl.dart';
 
+import '../globals.dart';
+
 
 class CollectionTwo extends StatelessWidget {
 
   int indexTemp = 0;
 
   final List<CollectionListCard> categoryList = [
-    CollectionListCard("assets/images/treeIcon.png", "Bäume", 14),
-    CollectionListCard("assets/images/plantIcon.png", "Pflanzen", 23),
-    CollectionListCard("assets/images/animalFootstepIcon.png", "Tiere", 3),
-    CollectionListCard("assets/images/mushroomIcon.png", "Pilze", 7),
+    CollectionListCard(treeImagePath, "Bäume", 14),
+    CollectionListCard(plantImagePath, "Pflanzen", 23),
+    CollectionListCard(animalImagePath, "Tiere", 3),
+    CollectionListCard(mushroomImagePath, "Pilze", 7),
   ];
 
   @override
@@ -33,7 +37,7 @@ class CollectionTwo extends StatelessWidget {
             return new GestureDetector(
               onTap: () {
                 indexTemp = index;
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(indexTemp : indexTemp)));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(indexTemp : indexTemp, test: testPic,)));
               },
               child: buildRouteListCard(context, index),
             );
@@ -78,6 +82,7 @@ class CollectionTwo extends StatelessWidget {
       ),
     );
   }
+
 }
 
 /*

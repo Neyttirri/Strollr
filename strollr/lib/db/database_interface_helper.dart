@@ -33,6 +33,10 @@ class DbHelper {
     return yearDist;
   }
 
+  static  Future<List<YearlyDistance>> readAllWalkDistancesYearly() async {
+    return await DatabaseManager.instance.readAllWalkDistancesYearly();
+  }
+
   static int getMonthOrDayFromString(String date) {
     int monthOrDay = 0;
     if (date[0] == '0')

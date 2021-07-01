@@ -6,10 +6,14 @@ import 'package:strollr/model/walk.dart';
 import 'package:strollr/logger.dart';
 import 'package:strollr/db/database_interface_helper.dart';
 
+import '../globals.dart';
+
 class DatabaseManager {
   static final DatabaseManager instance = DatabaseManager._init();
 
   static Database? _database;
+
+  static Map<int, Categories> idToCategoryMap = new Map();
 
   DatabaseManager._init();
 
@@ -94,15 +98,19 @@ class DatabaseManager {
     _insertCategories(db);
     ApplicationLogger.getLogger('DatabaseManager', colors: true)
         .i('Table $tablePictureCategories filled.');
+
+    print(idToCategory.keys);
   }
 
   void _insertCategories(Database db) {
-    print('inserting categories');
+    ApplicationLogger.getLogger('DatabaseManager', colors: true)
+        .d('inserting categories in the database');
     Categories.values.forEach((v) async {
-      await db.rawInsert(
+      int id = await db.rawInsert(
           "INSERT INTO $tablePictureCategories (description) "
           "VALUES (?)",
           [v.toShortString()]); // id is automatically created
+      idToCategoryMap[id] = v;
     });
   }
 

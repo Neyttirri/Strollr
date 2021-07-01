@@ -24,8 +24,9 @@ enum Categories {
   mushroom
 }
 
-extension ParseToString on Categories {
+extension CategoriesMethods on Categories {
   String toShortString() {
     return this.toString().split('.').last;
   }
 }
+

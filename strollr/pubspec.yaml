@@ -59,6 +59,8 @@ dependencies:
   animated_check: ^1.0.2
   charts_flutter: ^0.10.0
   flutter_image_compress: ^1.0.0
+  share_plus: ^2.1.4
+  gallery_saver: ^2.1.2
 
 dev_dependencies:
   flutter_test:

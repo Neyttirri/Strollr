@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:strollr/collection_pages/steckbrief.dart';
+import 'package:strollr/collection_pages/steckbrief_secondVersion.dart';
 import 'package:strollr/db/database_manager.dart';
 import 'package:strollr/model/picture.dart';
 import 'package:strollr/model/picture_categories.dart';
@@ -9,10 +11,10 @@ import '../style.dart';
 class GalleryView extends StatelessWidget {
 
   int indexTemp;
-
+  Picture test;
   //List<Picture> allPicturesInCategory;
 
-  GalleryView({required this.indexTemp});
+  GalleryView({required this.indexTemp, required this.test});
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +59,18 @@ class GalleryView extends StatelessWidget {
         return new GestureDetector(
           onTap: () {
             Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => Steckbrief_2(picture:test )));
+
+            /*
+            Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => Steckbrief(
               index: 0,
               imagePath:"assets/images/treeIcon.png",
               title:"Baum",
               details: "Großer Baum",
             )));
+
+             */
           },
           child: Container(
             padding: EdgeInsets.all(4),

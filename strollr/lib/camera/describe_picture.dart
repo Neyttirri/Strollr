@@ -44,32 +44,7 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
 
   // for each category there are two questions
   // in the list the order is: question - helper text to first question - next question - helper text to second question
-  Map<Categories, List<String>> questionsForCategory = {
-    Categories.animal: [
-      'Was für ein Tier ist das?',
-      'zB Hase, Ameise,...',
-      'Womit ernährt sich das Tier?',
-      'zB ernähren sich Ameisen von Insekten, Pflanzensäften und dem Honigtau von Schildläusen oder Blattläusen'
-    ],
-    Categories.mushroom: [
-      'Was für ein Pilz ist das?',
-      'zB Pfifferling, Austernpilz',
-      'Ist es giftig oder kann man es essen?',
-      'Austernpilz ist essbar, kann aber mit Gelbstieligen Muschelseitling verwechelt werden, der auch Giftstoffe enthalten kann'
-    ],
-    Categories.plant: [
-      'Was für eine Pflanze ist das?',
-      'zB Goldtaler, Kapkörbchen, ... ',
-      'Wann und wie oft blüht diese Pflanze?',
-      'zB hat Kapkörbchen eine Blütezeit von Mai bis September'
-    ],
-    Categories.tree: [
-      'Was für einen Baum ist das?',
-      'zB Eiche, Tanne,...',
-      'Wo wachsen solche Bäume nicht?',
-      'zB kann die Eiche nicht im Schatten anderer Gehölze wachsen'
-    ],
-  };
+
 
   @override
   void initState() {
@@ -111,27 +86,27 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
           IconButton(
             icon: Icon(Icons.check),
             onPressed: () async {
-              ApplicationLogger.getLogger('_DescribePhotoScreenState',
-                      colors: true)
-                  .d('saving image and info with path: ${image.path} ');
-              await Future.delayed(Duration(seconds: 0)).then(
-                (value) => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SavePhotoScreen(
-                      generic1: genericInfo1,
-                      generic2: genericInfo2,
-                      description: description,
-                      category: getChosenCategory(),
-                      image: image,
-                      imagePath: image.path,
-                      location: widget.arguments[1],
-                      //imageLocation: widget.arguments[1]
+                ApplicationLogger.getLogger('_DescribePhotoScreenState',
+                    colors: true)
+                    .d('saving image and info with path: ${image.path} ');
+                await Future.delayed(Duration(seconds: 0)).then(
+                      (value) => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SavePhotoScreen(
+                        generic1: genericInfo1,
+                        generic2: genericInfo2,
+                        description: description,
+                        category: getChosenCategory(),
+                        image: image,
+                        imagePath: image.path,
+                        location: widget.arguments[1],
+                        //imageLocation: widget.arguments[1]
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              }
           ),
         ],
       ),
@@ -276,7 +251,7 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Erzähl was du darüber weißt! ',
+            descriptionField,
             style: TextStyle(
               color: Colors.green,
               fontSize: 16.0,

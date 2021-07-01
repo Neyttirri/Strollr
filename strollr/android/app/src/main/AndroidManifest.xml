@@ -3,6 +3,7 @@
    <application
         android:label="strollr"
         android:icon="@mipmap/ic_launcher">
+        android:requestLegacyExternalStorage="true"
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -41,4 +42,5 @@
            android:value="AIzaSyD_tu2xAcc4YsaGGSDG2OQNfNFLXRHAiFA"/>
     </application>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE " />
 </manifest>
