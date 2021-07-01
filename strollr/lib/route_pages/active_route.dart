@@ -14,8 +14,6 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'PolylineIf.dart';
 
-const routeName = '/extractArguments';
-
 final _isHours = true;
 
 final _trackingInterval = Duration(seconds: 5);
@@ -292,8 +290,6 @@ class _ActiveRouteState extends State<ActiveRoute> {
     gpx.wpts.add(Wpt(lat: current!.latitude, lon: current.longitude));
 
     MapRouteInterface.gpx = gpx;
-
-    //DbRouteInterface.updateWalkRoute(gpx);
   }
 }
 

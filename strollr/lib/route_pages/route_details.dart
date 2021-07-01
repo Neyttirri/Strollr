@@ -8,7 +8,7 @@ import 'dbInterface.dart';
 
 final _formKey = GlobalKey<FormState>();
 TextEditingController _controller =
-    TextEditingController(text: routeName); // Name aus Datenbank
+    TextEditingController(); // Name aus Datenbank
 bool _isEnable = false;
 late int walkId;
 late String nName;
