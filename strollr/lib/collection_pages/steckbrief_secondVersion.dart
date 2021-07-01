@@ -248,6 +248,7 @@ class Steckbrief_2 extends StatelessWidget {
         .d('_shareImage | Sharing image with id ${picture.id}...');
     await Share.shareFiles([file.path],
         sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+    file.delete();
   }
 
   _deleteImage(BuildContext context) async {
@@ -313,5 +314,6 @@ class Steckbrief_2 extends StatelessWidget {
     var result = await GallerySaver.saveImage(file.path, albumName: 'Strollr');
     ApplicationLogger.getLogger('Steckbrief', colors: true)
         .d('_saveImageInGallery | Image saved in gallery: $result');
+    file.delete();
   }
 }
