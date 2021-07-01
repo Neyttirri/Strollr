@@ -4,7 +4,6 @@ import 'package:strollr/route_pages/active_route.dart';
 import '../style.dart';
 import 'package:gpx/gpx.dart';
 import 'package:strollr/maps_test_two.dart';
-import '../style.dart';
 import 'dbInterface.dart';
 
 final _formKey = GlobalKey<FormState>();
@@ -13,31 +12,22 @@ TextEditingController _controller =
 bool _isEnable = false;
 
 class RouteDetails extends StatefulWidget {
-  int walkId = 0;
-  String routeName = "";
-  double distance = 0;
-  String duration = "";
-  Gpx route = Gpx();
-  MapView map = new MapView();
+  late int walkId;
 
   RouteDetails(int walkId) {
     this.walkId = walkId;
   }
 
-  Future<bool> setDetails(int walkId) async {
-    routeName = await DbRouteInterface.getWalkName(walkId: walkId);
-    distance = await DbRouteInterface.getWalkDistance(walkId: walkId);
-    duration = await DbRouteInterface.getWalkDuration(walkId: walkId);
-    route = await DbRouteInterface.getWalkRoute(walkId: walkId);
-    map.createPolyLines(route);
-
-    return true;
-  }
-
-  _RouteDetailsState createState() => _RouteDetailsState();
+  _RouteDetailsState createState() => _RouteDetailsState(walkId);
 }
 
 class _RouteDetailsState extends State<RouteDetails> {
+  late int walkId;
+
+  _RouteDetailsState(int walkId){
+    this.walkId = walkId;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,19 +46,91 @@ class _RouteDetailsState extends State<RouteDetails> {
                 padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: SingleChildScrollView(
                   child: Column(
-                    children: [RouteForm(), buttonRow(context)],
+                    children: [RouteForm(walkId), buttonRow(context)],
                   ),
                 ))));
   }
 }
 
 class RouteForm extends StatefulWidget {
+  late int walkId;
+
+  RouteForm(int walkId){
+    this.walkId = walkId;
+  }
+
   @override
-  RouteFormState createState() => RouteFormState();
+  RouteFormState createState() => RouteFormState(walkId);
 }
 
 class RouteFormState extends State<RouteForm> {
   //related to WalkID
+  late MapView map;
+
+  late int walkId;
+  late String name;
+  late String started;
+  late double distance;
+  late String duration;
+  late Gpx route;
+
+  RouteFormState(int walkId){
+    this.walkId = walkId;
+
+    setRoute();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    map = new MapView();
+
+    ///creates polylines after widget is built
+    WidgetsBinding.instance!
+        .addPostFrameCallback((_) => drawDemPolylines());
+  }
+
+  drawDemPolylines() async {
+    await setRoute();
+
+    var gpxString = GpxWriter().asString(route, pretty: true);
+    print(gpxString);
+
+    map.createPolyLines(route);
+  }
+
+  setRoute() async {
+    route = await DbRouteInterface.getWalkRoute(walkId: walkId);
+  }
+
+  ///returns true when each attribute is set
+  Future<bool> setName() async {
+    name = await DbRouteInterface.getWalkName(walkId: walkId);
+
+    return true;
+  }
+
+
+  Future<bool> setDistance() async {
+    distance = await DbRouteInterface.getWalkDistance(walkId: walkId);
+
+    distance = double.parse((distance).toStringAsFixed(2));
+
+    return true;
+  }
+
+  Future<bool> setDuration() async {
+    duration = await DbRouteInterface.getWalkDuration(walkId: walkId);
+
+    return true;
+  }
+
+  Future<bool> setStarted() async {
+    started = await DbRouteInterface.getWalkName(walkId: walkId);
+
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,67 +138,103 @@ class RouteFormState extends State<RouteForm> {
       key: _formKey, // walkID
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(children: [
-            Expanded(
-              child: TextFormField(
-                controller: _controller,
-                enabled: _isEnable,
-                decoration: const InputDecoration(
-                    hintText: 'Gib deiner Route einen Namen',
-                    labelText: 'Routenname'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Bitte gib einen Routennamen ein';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            IconButton(
-                onPressed: () {
-                  setState(() {
-                    _isEnable = true;
-                  });
-                },
-                icon: Icon(Icons.edit))
-          ]),
-          SizedBox(
-            height: 250,
+        children: [
+          FutureBuilder(
+              future: setName(),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.hasData){
+                  return nameWidget(context);
+                }
+                return nameWidget(context);
+              }),
+          Row(
+            children: [new Expanded(child: map)],
           ), //insert map
           Padding(
             padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
-            child: Row(
-              children: <Widget>[
-                Text("Berlin"),
-                Spacer(),
-                Text("2020"),
-              ],
+            child: FutureBuilder(
+              future: setDistance(),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.hasData){
+                  return Row(
+                    children: <Widget>[
+                      Text("Distanz:"),
+                      Spacer(),
+                      Text(distance.toString() + 'km'),
+                    ],
+                  );
+                }
+                else {
+                  return Row(
+                    children: <Widget>[
+                      Text("Distanz:"),
+                      Spacer(),
+                      Text(''),
+                    ],
+                  );
+                }
+              },
             ),
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
-            child: Row(
-              children: <Widget>[
-                Text("Strecke in km:"),
-                Spacer(),
-                Text(distance.toString() + ' km'),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
-            child: Row(
-              children: <Widget>[
-                Text("Zeit in Stunden:"),
-                Spacer(),
-                Text('2:00 h'), //Text('$duration h')
-              ],
+            child: FutureBuilder(
+              future: setDuration(),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.hasData){
+                  return Row(
+                    children: <Widget>[
+                      Text("Dauer:"),
+                      Spacer(),
+                      Text(duration.toString() + 'h'),
+                    ],
+                  );
+                }
+                else {
+                  return Row(
+                    children: <Widget>[
+                      Text("Dauer:"),
+                      Spacer(),
+                      Text(''),
+                    ],
+                  );
+                }
+              },
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget nameWidget(BuildContext context){
+    return Row(children: [
+      Expanded(
+        child: TextFormField(
+          controller: _controller,
+          enabled: _isEnable,
+          decoration: const InputDecoration(
+              hintText: 'Gib deiner Route einen Namen',
+              labelText: 'Routenname'),
+          validator: (value) {
+            value = name;
+            print(value);
+
+            if (value.isEmpty) {
+              return 'Bitte gib einen Routennamen ein';
+            }
+            return value;
+          },
+        ),
+      ),
+      IconButton(
+          onPressed: () {
+            setState(() {
+              _isEnable = true;
+            });
+          },
+          icon: Icon(Icons.edit))
+    ]);
   }
 }
 

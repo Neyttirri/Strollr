@@ -40,7 +40,7 @@ class Routes extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) =>
-                              RouteDetails(37)));
+                              RouteDetails(routeList[index].routeId)));
                     },
                     child: buildRouteListCard(context, index),
                   );

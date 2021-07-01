@@ -50,11 +50,15 @@ class RouteFormState extends State<RouteForm> {
   @override
   void initState() {
     super.initState();
+
     map = new MapView();
+
+    ///creates polylines after widget is built
     WidgetsBinding.instance!
         .addPostFrameCallback((_) => map.createPolyLines(MapRouteInterface.gpx));
   }
 
+  ///returns true when each attribute is set
   Future<bool> setDistance() async {
     distance = await DbRouteInterface.getWalkDistance();
 

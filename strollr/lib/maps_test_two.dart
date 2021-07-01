@@ -104,15 +104,15 @@ class _MapViewState extends State<MapView> {
       polylineCoordinates.add(LatLng(element.lat as double,  element.lon  as double));
     });
 
-    LatLng southWestBound = _getBound(true);
-    LatLng northEastBound = _getBound(false);
+    LatLng southWestBound = _getBound(true, gpx);
+    LatLng northEastBound = _getBound(false, gpx);
 
     print(mounted);
 
     if (mounted) {
       setState(() {
 
-        var gpxString = GpxWriter().asString(MapRouteInterface.gpx, pretty: true);
+        var gpxString = GpxWriter().asString(gpx, pretty: true);
         print(gpxString);
 
         _polylines.add(
@@ -144,15 +144,15 @@ class _MapViewState extends State<MapView> {
   * compares coordinates of recorded Locations
   * to find southwest or northwest most points
    */
-  _getBound(bool southWest){
-    LatLng res = LatLng(MapRouteInterface.gpx.wpts[0].lat as double, MapRouteInterface.gpx.wpts[0].lon as double);
+  _getBound(bool southWest, Gpx gpx){
+    LatLng res = LatLng(gpx.wpts[0].lat as double, gpx.wpts[0].lon as double);
 
     double resLat = res.latitude;
     double resLon = res.longitude;
     var elementLat;
     var elementLon;
 
-    MapRouteInterface.gpx.wpts.forEach((element) {
+    gpx.wpts.forEach((element) {
       elementLat = element.lat;
       elementLon = element.lon;
       // TODO what happens when null?
@@ -169,7 +169,7 @@ class _MapViewState extends State<MapView> {
       }
     });
 
-    MapRouteInterface.gpx.wpts.forEach((element) {
+    gpx.wpts.forEach((element) {
       elementLat = element.lat;
       elementLon = element.lon;
       if(elementLat == null || elementLon == null )
