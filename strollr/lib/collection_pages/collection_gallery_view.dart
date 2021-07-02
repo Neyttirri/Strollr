@@ -20,6 +20,23 @@ class GalleryView extends StatelessWidget {
 
   late Picture selectedPicture;
 
+
+
+
+  final List<Picture> pictureList = [];
+
+  Future<bool> buildPictureList() async {
+    List<Picture> pictures = await DatabaseManager.instance.readALlPicturesFromCategory(categoryID);
+
+    pictures.forEach((element) {
+      pictureList.add(element);
+    });
+
+    return true;
+  }
+
+
+
   GalleryView({
     required this.category,
     required this.categoryID,
