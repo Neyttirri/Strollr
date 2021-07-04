@@ -1,3 +1,6 @@
+import 'dart:ffi';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:strollr/collection_pages/steckbrief.dart';
 import 'package:strollr/db/database_manager.dart';
@@ -29,12 +32,11 @@ class GalleryView extends StatelessWidget {
     List<Picture> pictures = await DatabaseManager.instance.readALlPicturesFromCategory(categoryID);
 
     pictures.forEach((element) {
-      pictureList.add(element);
+      pictureList.add(Picture(pictureData: element.pictureData, filename: element.filename, createdAtTime: element.createdAtTime, generic1: element.generic1, generic2: element.generic2, description: element.description, location: element.location, category: element.category, walk_id:  element.walk_id));
     });
 
     return true;
   }
-
 
 
   GalleryView({
@@ -54,13 +56,67 @@ class GalleryView extends StatelessWidget {
         title: Text("Gallery View", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
-      body: mainWidget(),
+      body: FutureBuilder(
+        future: buildPictureList(), 
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            if (snapshot.hasData) {
+              return GridView.builder(
+                  gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+                  itemCount: pictureList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return new GestureDetector(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (context) => Steckbrief(
+                          walkID: pictureList[index].walk_id,
+                          selectedPicture: pictureList[index],
+                        )));
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        child: pictureList[index].pictureData,
+                      ),
+                    );
+                  }
+              );
+            }
+
+            else {
+              return GridView.builder(
+                  gridDelegate:
+                  new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+                  itemCount: 4,
+                  itemBuilder: (BuildContext context, int index) {
+                    return new GestureDetector(
+                      onTap: () {
+                        //selectedPicture = allPicturesInCategory;
+                        pictureID = selectedPicture.id!;
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (context) => Steckbrief(
+                          walkID: walkID,
+                          selectedPicture: selectedPicture,
+                        )));
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        child: Image.asset("assets/images/treeIcon.png"),
+                      ),
+                    );
+                  }
+              );
+            }
+          },
+      ),
     );
   }
 
+
+
+
+
   Widget mainWidget() {
     //print("Index = " + indexTemp.toString());
-    return gridBuild();
+    return gridBuildWithoutData();
   }
 
   /*
@@ -75,13 +131,13 @@ class GalleryView extends StatelessWidget {
   }
    */
 
-  Widget gridBuild() {
+  Widget gridBuildWithoutData() {
     print("Index = " + category.toString());
 
     return GridView.builder(
       gridDelegate:
           new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
-      itemCount: allPicturesInCategory.toString().length,
+      itemCount: 4,
       itemBuilder: (BuildContext context, int index) {
         return new GestureDetector(
           onTap: () {
@@ -99,6 +155,30 @@ class GalleryView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+
+  Widget gridBuildWithData() {
+    return GridView.builder(
+        gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+        itemCount: pictureList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return new GestureDetector(
+            onTap: () {
+              pictureID = selectedPicture.id!;
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => Steckbrief(
+                walkID: walkID,
+                selectedPicture: selectedPicture,
+              )));
+            },
+            child: Container(
+              padding: EdgeInsets.all(4),
+              child: pictureList[index],
+            ),
+          );
+        },
     );
   }
 
