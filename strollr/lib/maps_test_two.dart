@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
 import 'package:strollr/route_pages/PolylineIf.dart';
+import 'package:strollr/route_pages/dbInterface.dart';
 
 
 void main() {
@@ -30,6 +31,7 @@ class MapView extends StatefulWidget {
 
   void createPolyLines(Gpx gpx){
     Timer(Duration (seconds: 2), () => map._createPolylines(gpx));
+    Timer(Duration (seconds: 2), () => map._setMarkers());
   }
 
   @override
@@ -189,8 +191,12 @@ class _MapViewState extends State<MapView> {
     return res;
   }
 
-  _setMarkers(List<LatLng> positions){
+  _setMarkers() async {
+    List<Position> markers = await DbRouteInterface.getMarkerPositions();
 
+    for (Position marker in markers){
+      _addMarker(LatLng(marker.latitude, marker.longitude));
+    }
   }
 
   _addMarker(latlong) {

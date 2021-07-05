@@ -1,8 +1,10 @@
 import 'dart:math';
 
+import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
 import 'package:intl/intl.dart';
 import 'package:strollr/db/database_manager.dart';
+import 'package:strollr/model/picture.dart';
 import 'package:strollr/model/walk.dart';
 import 'package:strollr/utils/shared_prefs.dart';
 
@@ -124,6 +126,20 @@ class DbRouteInterface{
     if (walkId == -1) walkId = SharedPrefs.getCurrentWalkId();
 
     await DatabaseManager.instance.deleteWalk(walkId);
+  }
+
+  static getMarkerPositions({int walkId = -1}) async {
+    if (walkId == -1) walkId = await SharedPrefs.getCurrentWalkId();
+
+    List<Picture> picturesOfWalk = await DatabaseManager.instance.readALlPicturesFromWalk(walkId);
+
+    List<Position> markerPositions = new List.empty(growable: true);
+    
+    for (Picture pic in picturesOfWalk){
+      //markerPosition.add(pic.location);
+    }
+
+    return markerPositions;
   }
 
   //calculates distance between two coordinates
