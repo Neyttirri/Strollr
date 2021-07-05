@@ -1,48 +1,37 @@
-import 'package:flutter/foundation.dart';
-import 'package:photofilters/filters/filters.dart';
-import 'package:image/image.dart' as img;
+const NO_FILTER_MATRIX = [1.0, 0.0, 0.0, 0.0, 0.0,
+  0.0, 1.0, 0.0, 0.0, 0.0,
+  0.0, 0.0, 1.0, 0.0, 0.0,
+  0.0, 0.0, 0.0, 1.0, 0.0];
 
-class FilterUtils {
-  static final Map<String, List<int>> _cacheFilter = {};
+const SEPIA_MATRIX = [0.39, 0.769, 0.189, 0.0, 0.0,
+  0.349, 0.686, 0.168, 0.0, 0.0,
+  0.272, 0.534, 0.131, 0.0, 0.0,
+  0.0, 0.0, 0.0, 1.0, 0.0];
 
-  static void clearCache() => _cacheFilter.clear();
+const GREYSCALE_MATRIX = [0.2126, 0.7152, 0.0722, 0.0, 0.0,
+  0.2126, 0.7152, 0.0722, 0.0, 0.0,
+  0.2126, 0.7152, 0.0722, 0.0, 0.0,
+  0.0, 0.0, 0.0, 1.0, 0.0];
 
-  static void saveCachedFilter(Filter filter, List<int> imageBytes) {
-    if (filter == null) return;
 
-    _cacheFilter[filter.name] = imageBytes;
-  }
+const VINTAGE_MATRIX = [0.9, 0.5, 0.1, 0.0, 0.0,
+  0.3, 0.8, 0.1, 0.0, 0.0,
+  0.2, 0.3, 0.5, 0.0, 0.0,
+  0.0, 0.0, 0.0, 1.0, 0.0];
 
-  static List<int>? getCachedFilter(Filter filter) {
-    if (filter == null) return null;
+const SWEET_MATRIX = [1.0, 0.0, 0.2, 0.0, 0.0,
+  0.0, 1.0, 0.0, 0.0, 0.0,
+  0.0, 0.0, 1.0, 0.0, 0.0,
+  0.0, 0.0, 0.0, 1.0, 0.0];
 
-    return _cacheFilter[filter.name];
-  }
+const PEACHY_MATRIX = [1.0, 0.0, 0.0, 0.0, 0.0,
+  0.0, 0.5, 0.0, 0.0, 0.0,
+  0.0, 0.0, 0.0, 0.5, 0.0,
+  0.0, 0.0, 0.0, 1.0, 0.0];
 
-  static Future<List<int>> applyFilter(img.Image image, Filter filter) {
-    if (filter == null) throw Exception('Filter not set');
+const INVERT_MATRIX = [-1.0, 0.0, 0.0, 0.0, 1.0,
+  0.0, -1.0, 0.0, 0.0, 1.0,
+  0.0, 0.0, -1.0, 0.0, 1.0,
+  0.0, 0.0, 0.0, 1.0, 0.0];
 
-    return compute(
-      _applyFilterInternal,
-      <String, dynamic>{
-        'filter': filter,
-        'image': image,
-        'width': image.width,
-        'height': image.height,
-      },
-    );
-  }
 
-  static List<int> _applyFilterInternal(Map<String, dynamic> params) {
-    Filter filter = params["filter"];
-    img.Image image = params["image"];
-    int width = params["width"];
-    int height = params["height"];
-
-    final bytes = image.getBytes();
-    filter.apply(bytes, width, height);
-
-    final newImage = img.Image.fromBytes(width, height, bytes);
-    return img.encodeJpg(newImage);
-  }
-}

@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:photofilters/filters/filters.dart';
 import 'package:photofilters/filters/preset_filters.dart';
 import 'package:strollr/main_screen.dart';
+import 'package:strollr/utils/filter_utils.dart';
 import 'package:strollr/widgets/filtered_image_list_widget.dart';
 import 'describe_picture.dart';
 import 'package:strollr/utils/loading_screen.dart';
@@ -89,7 +90,17 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
 
   late File image;
   ScrollController _scrollController = new ScrollController();
-  Filter filter = presetFiltersList.first;
+  final List<List<double>> filters = [
+    NO_FILTER_MATRIX,
+    SEPIA_MATRIX,
+    GREYSCALE_MATRIX,
+    VINTAGE_MATRIX,
+    SWEET_MATRIX,
+    PEACHY_MATRIX,
+    INVERT_MATRIX
+  ];
+  List<double> _currentFilter = NO_FILTER_MATRIX;
+  bool usingFilters = false;
 
   //    G  [ sg sg+s sg  0   0]
   //    B  [ sb  sb sb+s 0   0]
@@ -161,7 +172,8 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                 saturation = 1;
                 brightness = 0;
                 contrast = 1;
-                filter = presetFiltersList.first;
+                _currentFilter = NO_FILTER_MATRIX;
+                usingFilters = false;
               });
             },
           ),
@@ -319,39 +331,38 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
   }
 
   Widget buildImage() {
-    var imageBytes = image.readAsBytesSync().toList();
-    // to generate dynamic and vibrant shades,
-    return Image(image: MemoryImage(Uint8List.fromList(imageBytes)));
-    /*
-    ColorFiltered(
-      colorFilter: ColorFilter.matrix(calculateContrastMatrix(contrast)),
-      child: ColorFiltered(
-        colorFilter: ColorFilter.matrix(calculateSaturationMatrix(saturation)),
-        child: ExtendedImage(
-          color: brightness > 0
-              ? Colors.white.withOpacity(brightness)
-              : Colors.black.withOpacity(-brightness),
-          colorBlendMode: brightness > 0 ? BlendMode.lighten : BlendMode.darken,
-          image:  ExtendedFileImageProvider(image, cacheRawData: true),
-          height: MediaQuery.of(context).size.height * 0.45,
-          width: MediaQuery.of(context).size.width,
-          extendedImageEditorKey: editorKey,
-          mode: ExtendedImageMode.editor,
-          enableMemoryCache: true,
-          fit: BoxFit.contain,
-          initEditorConfigHandler: (state) {
-            return EditorConfig(
-              cornerColor: Colors.green,
-              maxScale: 8.0,
-              cropRectPadding: const EdgeInsets.all(20.0),
-              hitTestSize: 20.0,
-            );
-          },
-        ),
-      ),
-    );
-
-     */
+    return ColorFiltered(
+            colorFilter: ColorFilter.matrix(calculateContrastMatrix(contrast)),
+            child: ColorFiltered(
+              colorFilter:
+                  ColorFilter.matrix(calculateSaturationMatrix(saturation)),
+              child: ColorFiltered(
+                colorFilter: ColorFilter.matrix(_currentFilter),
+                child: ExtendedImage(
+                  color: brightness > 0
+                      ? Colors.white.withOpacity(brightness)
+                      : Colors.black.withOpacity(-brightness),
+                  colorBlendMode:
+                      brightness > 0 ? BlendMode.lighten : BlendMode.darken,
+                  image: ExtendedFileImageProvider(image, cacheRawData: true),
+                  height: MediaQuery.of(context).size.height * 0.45,
+                  width: MediaQuery.of(context).size.width,
+                  extendedImageEditorKey: editorKey,
+                  mode: ExtendedImageMode.editor,
+                  enableMemoryCache: true,
+                  fit: BoxFit.contain,
+                  initEditorConfigHandler: (state) {
+                    return EditorConfig(
+                      cornerColor: Colors.green,
+                      maxScale: 8.0,
+                      cropRectPadding: const EdgeInsets.all(20.0),
+                      hitTestSize: 20.0,
+                    );
+                  },
+                ),
+              ),
+            ),
+          );
   }
 
   Future<void> crop([bool test = false]) async {
@@ -553,12 +564,12 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
         return _buildSatSlider();
       case ID_FILTERS:
         return FilteredImageListWidget(
-          filters: presetFiltersList.sublist(0, 12),
-          image: img.Image.fromBytes(20, 20,
-              image.readAsBytesSync()),
+          filters: filters,
+          image: image,
           onChangedFilter: (filter) {
             setState(() {
-              this.filter = filter;
+              _currentFilter = filter;
+              usingFilters = true;
             });
           },
         );
@@ -575,8 +586,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
         duration: Duration(milliseconds: 400),
         width: tabSelectionMap[id] as bool ? 110 : 100,
         alignment: Alignment.center,
-        decoration: BoxDecoration(
-            shape: BoxShape.circle),
+        decoration: BoxDecoration(shape: BoxShape.circle),
         child: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -592,8 +602,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                 style: TextStyle(
                     color: tabSelectionMap[id] as bool
                         ? Colors.green[900]
-                        : Colors.green[
-                            300]),
+                        : Colors.green[300]),
               ),
             ],
           ),
@@ -640,7 +649,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
       });
     });
   }
-  /*
+/*
   Widget _buildFunctions() {
     return BottomNavigationBar(
       backgroundColor: Colors.white,
