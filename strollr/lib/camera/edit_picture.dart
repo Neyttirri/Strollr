@@ -424,7 +424,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     //File compressedFile = File.fromRawPath(compressedImage);
     //print('compressed file path: ${compressedFile.path}');
     Future.delayed(Duration(seconds: 0)).then(
-      (value) => Navigator.of(context).push(
+      (value) => Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => DescribePhotoScreen(arguments: [
             image,
