@@ -8,10 +8,15 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:photofilters/filters/filters.dart';
+import 'package:photofilters/filters/preset_filters.dart';
 import 'package:strollr/main_screen.dart';
+import 'package:strollr/widgets/filtered_image_list_widget.dart';
 import 'describe_picture.dart';
 import 'package:strollr/utils/loading_screen.dart';
 import 'package:image_editor/image_editor.dart' hide ImageSource;
+import 'package:image/image.dart' as img;
+import 'package:clickable_list_wheel_view/clickable_list_wheel_widget.dart';
 
 import '../logger.dart';
 
@@ -83,6 +88,8 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
   };
 
   late File image;
+  ScrollController _scrollController = new ScrollController();
+  Filter filter = presetFiltersList.first;
 
   //    G  [ sg sg+s sg  0   0]
   //    B  [ sb  sb sb+s 0   0]
@@ -154,6 +161,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                 saturation = 1;
                 brightness = 0;
                 contrast = 1;
+                filter = presetFiltersList.first;
               });
             },
           ),
@@ -176,10 +184,10 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                 children: <Widget>[
                   // the picture + crop option
                   SizedBox(
-                    height: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.45,
                     width: MediaQuery.of(context).size.width,
                     child: AspectRatio(
-                      aspectRatio: 1.0, // 16.0 / 9.0,
+                      aspectRatio: 16.0 / 9.0,
                       child: buildImage(),
                     ),
                   ),
@@ -197,7 +205,6 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                             ),
                           ],
                         ),
-                        //color: Colors.white,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -208,6 +215,8 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                                   Container(
                                     alignment: Alignment.center,
                                     width: MediaQuery.of(context).size.width,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.17,
                                     child: getCurrentSlider(selectedTabIndex),
                                   )
                                 ]),
@@ -221,33 +230,77 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Expanded(
-                                      child: ListView(
-                                        shrinkWrap: true,
-                                        scrollDirection: Axis.horizontal,
-                                        children: [
-                                          _createIconTap(
-                                              'Helligkeit',
-                                              Icons.brightness_6,
-                                              ID_BRIGHTNESS),
-                                          _createIconTap(
-                                              'Kontrast',
-                                              Icons.invert_colors_on,
-                                              ID_CONTRAST),
-                                          _createIconTap('Sättigung',
-                                              Icons.brush, ID_SATURATION),
-                                          _createIconTap(
-                                              'spiegeln ', Icons.flip, ID_FLIP),
-                                          _createIconTap(
-                                              'links drehen ',
-                                              Icons.rotate_left,
-                                              ID_ROTATE_LEFT),
-                                          _createIconTap(
-                                              'rechts drehen',
-                                              Icons.rotate_right,
-                                              ID_ROTATE_RIGHT),
-                                        ],
+                                      // so the list is horizontal
+                                      child: RotatedBox(
+                                        quarterTurns: -1,
+                                        child: ClickableListWheelScrollView(
+                                          scrollController: _scrollController,
+                                          itemCount: tabSelectionMap.length,
+                                          itemHeight: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.15,
+                                          onItemTapCallback: (id) {
+                                            print(
+                                                "onItemTapCallback index: $id");
+                                            if (id < 0 ||
+                                                id > tabSelectionMap.length)
+                                              return;
+                                            switch (id) {
+                                              case ID_FLIP:
+                                                print('fliiiiip');
+                                                flip();
+                                                break;
+                                              case ID_ROTATE_RIGHT:
+                                                print('rotateeee right');
+                                                rotate(true);
+                                                break;
+                                              case ID_ROTATE_LEFT:
+                                                print('rotateeee leeeft');
+                                                rotate(false);
+                                                break;
+                                              default:
+                                                _updateTabSelection(id);
+                                            }
+                                          },
+                                          child: ListWheelScrollView(
+                                              controller: _scrollController,
+                                              diameterRatio: 1.6,
+                                              children: [
+                                                _createIconTap(
+                                                    'Helligkeit',
+                                                    Icons.brightness_6,
+                                                    ID_BRIGHTNESS),
+                                                _createIconTap(
+                                                    'Kontrast',
+                                                    Icons.invert_colors_on,
+                                                    ID_CONTRAST),
+                                                _createIconTap('Sättigung',
+                                                    Icons.brush, ID_SATURATION),
+                                                _createIconTap(
+                                                    'Filters',
+                                                    Icons
+                                                        .filter_vintage_outlined,
+                                                    ID_FILTERS),
+                                                _createIconTap('spiegeln ',
+                                                    Icons.flip, ID_FLIP),
+                                                _createIconTap(
+                                                    'links drehen ',
+                                                    Icons.rotate_left,
+                                                    ID_ROTATE_LEFT),
+                                                _createIconTap(
+                                                    'rechts drehen',
+                                                    Icons.rotate_right,
+                                                    ID_ROTATE_RIGHT),
+                                              ],
+                                              itemExtent: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.15 // 110.0,
+                                              ),
+                                        ),
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                               ),
@@ -266,8 +319,11 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
   }
 
   Widget buildImage() {
+    var imageBytes = image.readAsBytesSync().toList();
     // to generate dynamic and vibrant shades,
-    return ColorFiltered(
+    return Image(image: MemoryImage(Uint8List.fromList(imageBytes)));
+    /*
+    ColorFiltered(
       colorFilter: ColorFilter.matrix(calculateContrastMatrix(contrast)),
       child: ColorFiltered(
         colorFilter: ColorFilter.matrix(calculateSaturationMatrix(saturation)),
@@ -276,8 +332,8 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
               ? Colors.white.withOpacity(brightness)
               : Colors.black.withOpacity(-brightness),
           colorBlendMode: brightness > 0 ? BlendMode.lighten : BlendMode.darken,
-          image: ExtendedFileImageProvider(image, cacheRawData: true),
-          height: MediaQuery.of(context).size.width,
+          image:  ExtendedFileImageProvider(image, cacheRawData: true),
+          height: MediaQuery.of(context).size.height * 0.45,
           width: MediaQuery.of(context).size.width,
           extendedImageEditorKey: editorKey,
           mode: ExtendedImageMode.editor,
@@ -294,57 +350,8 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
         ),
       ),
     );
-  }
 
-  Widget _buildFunctions() {
-    return BottomNavigationBar(
-      backgroundColor: Colors.white,
-      elevation: 20,
-      selectedIconTheme: IconThemeData(color: Colors.green),
-      unselectedIconTheme: IconThemeData(color: Colors.green),
-      selectedFontSize: 12.0,
-      unselectedFontSize: 12.0,
-      items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(
-            Icons.flip,
-            color: Colors.green,
-          ),
-          label: 'Flip',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(
-            Icons.rotate_left,
-            color: Colors.green,
-          ),
-          label: 'Rotate left',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(
-            Icons.rotate_right,
-            color: Colors.green,
-          ),
-          label: 'Rotate right',
-        ),
-      ],
-      onTap: (int index) {
-        switch (index) {
-          case 0:
-            flip();
-            break;
-          case 1:
-            rotate(false);
-            break;
-          case 2:
-            rotate(true);
-            break;
-        }
-      },
-      currentIndex: 0,
-      selectedItemColor: Colors.grey[600],
-      //Theme.of(context).primaryColor,
-      unselectedItemColor: Colors.grey[600],
-    );
+     */
   }
 
   Future<void> crop([bool test = false]) async {
@@ -545,7 +552,16 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
       case ID_SATURATION:
         return _buildSatSlider();
       case ID_FILTERS:
-        return Text('create filters!! ');
+        return FilteredImageListWidget(
+          filters: presetFiltersList.sublist(0, 12),
+          image: img.Image.fromBytes(20, 20,
+              image.readAsBytesSync()),
+          onChangedFilter: (filter) {
+            setState(() {
+              this.filter = filter;
+            });
+          },
+        );
 
       default:
         return Container();
@@ -553,41 +569,37 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
   }
 
   Widget _createIconTap(String label, IconData icon, int id) {
-    return Container(
-        width: 90,
-        child: Column(
-          children: [
-            IconButton(
-              onPressed: () {
-                switch (id) {
-                  case ID_FLIP:
-                    flip();
-                    break;
-                  case ID_ROTATE_RIGHT:
-                    rotate(true);
-                    break;
-                  case ID_ROTATE_LEFT:
-                    rotate(false);
-                    break;
-                  default:
-                    _updateTabSelection(id);
-                }
-              },
-              icon: Icon(icon),
-              color: tabSelectionMap[id] as bool
-                  ? Colors.green[900]
-                  : Colors.green[300],
-            ),
-            Text(
-              label,
-              style: TextStyle(
-                  color: tabSelectionMap[id] as bool
-                      ? Colors.green[900]
-                      : Colors.green[
-                          300]), // TextStyle(color: Theme.of(context).accentColor),
-            ),
-          ],
-        ));
+    return RotatedBox(
+      quarterTurns: 1,
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 400),
+        width: tabSelectionMap[id] as bool ? 110 : 100,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle),
+        child: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Icon(
+                icon,
+                color: tabSelectionMap[id] as bool
+                    ? Colors.green[900]
+                    : Colors.green[300],
+              ),
+              Text(
+                label,
+                style: TextStyle(
+                    color: tabSelectionMap[id] as bool
+                        ? Colors.green[900]
+                        : Colors.green[
+                            300]),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _createCheckBox() {
@@ -618,7 +630,6 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
   }
 
   _updateTabSelection(int id) {
-    print(tabSelectionMap);
     setState(() {
       selectedTabIndex = id;
       tabSelectionMap.forEach((key, value) {
@@ -629,4 +640,57 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
       });
     });
   }
+  /*
+  Widget _buildFunctions() {
+    return BottomNavigationBar(
+      backgroundColor: Colors.white,
+      elevation: 20,
+      selectedIconTheme: IconThemeData(color: Colors.green),
+      unselectedIconTheme: IconThemeData(color: Colors.green),
+      selectedFontSize: 12.0,
+      unselectedFontSize: 12.0,
+      items: <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(
+            Icons.flip,
+            color: Colors.green,
+          ),
+          label: 'Flip',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(
+            Icons.rotate_left,
+            color: Colors.green,
+          ),
+          label: 'Rotate left',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(
+            Icons.rotate_right,
+            color: Colors.green,
+          ),
+          label: 'Rotate right',
+        ),
+      ],
+      onTap: (int index) {
+        switch (index) {
+          case 0:
+            flip();
+            break;
+          case 1:
+            rotate(false);
+            break;
+          case 2:
+            rotate(true);
+            break;
+        }
+      },
+      currentIndex: 0,
+      selectedItemColor: Colors.grey[600],
+      //Theme.of(context).primaryColor,
+      unselectedItemColor: Colors.grey[600],
+    );
+  }
+
+   */
 }
