@@ -97,7 +97,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     VINTAGE_MATRIX,
     SWEET_MATRIX,
     PEACHY_MATRIX,
-    INVERT_MATRIX
+    EXTRA_MATRIX
   ];
   List<double> _currentFilter = NO_FILTER_MATRIX;
   bool usingFilters = false;
@@ -404,6 +404,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     option.addOption(ColorOption.saturation(saturation));
     option.addOption(ColorOption.brightness(brightness + 1));
     option.addOption(ColorOption.contrast(contrast));
+    option.addOption(ColorOption(matrix: _currentFilter));
 
     //option.outputFormat = const OutputFormat.jpeg(100);
     print(const JsonEncoder.withIndent('  ').convert(option.toJson()));
@@ -415,8 +416,6 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
       image: imageList,
       imageEditorOption: option,
     );
-
-    // print('result.length = ${result.length}');
 
     final Duration diff = DateTime.now().difference(start);
     image.writeAsBytesSync(result!);
