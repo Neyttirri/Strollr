@@ -7,7 +7,7 @@ import 'package:strollr/style.dart';
 import 'package:strollr/route_pages/route_list_card.dart';
 import 'package:intl/intl.dart';
 
-
+/*
 class Routes extends StatelessWidget {
 
   final List<RouteListCard> routeList = [];
@@ -124,3 +124,4 @@ class Routes extends StatelessWidget {
     );
   }
 }
+*/

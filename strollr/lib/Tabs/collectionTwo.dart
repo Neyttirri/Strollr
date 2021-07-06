@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:strollr/collection_pages/collection_category_card.dart';
 import 'package:strollr/collection_pages/collection_gallery_view.dart';
-import 'package:strollr/model/picture.dart';
-import 'package:strollr/route_pages/active_route.dart';
-import 'package:strollr/route_pages/new_route.dart';
-import 'package:strollr/route_pages/route_details.dart';
+import 'package:strollr/model/picture_categories.dart';
 import 'package:strollr/style.dart';
-import 'package:strollr/route_pages/route_list_card.dart';
-import 'package:intl/intl.dart';
-
 import '../globals.dart';
 
 
@@ -17,7 +10,6 @@ class CollectionTwo extends StatelessWidget {
 
   int indexTemp = 0;
   late Categories category;
-  late int categoryID;
 
   final List<CollectionListCard> categoryList = [
     CollectionListCard(treeImagePath, "Bäume", 14),
@@ -38,20 +30,19 @@ class CollectionTwo extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             return new GestureDetector(
               onTap: () {
-                categoryID = index;
                 indexTemp = index;
                 if(index == 0) {
                   category = Categories.tree;
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category, categoryID: categoryID)));
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category)));
                 } else if(index == 1) {
                   category = Categories.plant;
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category, categoryID: categoryID)));
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category)));
                 } else if(index == 2) {
                   category = Categories.animal;
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category, categoryID: categoryID)));
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category)));
                 } else if(index == 3) {
                   category = Categories.mushroom;
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category, categoryID: categoryID)));
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category)));
                 }
               },
               child: buildRouteListCard(context, index),
@@ -98,36 +89,4 @@ class CollectionTwo extends StatelessWidget {
     );
   }
 }
-
-/*
-Card(
-        color: backgroundGrey,
-        child: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
-                child: Row(
-                    children: <Widget>[
-                      Image.asset(category.categoryImage, height: 60, width: 60),
-                      Spacer(),
-                      Text(category.categoryName, style: new TextStyle(fontSize: 18.0),),
-                    ]
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.only(top: 4.0),
-                child: Row(
-                    children: <Widget>[
-                      Text(category.itemCount.toString()),
-                    ]
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
- */
 

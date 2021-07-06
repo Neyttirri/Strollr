@@ -30,7 +30,6 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
   late Picture image;
   late Categories chosenCategory;
 
-  // TODO: prob smarter
   List<RadioModel> radioCategoryList = [
     new RadioModel(false, Image.asset(treeImagePath), 'Baum', Categories.tree),
     new RadioModel(

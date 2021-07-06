@@ -16,8 +16,6 @@ final String plantImagePath = "assets/images/plantIcon.png";
 final String animalImagePath = "assets/images/animalFootstepIcon.png";
 final String treeImagePath = "assets/images/treeIcon.png";
 
-late Map<int, Categories> idToCategory = new Map();
-
 // **************** STECKBRIEF QUESTIONS ********************
 
 Map<Categories, List<String>> questionsForCategory = {
@@ -48,5 +46,3 @@ Map<Categories, List<String>> questionsForCategory = {
 };
 
 final String descriptionField = "Erzähl was du darüber weißt!";
-late  Picture testPic;
-//= await _createTestPicture();

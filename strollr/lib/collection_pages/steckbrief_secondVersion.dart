@@ -143,7 +143,7 @@ class Steckbrief_2 extends StatelessWidget {
                           OutlinedButton(
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => RouteDetails()));
+                                  builder: (context) => RouteDetails(walkID: picture.walk_id,)));
                             },
                             child: Text('Zeige Route'),
                             style: OutlinedButton.styleFrom(

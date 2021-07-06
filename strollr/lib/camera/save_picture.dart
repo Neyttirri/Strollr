@@ -10,6 +10,8 @@ import 'package:strollr/route_pages/active_route.dart';
 import 'package:strollr/utils/shared_prefs.dart';
 import 'package:animated_check/animated_check.dart';
 
+import '../logger.dart';
+
 class SavePhotoScreen extends StatelessWidget {
   final File image;
   final String generic1;
@@ -93,6 +95,8 @@ class SavePhotoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _saveInDatabase();
+    ApplicationLogger.getLogger('SavePictureScreen', colors: true)
+        .d('build | deleting file...');
     image.deleteSync();
     return ConfirmationAnimation();
   }
