@@ -12,7 +12,7 @@ final String plantImagePath = "assets/images/plantIcon.png";
 final String animalImagePath = "assets/images/animalFootstepIcon.png";
 final String treeImagePath = "assets/images/treeIcon.png";
 
-// ugly stuff TODO better ^^ 
+// ugly stuff TODO better ^^
 final Map<int, Categories> idToCategoryMap = {
   1: Categories.undefined,
   2: Categories.trashbin,
