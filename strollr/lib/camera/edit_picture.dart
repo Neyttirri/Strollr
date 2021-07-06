@@ -7,16 +7,11 @@ import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:photofilters/filters/filters.dart';
-import 'package:photofilters/filters/preset_filters.dart';
-import 'package:strollr/main_screen.dart';
 import 'package:strollr/utils/filter_utils.dart';
 import 'package:strollr/widgets/filtered_image_list_widget.dart';
 import 'describe_picture.dart';
 import 'package:strollr/utils/loading_screen.dart';
 import 'package:image_editor/image_editor.dart' hide ImageSource;
-import 'package:image/image.dart' as img;
 import 'package:clickable_list_wheel_view/clickable_list_wheel_widget.dart';
 
 import '../logger.dart';
@@ -96,8 +91,11 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     GREYSCALE_MATRIX,
     VINTAGE_MATRIX,
     SWEET_MATRIX,
-    PEACHY_MATRIX,
-    EXTRA_MATRIX
+    REMIX_MATRIX,
+    EXTRA_MATRIX,
+    FILTER_3,
+    FILTER_4,
+    FILTER_5
   ];
   List<double> _currentFilter = NO_FILTER_MATRIX;
   bool usingFilters = false;
@@ -253,22 +251,17 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                                                   .height *
                                               0.15,
                                           onItemTapCallback: (id) {
-                                            print(
-                                                "onItemTapCallback index: $id");
                                             if (id < 0 ||
                                                 id > tabSelectionMap.length)
                                               return;
                                             switch (id) {
                                               case ID_FLIP:
-                                                print('fliiiiip');
                                                 flip();
                                                 break;
                                               case ID_ROTATE_RIGHT:
-                                                print('rotateeee right');
                                                 rotate(true);
                                                 break;
                                               case ID_ROTATE_LEFT:
-                                                print('rotateeee leeeft');
                                                 rotate(false);
                                                 break;
                                               default:
@@ -326,7 +319,6 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                 ],
               ),
             ),
-      // bottomNavigationBar: _buildFunctions(),
     ));
   }
 
@@ -406,7 +398,6 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     option.addOption(ColorOption.contrast(contrast));
     option.addOption(ColorOption(matrix: _currentFilter));
 
-    //option.outputFormat = const OutputFormat.jpeg(100);
     print(const JsonEncoder.withIndent('  ').convert(option.toJson()));
 
     var imageList = state.rawImageData;
@@ -429,12 +420,10 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     ApplicationLogger.getLogger('_EditPhotoScreenState', colors: true).i(
         'Finished compression. Size before: ${image.readAsBytesSync().lengthInBytes / 1024}. Size after: ${compressedImage.lengthInBytes / 1024}');
     image.writeAsBytesSync(
-        compressedImage); // = await File(image.path).writeAsBytes(compressedImage);
+        compressedImage);
 
     ApplicationLogger.getLogger('_EditPhotoScreenState', colors: true)
         .d('Finished editing picture');
-    //File compressedFile = File.fromRawPath(compressedImage);
-    //print('compressed file path: ${compressedFile.path}');
     Future.delayed(Duration(seconds: 0)).then(
       (value) => Navigator.of(context).push(
         MaterialPageRoute(
@@ -648,57 +637,4 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
       });
     });
   }
-/*
-  Widget _buildFunctions() {
-    return BottomNavigationBar(
-      backgroundColor: Colors.white,
-      elevation: 20,
-      selectedIconTheme: IconThemeData(color: Colors.green),
-      unselectedIconTheme: IconThemeData(color: Colors.green),
-      selectedFontSize: 12.0,
-      unselectedFontSize: 12.0,
-      items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(
-            Icons.flip,
-            color: Colors.green,
-          ),
-          label: 'Flip',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(
-            Icons.rotate_left,
-            color: Colors.green,
-          ),
-          label: 'Rotate left',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(
-            Icons.rotate_right,
-            color: Colors.green,
-          ),
-          label: 'Rotate right',
-        ),
-      ],
-      onTap: (int index) {
-        switch (index) {
-          case 0:
-            flip();
-            break;
-          case 1:
-            rotate(false);
-            break;
-          case 2:
-            rotate(true);
-            break;
-        }
-      },
-      currentIndex: 0,
-      selectedItemColor: Colors.grey[600],
-      //Theme.of(context).primaryColor,
-      unselectedItemColor: Colors.grey[600],
-    );
-  }
-
-   */
 }

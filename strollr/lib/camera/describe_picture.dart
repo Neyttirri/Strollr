@@ -42,10 +42,6 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
     new RadioModel(false, Image.asset(animalImagePath), 'Tier')
   ];
 
-  // for each category there are two questions
-  // in the list the order is: question - helper text to first question - next question - helper text to second question
-
-
   @override
   void initState() {
     super.initState();
@@ -158,7 +154,7 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
                             borderRadius: BorderRadius.all(Radius.circular(85)),
                             image: new DecorationImage(
                               image: FileImage(image),
-                              fit: BoxFit.contain/,
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ),
@@ -166,7 +162,6 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
               ),
             ),
     );
-    // bottomNavigationBar: _buildFunctions(),
   }
 
   Widget _generateQuestion(
@@ -231,17 +226,6 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
             questionsForCategory[chosenCategory]![3], false),
       ],
     );
-  }
-
-  Widget _getFirstQuestion() {
-    _animationController.forward();
-    return _generateQuestion(questionsForCategory[chosenCategory]![0],
-        questionsForCategory[chosenCategory]![1], true);
-  }
-
-  Widget _getSecondQuestion() {
-    return _generateQuestion(questionsForCategory[chosenCategory]![2],
-        questionsForCategory[chosenCategory]![3], false);
   }
 
   Widget _getDescriptionField() {
