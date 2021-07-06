@@ -27,7 +27,7 @@ class TimeChart extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Text(
-                "Minuten im Monat",
+                "Zeitübersicht",
                 style: Theme.of(context).textTheme.bodyText1,
               ),
               Expanded(

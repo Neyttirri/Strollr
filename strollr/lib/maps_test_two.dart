@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:gpx/gpx.dart';
 import 'package:strollr/route_pages/PolylineIf.dart';
+import 'package:strollr/route_pages/dbInterface.dart';
 
 
 void main() {
@@ -25,8 +27,15 @@ class MyApp extends StatelessWidget {
 }
 
 class MapView extends StatefulWidget {
+  late _MapViewState map = new _MapViewState();
+
+  void createPolyLines(Gpx gpx){
+    Timer(Duration (seconds: 2), () => map._createPolylines(gpx));
+    Timer(Duration (seconds: 2), () => map._setMarkers());
+  }
+
   @override
-  _MapViewState createState() => _MapViewState();
+  _MapViewState createState() => map;
 }
 
 class _MapViewState extends State<MapView> {
@@ -46,10 +55,7 @@ class _MapViewState extends State<MapView> {
   //recorded locations of user
   List<LatLng> polylineCoordinates = [];
 
-   PolylinePoints? polylinePoints;
-
-  // For storing the current position
-  Position? _currentPosition;
+  PolylinePoints? polylinePoints;
 
   Timer _getCurrentLocation() {
     return Timer.periodic(_locationUpdateIntervall, (timer) async {
@@ -57,36 +63,36 @@ class _MapViewState extends State<MapView> {
       if (MapRouteInterface.walkPaused) return;
 
 
-
-      if (MapRouteInterface.walkFinished) {
-        _createPolylines();
-        _timer!.cancel();
+      if (MapRouteInterface.walkFinished && MapRouteInterface.gpx.wpts.isNotEmpty) {
+        //_createPolylines(MapRouteInterface.gpx);
+        _timer?.cancel();
+        MapRouteInterface.walkPaused = true;
       }
 
         //print(PolylineIf.gpx);
 
 
-        if (mounted && !MapRouteInterface.walkFinished) {
-          Position? myPosition = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      if (mounted && !MapRouteInterface.walkFinished) {
+        Position? myPosition = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-          setState(() {
-            // Store the position in the variable
-            MapRouteInterface.currentPosition = myPosition;
+        setState(() {
+          // Store the position in the variable
+          MapRouteInterface.currentPosition = myPosition;
 
-            print('CURRENT POS: $myPosition');
+          print('CURRENT POS: $myPosition');
 
-            // For moving the camera to current location
-            mapController.animateCamera(
-              CameraUpdate.newCameraPosition(
-                CameraPosition(
-                  target: LatLng(
-                      myPosition.latitude, myPosition.longitude),
-                  zoom: 18.0,
-                ),
+          // For moving the camera to current location
+          mapController.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: LatLng(
+                    myPosition.latitude, myPosition.longitude),
+                zoom: 18.0,
               ),
-            );
-          });
-        }
+            ),
+          );
+        });
+      }
     });
   }
 
@@ -95,16 +101,22 @@ class _MapViewState extends State<MapView> {
   * when finished, method will take list of recorded locations
   * connect them via _polylines.add
    */
-  _createPolylines() async{
-    MapRouteInterface.gpx.wpts.forEach((element)  {
+  void _createPolylines(Gpx gpx) async {
+    gpx.wpts.forEach((element)  {
       polylineCoordinates.add(LatLng(element.lat as double,  element.lon  as double));
     });
 
-    LatLng southWestBound = _getBound(true);
-    LatLng northEastBound = _getBound(false);
+    LatLng southWestBound = _getBound(true, gpx);
+    LatLng northEastBound = _getBound(false, gpx);
+
+    print(mounted);
 
     if (mounted) {
       setState(() {
+
+        var gpxString = GpxWriter().asString(gpx, pretty: true);
+        print(gpxString);
+
         _polylines.add(
             Polyline(
                 width: 5,
@@ -132,15 +144,15 @@ class _MapViewState extends State<MapView> {
   * compares coordinates of recorded Locations
   * to find southwest or northwest most points
    */
-  _getBound(bool southWest){
-    LatLng res = LatLng(MapRouteInterface.gpx.wpts[0].lat as double, MapRouteInterface.gpx.wpts[0].lon as double);
+  _getBound(bool southWest, Gpx gpx){
+    LatLng res = LatLng(gpx.wpts[0].lat as double, gpx.wpts[0].lon as double);
 
     double resLat = res.latitude;
     double resLon = res.longitude;
     var elementLat;
     var elementLon;
 
-    MapRouteInterface.gpx.wpts.forEach((element) {
+    gpx.wpts.forEach((element) {
       elementLat = element.lat;
       elementLon = element.lon;
       // TODO what happens when null?
@@ -157,7 +169,7 @@ class _MapViewState extends State<MapView> {
       }
     });
 
-    MapRouteInterface.gpx.wpts.forEach((element) {
+    gpx.wpts.forEach((element) {
       elementLat = element.lat;
       elementLon = element.lon;
       if(elementLat == null || elementLon == null )
@@ -175,6 +187,16 @@ class _MapViewState extends State<MapView> {
     res = LatLng(resLat, resLon);
 
     return res;
+  }
+
+  _setMarkers() async {
+    List<LatLng> markers = await DbRouteInterface.getMarkerPositions();
+
+    //_addMarker(MapRouteInterface.currentPosition);
+
+    for (LatLng marker in markers){
+      _addMarker(marker);
+    }
   }
 
   _addMarker(latlong) {
@@ -206,6 +228,7 @@ class _MapViewState extends State<MapView> {
     _timer = _getCurrentLocation();
 
     polylinePoints = PolylinePoints();
+    _polylines = {};
   }
 
   void dispose() {
@@ -269,56 +292,12 @@ class _MapViewState extends State<MapView> {
                 _addMarker(latlang);
               },
               onMapCreated: (GoogleMapController controller) {
-                MapRouteInterface.walkFinished = false;
+                MapRouteInterface.walkFinished = true;
                 mapController = controller;
                 changeMapStyle();
 
                 _timer = _getCurrentLocation();
               },
-            ),
-            //Current location button
-            SafeArea(
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 15.0, bottom: 15.0),
-                  child: ClipOval(
-                    child: Material(
-                      color: Colors.green, // button color
-                      child: InkWell(
-                        splashColor: Colors.grey, // inkwell color
-                        child: SizedBox(
-                          width: 56,
-                          height: 56,
-                          child: Icon(Icons.my_location),
-                        ),
-                        onTap: () {
-                          _getCurrentLocation();
-                          /*
-                          * may be redundant
-                          * l. 50-54
-                           */
-                          mapController.animateCamera(
-                            CameraUpdate.newCameraPosition(
-                              CameraPosition(
-                                target: LatLng(
-                                  _currentPosition!.latitude,
-                                  _currentPosition!.longitude,
-                                ),
-                                zoom: 18.0,
-                              ),
-                            ),
-                          );
-                          /*
-                          *
-                          *
-                           */
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ),
             ),
           ],
         ),

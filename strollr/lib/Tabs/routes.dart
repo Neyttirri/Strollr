@@ -1,27 +1,26 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:strollr/model/walk.dart';
 import 'package:strollr/route_pages/active_route.dart';
-import 'package:strollr/route_pages/new_route.dart';
+import 'package:strollr/route_pages/dbInterface.dart';
 import 'package:strollr/route_pages/route_details.dart';
 import 'package:strollr/style.dart';
 import 'package:strollr/route_pages/route_list_card.dart';
 import 'package:intl/intl.dart';
-import 'package:strollr/model/walk.dart';
-import 'package:strollr/db/database_manager.dart';
 
 
 class Routes extends StatelessWidget {
 
-  Future<List<Walk>> allWalks = DatabaseManager.instance.readALlWalks();
-  late Walk walk;
-  late int walkID;
+  final List<RouteListCard> routeList = [];
 
-  final List<RouteListCard> routeList = [
-    RouteListCard(DateTime.now(), "Berlin", "Botanischer Garten", 34.43, 6.3),
-    RouteListCard(DateTime.now(), "Hamburg", "Hamburg Garten", 24.43, 5.1),
-  ];
+  Future<bool> buildRouteList() async {
+    List<Walk> walks = await DbRouteInterface.getAllWalks();
 
+    walks.forEach((element) {
+      routeList.add(new RouteListCard(element.id as int, element.startedAtTime, "Berlin", element.name, element.durationTime, element.distanceInKm));
+    });
+
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,17 +29,34 @@ class Routes extends StatelessWidget {
         title: Text("Routen", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
-      body: ListView.builder(
-          itemCount: routeList.length, //Database length
-          itemBuilder: (BuildContext context, int index) {
-            return new GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(walkID : walkID)));
-              },
-              child: buildRouteListCard(context, index),
+      body: FutureBuilder(
+        future: buildRouteList(),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+                itemCount: routeList.length, //Database length
+                itemBuilder: (BuildContext context, int index) {
+                  return new GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) =>
+                              RouteDetails(routeList[index].routeId)));
+                    },
+                    child: buildRouteListCard(context, index),
+                  );
+                }
             );
-
           }
+
+          else {
+            return ListView.builder(
+                itemCount: routeList.length, //Database length
+                itemBuilder: (BuildContext context, int index) {
+                  return Row();
+                }
+            );
+          }
+        }
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Neue Route',
@@ -56,7 +72,6 @@ class Routes extends StatelessWidget {
 
   Widget buildRouteListCard(BuildContext context, int index) {
     final route = routeList[index];
-    //final walk = allWalks[index];
     return new Container(
       child: Card(
         child: Padding(
@@ -79,7 +94,8 @@ class Routes extends StatelessWidget {
                     children: <Widget>[
                       Text(route.routeLocation),
                       Spacer(),
-                      Text("${DateFormat('dd/MM/yyyy').format(route.routeTime).toString()}", textAlign: TextAlign.right,),
+                      Text("${DateFormat('dd/MM/yyyy').format(route.routeTime).toString()}", textAlign: TextAlign.left,),
+                      Spacer(),
                     ]
                 ),
               ),
@@ -100,22 +116,4 @@ class Routes extends StatelessWidget {
       ),
     );
   }
-
-
-  /*
-  Future<List<Walk>> getAllWalks() async {
-    allWalks = DatabaseManager.instance.readALlWalks();
-
-    var jsonData = json.decode(allWalks.body);
-
-    List<walk> walks = [];
-
-    for(var u in jsonData) {
-      Walk walk = Walk(u)
-    }
-
-  }
-  */
-
-
 }

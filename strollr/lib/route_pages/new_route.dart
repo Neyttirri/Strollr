@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../globals.dart' as globals;
 import '../style.dart';
 import 'active_route.dart';
-import 'package:stop_watch_timer/stop_watch_timer.dart';
+import 'package:strollr/stop_watch_timer.dart';
 
 class NewRoute extends StatefulWidget {
   @override
@@ -30,8 +30,8 @@ class _NewRouteState extends State<NewRoute> {
               onPressed: () {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => ActiveRoute()));
-                globals.stopWatchTimer.onExecute.add(StopWatchExecute.reset);
-                globals.stopWatchTimer.onExecute.add(StopWatchExecute.start);
+                globals.stopWatchTimer.onExecute.add(StopWatchExecuted.reset);
+                globals.stopWatchTimer.onExecute.add(StopWatchExecuted.start);
               },
               color: Colors.green,
               shape: RoundedRectangleBorder(

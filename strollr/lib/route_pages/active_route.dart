@@ -1,142 +1,159 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
 import 'package:strollr/route_pages/PolylineIf.dart';
 import 'package:strollr/route_pages/dbInterface.dart';
+import 'package:strollr/route_pages/save_route.dart';
 import '../camera/edit_picture.dart';
 import '../globals.dart' as globals;
-import '../logger.dart';
 import '../style.dart';
-import 'package:stop_watch_timer/stop_watch_timer.dart';
+import 'package:strollr/stop_watch_timer.dart';
 import '../maps_test_two.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'PolylineIf.dart';
 
-const routeName = '/extractArguments';
-
 final _isHours = true;
-final maps = new MapView();
 
 final _trackingInterval = Duration(seconds: 5);
 late Timer _timer;
 
 int? walkId;
 
-double distance = 0;
+double distance = 0.0;
 
 Geolocator _geolocator = Geolocator();
 
 var gpx = Gpx();
 
-final overview = DefaultTextStyle.merge(
-  style: TextStyle(
-      color: Colors.black,
-      fontWeight: FontWeight.w700,
-      fontFamily: 'Roboto',
-      letterSpacing: 0.5,
-      fontSize: 25),
-  child: Container(
-    padding: EdgeInsets.fromLTRB(3, 10, 10, 5),
-    decoration: BoxDecoration(
-      border: Border(
-        bottom: BorderSide(width: 1.0, color: Colors.black),
-      ),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Column(
-          children: [
-            Row(
-              children: [
-                Column(
-                  children: [
-                    StreamBuilder<int>(
-                        stream: globals.stopWatchTimer.rawTime,
-                        initialData: globals.stopWatchTimer.rawTime.value,
-                        builder: (context, snapshot) {
-                          final value = snapshot.data;
-                          final displayTime = StopWatchTimer.getDisplayTime(
-                              value!,
-                              hours: _isHours);
-                          return Padding(
-                              padding: EdgeInsets.all(8),
-                              child: Text(displayTime));
-                        }),
-                    Icon(Icons.timer, color: Colors.green[500]),
-                  ],
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                  child: Column(
-                    children: [
-                      Padding(
-                          padding: EdgeInsets.all(8), child: Text(distance.toString() + 'km')),
-                      Icon(Icons.directions_walk_outlined,
-                          color: Colors.green[500]),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(10, 10, 3, 5),
-                child: CustomButton(
-                    label: 'Start',
-                    onPress: () {
-                      MapRouteInterface.walkPaused = false;
-
-                      MapRouteInterface.walkFinished = false;
-
-                      globals.stopWatchTimer.onExecute
-                          .add(StopWatchExecute.start);
-                    }),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(10, 10, 40, 5),
-                child: CustomButton(
-                    label: 'Pause',
-                    onPress: () {
-                      MapRouteInterface.walkPaused = true;
-
-                      globals.stopWatchTimer.onExecute
-                          .add(StopWatchExecute.stop);
-                    }),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                child: CustomButton(
-                    label: 'Walk beenden',
-                    onPress: () {
-                      finishedWalk();
-
-                      globals.stopWatchTimer.onExecute
-                          .add(StopWatchExecute.stop);
-                    }),
-              ),
-            ])
-          ],
-        ),
-      ],
-    ),
-  ),
-);
-
-void finishedWalk(){
-  _timer.cancel();
-
-  if (gpx.wpts.isNotEmpty) _ActiveRouteState.writeGpxFile(MapRouteInterface.currentPosition);
-
-  MapRouteInterface.gpx = gpx;
-  MapRouteInterface.walkFinished = true;
-
-  gpx.creator = "new route";
+class Overview extends StatefulWidget {
+  _OverviewState createState() => _OverviewState();
 }
 
+class _OverviewState extends State<Overview> {
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(3, 10, 10, 5),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(width: 1.0, color: Colors.black),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Column(
+                      children: [
+                        StreamBuilder<int>(
+                            stream: globals.stopWatchTimer.rawTime,
+                            initialData: globals.stopWatchTimer.rawTime.value,
+                            builder: (context, snapshot) {
+                              final value = snapshot.data;
+                              final displayTime = StopWatchTimer.getDisplayTime(
+                                  value!,
+                                  hours: _isHours);
+                              return Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Text(displayTime,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w700,
+                                          fontFamily: 'Roboto',
+                                          letterSpacing: 0.5,
+                                          fontSize: 25)));
+                            }),
+                        Icon(Icons.timer, color: Colors.green[500]),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(50, 0, 0, 0),
+                      child: Column(
+                        children: [
+                          Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Text(distance.toString() + ' km',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: 'Roboto',
+                                      letterSpacing: 0.5,
+                                      fontSize: 25))),
+                          Icon(Icons.directions_walk_outlined,
+                              color: Colors.green[500]),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(45, 10, 3, 5),
+                    child: CustomButton(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(60, 10, 0, 5),
+                    child: ElevatedButton(
+                        child: Text('Route beenden'),
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.grey[500])),
+                        onPressed: () async {
+                          globals.stopWatchTimer.onExecute
+                              .add(StopWatchExecuted.stop);
+
+                          await finishedWalk();
+                          MapRouteInterface.walkFinished = true;
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (context) => RouteSaver()));
+                        }),
+                  ),
+                ])
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+void printDbValues() async {
+  String name = await DbRouteInterface.getWalkName();
+  double distance = await DbRouteInterface.getWalkDistance();
+  String duration = await DbRouteInterface.getWalkDuration();
+
+  distance = double.parse((distance).toStringAsFixed(2));
+
+  print('Name: $name');
+  print('Distance: $distance km');
+  print('Duration: $duration h');
+}
+
+Future<bool> finishedWalk() async {
+  _timer.cancel();
+
+  if (gpx.wpts.isNotEmpty)
+    _ActiveRouteState.writeGpxFile(MapRouteInterface.currentPosition);
+
+  await DbRouteInterface.finishWalk(gpx);
+  printDbValues();
+
+  MapRouteInterface.gpx = gpx;
+
+  //MapRouteInterface.walkPaused = true;
+
+  gpx.creator = "new route";
+
+  return true;
+}
 
 class ActiveRoute extends StatefulWidget {
   @override
@@ -144,17 +161,19 @@ class ActiveRoute extends StatefulWidget {
 }
 
 class _ActiveRouteState extends State<ActiveRoute> {
-  late File _imageBytes;
+  final maps = new MapView();
+  late File _imageFile;
   late Position _currentPosition;
   final _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
+    MapRouteInterface.walkFinished = true;
     //initiate periodic Timer on init
     _timer = startTracking();
     gpx.creator = "route";
-     DbRouteInterface.generateWalk(gpx);
+    DbRouteInterface.generateWalk(gpx);
   }
 
   @override
@@ -162,9 +181,11 @@ class _ActiveRouteState extends State<ActiveRoute> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: headerGreen),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+            icon: Icon(Icons.arrow_back, color: headerGreen),
+            onPressed: () {
+              Navigator.of(context).pop();
+              globals.stopWatchTimer.onExecute.add(StopWatchExecuted.reset);
+            }),
         title: Text("Aktive Route", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
@@ -172,7 +193,7 @@ class _ActiveRouteState extends State<ActiveRoute> {
         child: Container(
           padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
           child: Column(
-            children: [overview, new Expanded(child: maps)],
+            children: [Overview(), new Expanded(child: maps)],
           ),
         ),
       ),
@@ -198,21 +219,19 @@ class _ActiveRouteState extends State<ActiveRoute> {
   }
 
   Future<void> _openCamera() async {
-    final PickedFile? pickedImage = await _picker.getImage(source: ImageSource.camera);
-    if(pickedImage == null) {
-      ApplicationLogger.getLogger('ActiveRoute', colors: true).d(
-          '_openCamera | picked image was null');
-      return;
-    }
+
+    var picture = (await _picker.getImage(
+        source: ImageSource.camera,
+        ))!;
+
     Position position = await _geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    setState(()  {
-      _imageBytes = File(pickedImage.path);
+
+    setState(() {
+      _imageFile = File(picture.path);
       _currentPosition = position;
     });
 
-    print('ACTIVE ROUTE: size of image before compression:  ${(_imageBytes.readAsBytesSync().lengthInBytes) / 1024} kB' );
-    print('${pickedImage.path}');
     // Navigator.popUntil(context, ModalRoute.withName('main_screen'));
     // TODO figure out the Navigator and the context so the persistent bottom navigation bar is not there anymore
     Future.delayed(Duration(seconds: 0)).then(
@@ -222,13 +241,17 @@ class _ActiveRouteState extends State<ActiveRoute> {
         MaterialPageRoute(
           builder: (context) => EditPhotoScreen(
             arguments: [
-              _imageBytes,
+              _imageFile,
               _currentPosition,
             ],
           ),
         ),
       ),
     );
+
+
+
+
   }
 
   /*
@@ -241,43 +264,83 @@ class _ActiveRouteState extends State<ActiveRoute> {
     return Timer.periodic(_trackingInterval, (timer) async {
       if (MapRouteInterface.walkPaused) return;
 
+      if (MapRouteInterface.walkFinished && MapRouteInterface.gpx.wpts.isNotEmpty) {
+        timer.cancel();
+      }
+
       Position? currentPosition = MapRouteInterface().getPosition();
       print('You are here: $currentPosition');
 
       double distanceToLastPosition = 0;
 
-      if (gpx.wpts.isNotEmpty)
+      if (gpx.wpts.isNotEmpty) {
         distanceToLastPosition = DbRouteInterface.calcDistance(
             (gpx.wpts[gpx.wpts.length - 1]).lat as double,
             currentPosition!.latitude,
             gpx.wpts[gpx.wpts.length - 1].lon as double,
             currentPosition.longitude);
 
-      if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.05) return;
+      setState(() {
+        distance += distanceToLastPosition;
 
-    writeGpxFile(currentPosition!);
+        distance = double.parse(distance.toStringAsFixed(2));
+      });
+      }
+
+      if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.02) return;
+
+      writeGpxFile(currentPosition!);
     });
   }
 
   static void writeGpxFile(Position? current) {
     gpx.wpts.add(Wpt(lat: current!.latitude, lon: current.longitude));
-    DbRouteInterface.updateWalkRoute(gpx);
+
+    MapRouteInterface.gpx = gpx;
   }
 }
 
-class CustomButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onPress;
+class CustomButton extends StatefulWidget {
+  _CustomButtonState createState() => _CustomButtonState();
+}
 
-  CustomButton({required this.onPress, required this.label});
+class _CustomButtonState extends State<CustomButton> {
+  String label = 'Start';
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.grey[500]),
+        backgroundColor: MaterialStateProperty.all(Colors.green),
       ),
-      onPressed: onPress,
+      onPressed: () {
+        if (label == 'Start') {
+          setState(() {
+            label = 'Pause';
+            MapRouteInterface.walkPaused = false;
+
+            MapRouteInterface.walkFinished = false;
+
+            globals.stopWatchTimer.onExecute.add(StopWatchExecuted.start);
+          });
+        } else if (label == 'Pause') {
+          setState(() {
+            label = 'Weiter';
+            MapRouteInterface.walkPaused = true;
+
+            globals.stopWatchTimer.onExecute.add(StopWatchExecuted.stop);
+          });
+        } else if (label == 'Weiter') {
+          setState(() {
+            label = 'Pause';
+            MapRouteInterface.walkPaused = false;
+
+            MapRouteInterface.walkFinished = false;
+
+            globals.stopWatchTimer.onExecute.add(StopWatchExecuted.start);
+          });
+        }
+      },
       child: Text(
         label,
         style: TextStyle(color: Colors.white),
