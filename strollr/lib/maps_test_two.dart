@@ -5,6 +5,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
+import 'package:strollr/model/picture.dart';
 import 'package:strollr/route_pages/PolylineIf.dart';
 import 'package:strollr/route_pages/dbInterface.dart';
 
@@ -42,6 +43,8 @@ class _MapViewState extends State<MapView> {
   CameraPosition _initialLocation = CameraPosition(target: LatLng(0.0, 0.0));
    late GoogleMapController mapController;
    late BitmapDescriptor markerIcon;
+
+   late List<Picture> pics;
 
   final Geolocator _geolocator = Geolocator();
   final Set<Marker> _itemMarkers = {};
@@ -193,6 +196,7 @@ class _MapViewState extends State<MapView> {
 
   _setMarkers() async {
     List<LatLng> markers = await DbRouteInterface.getMarkerPositions();
+    pics = await DbRouteInterface.getPicuturesOfWalk();
 
     //_addMarker(MapRouteInterface.currentPosition);
 
@@ -214,6 +218,15 @@ class _MapViewState extends State<MapView> {
             infoWindow: InfoWindow(
               title: 'Start',
             ),
+            onTap: () async {
+              if (pics.isNotEmpty){
+                for (Picture picture in pics){
+                  if (picture.location == latlong){
+                    //Navigator.of(context).push(MaterialPageRoute(builder: (context) => Steckbrief_2(picture : picture)))
+                  }
+                }
+              }
+            },
             icon: markerIcon,
           ),
         );
