@@ -95,9 +95,12 @@ class SavePhotoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _saveInDatabase();
+    /*
     ApplicationLogger.getLogger('SavePictureScreen', colors: true)
         .d('build | deleting file...');
     image.deleteSync();
+
+     */
     return ConfirmationAnimation();
   }
 }

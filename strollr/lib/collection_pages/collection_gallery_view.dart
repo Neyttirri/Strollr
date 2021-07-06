@@ -83,10 +83,10 @@ class GalleryView extends StatelessWidget {
                       padding: EdgeInsets.all(4),
                       child: Container(
                         decoration: BoxDecoration(
-                          // borderRadius: BorderRadius.all(Radius.circular(15)),
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
                           image: new DecorationImage(
                             image: MemoryImage(pictureList[index].pictureData),
-                            fit: BoxFit.fill,
+                            fit: BoxFit.scaleDown,
                           ),
                         ),
                       ),
@@ -95,8 +95,8 @@ class GalleryView extends StatelessWidget {
                 });
           } else {
             return GridView.builder(
-                gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 4),
+                gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4),
                 itemCount: 4,
                 itemBuilder: (BuildContext context, int index) {
                   return new GestureDetector(
@@ -126,7 +126,6 @@ class GalleryView extends StatelessWidget {
   }
 
   Widget gridBuildWithoutData() {
-    print("Index = " + category.toString());
 
     return GridView.builder(
       gridDelegate:
@@ -139,10 +138,11 @@ class GalleryView extends StatelessWidget {
             pictureID = selectedPicture.id!;
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) =>
-                    Steckbrief(
-                      walkID: walkID,
-                      selectedPicture: selectedPicture,
-                    )));
+                    Steckbrief_2(
+                      picture: selectedPicture,
+                    ),
+            )
+            );
           },
           child: Container(
             padding: EdgeInsets.all(4),
@@ -172,10 +172,10 @@ class GalleryView extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.all(4),
             decoration: BoxDecoration(
-              // borderRadius: BorderRadius.all(Radius.circular(15)),
+              borderRadius: BorderRadius.all(Radius.circular(15)),
               image: new DecorationImage(
                 image: MemoryImage(pictureList[index].pictureData),
-                fit: BoxFit.fill,
+                fit: BoxFit.scaleDown,
               ),
             ),
           ),
