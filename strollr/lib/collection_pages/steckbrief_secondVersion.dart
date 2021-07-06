@@ -23,11 +23,11 @@ class Steckbrief_2 extends StatelessWidget {
   final int ID_DOWNLOAD = 2;
 
   Steckbrief_2({required this.picture}) {
-    categoryPicture = DatabaseManager.idToCategoryMap[picture.category]!;
+    categoryPicture = idToCategoryMap[picture.category]!;
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)  {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(

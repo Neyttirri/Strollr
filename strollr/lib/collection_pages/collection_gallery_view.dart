@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:strollr/Tabs/collectionTwo.dart';
 import 'package:strollr/collection_pages/steckbrief.dart';
 import 'package:strollr/collection_pages/steckbrief_secondVersion.dart';
 import 'package:strollr/db/database_manager.dart';
 import 'package:strollr/model/picture.dart';
 import 'package:strollr/model/picture_categories.dart';
-import 'package:strollr/utils/shared_prefs.dart';
 
+import '../globals.dart';
 import '../style.dart';
 
 class GalleryView extends StatelessWidget {
@@ -25,47 +26,29 @@ class GalleryView extends StatelessWidget {
 
   Future<bool> buildPictureList() async {
     List<Picture> pictures =
-    await DatabaseManager.instance.readALlPicturesFromCategory(categoryID);
+        await DatabaseManager.instance.readALlPicturesFromCategory(categoryID);
 
     pictureList.addAll(pictures);
-    /*
-    pictures.forEach((element) {
-      pictureList.add(Picture(
-          pictureData: element.pictureData,
-          filename: element.filename,
-          createdAtTime: element.createdAtTime,
-          generic1: element.generic1,
-          generic2: element.generic2,
-          description: element.description,
-          location: element.location,
-          category: element.category,
-          walk_id: element.walk_id));
-    });
-
-     */
-
     return true;
   }
 
   GalleryView({
     required this.category,
   }) {
-    categoryID = DatabaseManager.idToCategoryMap.keys.firstWhere((
-        element) => DatabaseManager.idToCategoryMap[element] == category, orElse: () => 0);
-    DatabaseManager.idToCategoryMap.entries.forEach((element) {
-      print('Key = ${element.key} : Value = ${element.value}');
-    });
+    categoryID = idToCategoryMap.keys.firstWhere(
+        (element) => idToCategoryMap[element] == category,
+        orElse: () => -1);
   }
 
   @override
   Widget build(BuildContext context) {
-    allPicturesInCategory =
-        DatabaseManager.instance.readALlPicturesFromCategory(categoryID);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: headerGreen),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => CollectionTwo()),
+          ),
         ),
         title: Text("Gallery View", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
@@ -82,8 +65,7 @@ class GalleryView extends StatelessWidget {
                   return new GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              Steckbrief_2(
+                          builder: (context) => Steckbrief_2(
                                 picture: pictureList[index],
                               )));
                     },
@@ -112,8 +94,7 @@ class GalleryView extends StatelessWidget {
                       //selectedPicture = allPicturesInCategory;
                       pictureID = selectedPicture.id!;
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              Steckbrief_2(
+                          builder: (context) => Steckbrief_2(
                                 picture: selectedPicture,
                               )));
                     },
@@ -134,10 +115,9 @@ class GalleryView extends StatelessWidget {
   }
 
   Widget gridBuildWithoutData() {
-
     return GridView.builder(
       gridDelegate:
-      new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+          new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
       itemCount: 4,
       itemBuilder: (BuildContext context, int index) {
         return new GestureDetector(
@@ -145,12 +125,10 @@ class GalleryView extends StatelessWidget {
             //selectedPicture = allPicturesInCategory;
             pictureID = selectedPicture.id!;
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    Steckbrief_2(
-                      picture: selectedPicture,
-                    ),
-            )
-            );
+              builder: (context) => Steckbrief_2(
+                picture: selectedPicture,
+              ),
+            ));
           },
           child: Container(
             padding: EdgeInsets.all(4),
@@ -164,15 +142,14 @@ class GalleryView extends StatelessWidget {
   Widget gridBuildWithData() {
     return GridView.builder(
       gridDelegate:
-      new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+          new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
       itemCount: pictureList.length,
       itemBuilder: (BuildContext context, int index) {
         return new GestureDetector(
           onTap: () {
             pictureID = selectedPicture.id!;
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    Steckbrief(
+                builder: (context) => Steckbrief(
                       walkID: walkID,
                       selectedPicture: selectedPicture,
                     )));
@@ -191,5 +168,4 @@ class GalleryView extends StatelessWidget {
       },
     );
   }
-
 }

@@ -12,7 +12,15 @@ final String plantImagePath = "assets/images/plantIcon.png";
 final String animalImagePath = "assets/images/animalFootstepIcon.png";
 final String treeImagePath = "assets/images/treeIcon.png";
 
-late Map<int, Categories> idToCategory;
+// ugly stuff TODO better ^^ 
+final Map<int, Categories> idToCategoryMap = {
+  1: Categories.undefined,
+  2: Categories.trashbin,
+  3: Categories.animal,
+  4: Categories.tree,
+  5: Categories.plant,
+  6: Categories.mushroom,
+};
 // **************** STECKBRIEF QUESTIONS ********************
 
 Map<Categories, List<String>> questionsForCategory = {

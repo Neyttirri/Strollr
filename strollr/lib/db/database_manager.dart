@@ -14,8 +14,6 @@ class DatabaseManager {
 
   static Database? _database;
 
-  static late Map<int, Categories> idToCategoryMap;
-
   DatabaseManager._init();
 
   Future<Database> get database async {
@@ -28,7 +26,6 @@ class DatabaseManager {
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath(); // gets the default path
     final path = join(dbPath, filePath);
-    idToCategoryMap = new Map();
 
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
@@ -111,9 +108,7 @@ class DatabaseManager {
           "INSERT INTO $tablePictureCategories (description) "
           "VALUES (?)",
           [v.toShortString()]); // id is automatically created
-      idToCategoryMap[id] = v;
     });
-
   }
 
   Future<int> getCategoryIdFromCategory(Categories category) async {
