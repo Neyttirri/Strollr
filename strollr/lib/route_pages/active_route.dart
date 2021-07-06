@@ -282,6 +282,8 @@ class _ActiveRouteState extends State<ActiveRoute> {
 
       setState(() {
         distance += distanceToLastPosition;
+
+        distance = double.parse(distance.toStringAsFixed(2));
       });
       }
 
