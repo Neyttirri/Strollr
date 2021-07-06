@@ -103,7 +103,6 @@ class ConfirmationAnimation extends StatefulWidget {
 }
 
 
-// TODO: Transition to next screen (return to walk?)
 class _ConfirmationAnimationState extends State<ConfirmationAnimation>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
@@ -119,6 +118,12 @@ class _ConfirmationAnimationState extends State<ConfirmationAnimation>
         new CurvedAnimation(
             parent: _animationController, curve: Curves.easeInOutCirc));
 
+    Future.delayed(Duration(milliseconds: 1500)).then(
+          (value) => Navigator.pop(
+        context,
+      ),
+    );
+    /*
      Future.delayed(Duration(milliseconds: 1500)).then(
           (value) => Navigator.push(
             context,
@@ -128,6 +133,8 @@ class _ConfirmationAnimationState extends State<ConfirmationAnimation>
             ),
           ),
     );
+
+     */
   }
 
   @override
