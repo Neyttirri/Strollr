@@ -5,6 +5,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
+import 'package:strollr/model/picture.dart';
 import 'package:strollr/route_pages/PolylineIf.dart';
 import 'package:strollr/route_pages/dbInterface.dart';
 
@@ -43,6 +44,8 @@ class _MapViewState extends State<MapView> {
    late GoogleMapController mapController;
    late BitmapDescriptor markerIcon;
 
+   late List<Picture> pics;
+
   final Geolocator _geolocator = Geolocator();
   final Set<Marker> _itemMarkers = {};
 
@@ -59,39 +62,41 @@ class _MapViewState extends State<MapView> {
 
   Timer _getCurrentLocation() {
     return Timer.periodic(_locationUpdateIntervall, (timer) async {
-
       if (MapRouteInterface.walkPaused) return;
 
 
-      if (MapRouteInterface.walkFinished && MapRouteInterface.gpx.wpts.isNotEmpty) {
+      if (MapRouteInterface.walkFinished &&
+          MapRouteInterface.gpx.wpts.isNotEmpty) {
         //_createPolylines(MapRouteInterface.gpx);
         _timer?.cancel();
         MapRouteInterface.walkPaused = true;
       }
 
-        //print(PolylineIf.gpx);
+      //print(PolylineIf.gpx);
 
 
-      if (mounted && !MapRouteInterface.walkFinished) {
-        Position? myPosition = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      if (!MapRouteInterface.walkFinished) {
+        Position? myPosition = await _geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high);
+        // Store the position in the variable
+        MapRouteInterface.currentPosition = myPosition;
 
-        setState(() {
-          // Store the position in the variable
-          MapRouteInterface.currentPosition = myPosition;
+        if (mounted) {
+          setState(() {
+            print('CURRENT POS: $myPosition');
 
-          print('CURRENT POS: $myPosition');
-
-          // For moving the camera to current location
-          mapController.animateCamera(
-            CameraUpdate.newCameraPosition(
-              CameraPosition(
-                target: LatLng(
-                    myPosition.latitude, myPosition.longitude),
-                zoom: 18.0,
+            // For moving the camera to current location
+            mapController.animateCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(
+                  target: LatLng(
+                      myPosition.latitude, myPosition.longitude),
+                  zoom: 18.0,
+                ),
               ),
-            ),
-          );
-        });
+            );
+          });
+        }
       }
     });
   }
@@ -191,6 +196,7 @@ class _MapViewState extends State<MapView> {
 
   _setMarkers() async {
     List<LatLng> markers = await DbRouteInterface.getMarkerPositions();
+    pics = await DbRouteInterface.getPicuturesOfWalk();
 
     //_addMarker(MapRouteInterface.currentPosition);
 
@@ -212,6 +218,15 @@ class _MapViewState extends State<MapView> {
             infoWindow: InfoWindow(
               title: 'Start',
             ),
+            onTap: () async {
+              if (pics.isNotEmpty){
+                for (Picture picture in pics){
+                  if (picture.location == latlong){
+                    //Navigator.of(context).push(MaterialPageRoute(builder: (context) => Steckbrief_2(picture : picture)))
+                  }
+                }
+              }
+            },
             icon: markerIcon,
           ),
         );

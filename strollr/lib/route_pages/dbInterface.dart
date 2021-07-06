@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:gpx/gpx.dart';
 import 'package:intl/intl.dart';
@@ -143,6 +142,14 @@ class DbRouteInterface{
     }
 
     return markerPositions;
+  }
+
+  static getPicuturesOfWalk({int walkId = -1}) async {
+    if (walkId == -1) walkId = await SharedPrefs.getCurrentWalkId();
+
+    List<Picture> pics = await DatabaseManager.instance.readALlPicturesFromWalk(walkId);
+
+    return pics;
   }
 
   //calculates distance between two coordinates
