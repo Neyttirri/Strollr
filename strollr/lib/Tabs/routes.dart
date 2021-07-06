@@ -52,14 +52,7 @@ class Routes extends StatelessWidget {
             return ListView.builder(
                 itemCount: routeList.length, //Database length
                 itemBuilder: (BuildContext context, int index) {
-                  return new GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) =>
-                              RouteDetails(37)));
-                    },
-                    child: buildRouteListCard(context, index),
-                  );
+                  return Row();
                 }
             );
           }

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:strollr/Tabs/routes.dart';
-import 'package:strollr/route_pages/active_route.dart';
 import '../style.dart';
 import 'package:gpx/gpx.dart';
 import 'package:strollr/maps_test_two.dart';
 import 'dbInterface.dart';
 
-final _formKey = GlobalKey<FormState>();
+GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 TextEditingController _controller =
     TextEditingController(); // Name aus Datenbank
 bool _isEnable = false;
@@ -267,8 +266,8 @@ class _SaveButtonState extends State<SaveButton> {
           setState(() {
             _isEnable = false;
           });
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => Routes()));
+          Navigator.of(context).pop();
+              //.push(MaterialPageRoute(builder: (context) => Routes()));
           // neuen Routennamen in Datenbank übernehmen
         }
       },
@@ -288,7 +287,7 @@ Widget deleteButton(BuildContext context) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Route wird gelöscht')));
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => Routes()));
+          .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
     },
     child: Text(' Route löschen'),
   );
