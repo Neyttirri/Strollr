@@ -50,7 +50,7 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
     genericInfo1 = image.generic1;
     genericInfo2 = image.generic2;
     description = image.description;
-    chosenCategory = DatabaseManager.idToCategoryMap[image.category]!;
+    chosenCategory = idToCategoryMap[image.category]!;
     radioCategoryList.forEach((element) {
       if (element.category == chosenCategory) {
         element.isSelected = true;
