@@ -16,6 +16,8 @@ import '../globals.dart';
 class CollectionTwo extends StatelessWidget {
 
   int indexTemp = 0;
+  late Categories category;
+  late int categoryID;
 
   final List<CollectionListCard> categoryList = [
     CollectionListCard(treeImagePath, "Bäume", 14),
@@ -36,8 +38,21 @@ class CollectionTwo extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             return new GestureDetector(
               onTap: () {
+                categoryID = index;
                 indexTemp = index;
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(indexTemp : indexTemp, test: testPic,)));
+                if(index == 0) {
+                  category = Categories.tree;
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category, categoryID: categoryID)));
+                } else if(index == 1) {
+                  category = Categories.plant;
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category, categoryID: categoryID)));
+                } else if(index == 2) {
+                  category = Categories.animal;
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category, categoryID: categoryID)));
+                } else if(index == 3) {
+                  category = Categories.mushroom;
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category, categoryID: categoryID)));
+                }
               },
               child: buildRouteListCard(context, index),
             );
@@ -82,7 +97,6 @@ class CollectionTwo extends StatelessWidget {
       ),
     );
   }
-
 }
 
 /*

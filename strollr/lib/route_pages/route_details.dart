@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:strollr/model/walk.dart';
+import 'package:strollr/db/database_manager.dart';
 
 import '../style.dart';
 
 class RouteDetails extends StatelessWidget {
+
+  late final int walkID;
+  late final Walk selectedWalk;
+
+  RouteDetails({required this.walkID});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
