@@ -59,39 +59,41 @@ class _MapViewState extends State<MapView> {
 
   Timer _getCurrentLocation() {
     return Timer.periodic(_locationUpdateIntervall, (timer) async {
-
       if (MapRouteInterface.walkPaused) return;
 
 
-      if (MapRouteInterface.walkFinished && MapRouteInterface.gpx.wpts.isNotEmpty) {
+      if (MapRouteInterface.walkFinished &&
+          MapRouteInterface.gpx.wpts.isNotEmpty) {
         //_createPolylines(MapRouteInterface.gpx);
         _timer?.cancel();
         MapRouteInterface.walkPaused = true;
       }
 
-        //print(PolylineIf.gpx);
+      //print(PolylineIf.gpx);
 
 
-      if (mounted && !MapRouteInterface.walkFinished) {
-        Position? myPosition = await _geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      if (!MapRouteInterface.walkFinished) {
+        Position? myPosition = await _geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high);
+        // Store the position in the variable
+        MapRouteInterface.currentPosition = myPosition;
 
-        setState(() {
-          // Store the position in the variable
-          MapRouteInterface.currentPosition = myPosition;
+        if (mounted) {
+          setState(() {
+            print('CURRENT POS: $myPosition');
 
-          print('CURRENT POS: $myPosition');
-
-          // For moving the camera to current location
-          mapController.animateCamera(
-            CameraUpdate.newCameraPosition(
-              CameraPosition(
-                target: LatLng(
-                    myPosition.latitude, myPosition.longitude),
-                zoom: 18.0,
+            // For moving the camera to current location
+            mapController.animateCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(
+                  target: LatLng(
+                      myPosition.latitude, myPosition.longitude),
+                  zoom: 18.0,
+                ),
               ),
-            ),
-          );
-        });
+            );
+          });
+        }
       }
     });
   }
