@@ -212,11 +212,13 @@ Widget deleteButton(BuildContext context) {
     style: ButtonStyle(
       backgroundColor: MaterialStateProperty.all(Colors.grey),
     ),
-    onPressed: () {
+    onPressed: () async {
+      await DbRouteInterface.deleteWalk();
+
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Route wird gelöscht')));
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => Routes()));
+          .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
     },
     child: Text(' Route löschen'),
   );

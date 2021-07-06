@@ -111,8 +111,8 @@ class _OverviewState extends State<Overview> {
 
                           await finishedWalk();
                           MapRouteInterface.walkFinished = true;
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => RouteSaver()));
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (context) => RouteSaver()));
                         }),
                   ),
                 ])
