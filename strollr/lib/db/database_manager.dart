@@ -4,11 +4,17 @@ import 'package:strollr/model/picture.dart';
 import 'package:strollr/model/picture_categories.dart';
 import 'package:strollr/model/walk.dart';
 import 'package:strollr/logger.dart';
+import 'package:strollr/db/database_interface_helper.dart';
+import 'package:strollr/utils/shared_prefs.dart';
+
+import '../globals.dart';
 
 class DatabaseManager {
   static final DatabaseManager instance = DatabaseManager._init();
 
   static Database? _database;
+
+  static late Map<int, Categories> idToCategoryMap;
 
   DatabaseManager._init();
 
@@ -22,6 +28,7 @@ class DatabaseManager {
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath(); // gets the default path
     final path = join(dbPath, filePath);
+    idToCategoryMap = new Map();
 
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
@@ -95,12 +102,35 @@ class DatabaseManager {
         .i('Table $tablePictureCategories filled.');
   }
 
+
   void _insertCategories(Database db) {
-    print('inserting categories');
-    Categories.values.forEach((v)  async {
-      await db.rawInsert("INSERT INTO $tablePictureCategories (description) "
-          "VALUES (?)", [v.toShortString()]); // id is automatically created
-        });
+    ApplicationLogger.getLogger('DatabaseManager', colors: true)
+        .d('inserting categories in the database');
+    Categories.values.forEach((v) async {
+      int id = await db.rawInsert(
+          "INSERT INTO $tablePictureCategories (description) "
+          "VALUES (?)",
+          [v.toShortString()]); // id is automatically created
+      idToCategoryMap[id] = v;
+    });
+
+  }
+
+  Future<int> getCategoryIdFromCategory(Categories category) async {
+    var cat = category.toShortString();
+    final db = await DatabaseManager.instance.database;
+    final List<Map> map = await db
+        .rawQuery('SELECT ID FROM categories WHERE description = ?', [cat]);
+
+    if (map.isNotEmpty) {
+      int id = -1;
+      map.forEach((element) {
+        id = element[PictureCategoriesField.id] as int;
+      });
+      return id;
+    } else {
+      throw Exception('Category ${category.toShortString()} not found!');
+    }
   }
 
   /// insert a picture into the database
@@ -238,6 +268,62 @@ class DatabaseManager {
     final result = await db.query(tableWalks, orderBy: orderBy);
     return result.map((json) => Walk.fromJson(json)).toList();
   }
+
+  Future<List<YearlyDistance>> readAllWalkDistancesYearly() async {
+    final db = await instance.database;
+    final result = await db.query(tableWalks,
+        columns: [
+          'strftime(\'%Y\', ${WalkField.endedAt}) AS ${YearlyDistancesField.year}',
+          'SUM(${WalkField.distance}) AS ${YearlyDistancesField.distKm} '
+        ],
+        orderBy: '${WalkField.endedAt} DESC',
+        groupBy: '${YearlyDistancesField.year}');
+    return result.map((json) => YearlyDistance.fromJson(json)).toList();
+  }
+
+  Future<List<MonthlyDistance>> readAllWalkDistancesMonthly(String year) async {
+    final db = await instance.database;
+    final result = await db.query(tableWalks,
+        columns: [
+          'strftime(\'%m\', ${WalkField.endedAt}) AS ${MonthlyDistancesField.monthInYear}',
+          'SUM(${WalkField.distance}) AS ${MonthlyDistancesField.distKm} '
+        ],
+        where: 'strftime(\'%Y\', ${WalkField.endedAt}) = ?',
+        orderBy: '${WalkField.endedAt}',
+        groupBy: '${MonthlyDistancesField.monthInYear}',
+        whereArgs: [year]);
+    return result.map((json) => MonthlyDistance.fromJson(json)).toList();
+  }
+
+  Future<List<DailyDistance>> readAllWalkDistancesInAMonth(String month, String year) async {
+    final db = await instance.database;
+    final result = await db.query(tableWalks,
+        columns: [
+          'strftime(\'%d\', ${WalkField.endedAt}) AS ${DailyDistancesField.day}',
+          'strftime(\'%m\', ${WalkField.endedAt}) AS ${DailyDistancesField.month}',
+          'strftime(\'%Y\', ${WalkField.endedAt}) AS ${DailyDistancesField.year}',
+          'SUM(${WalkField.distance}) AS ${DailyDistancesField.distKm}'
+        ],
+        where: 'strftime(\'%m\', ${WalkField.endedAt}) = ? AND strftime(\'%Y\', ${WalkField.endedAt}) = ?',
+        orderBy: '${WalkField.endedAt} ASC',
+        groupBy: '${DailyDistancesField.day}',
+        whereArgs: [
+          month, year]);
+
+
+    return result.map((json) => DailyDistance.fromJson(json)).toList();
+    // where: 'strftime(\'%m\', ${WalkField.endedAt}) = ? AND strftime(\'%Y\', ${WalkField.endedAt}) = ?',
+    // groupBy: '${DailyDistancesField.day}');
+    // orderBy: WalkField.endedAt,
+    /*
+    where: 'strftime(\'%m\', ${WalkField.endedAt}) = ? AND strftime(\'%Y\', ${WalkField.endedAt}) = ?',
+
+        groupBy: '${DailyDistancesField.day}',
+        whereArgs: [month, year]
+     */
+  }
+
+
 
   /// update a picture in the database by passing the updated version [picture]. Returns the number of changes made
   Future<int> updatePicture(Picture picture) async {

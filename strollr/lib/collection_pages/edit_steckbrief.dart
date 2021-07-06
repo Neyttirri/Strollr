@@ -1,68 +1,66 @@
-import 'dart:async';
-import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:strollr/collection_pages/steckbrief_secondVersion.dart';
+import 'package:strollr/db/database_manager.dart';
 import 'package:strollr/model/picture_categories.dart';
-import 'package:strollr/utils/loading_screen.dart';
-import 'save_picture.dart';
+import 'package:strollr/model/picture.dart';
 import '../globals.dart';
 import '../logger.dart';
 
-class DescribePhotoScreen extends StatefulWidget {
-  final List arguments;
+class EditSteckbriefScreen extends StatefulWidget {
+  final Picture picture;
 
-  DescribePhotoScreen({required this.arguments});
+  EditSteckbriefScreen({required this.picture});
 
   @override
-  _DescribePhotoScreenState createState() => _DescribePhotoScreenState();
+  _EditSteckbriefScreenState createState() => _EditSteckbriefScreenState();
 }
 
-class _DescribePhotoScreenState extends State<DescribePhotoScreen>
+class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
     with SingleTickerProviderStateMixin {
-  // keep the state on a global (not local) level -> here: to show the image in another widget but in the same state
   final GlobalKey<ExtendedImageEditorState> editorKey =
       GlobalKey<ExtendedImageEditorState>();
   final double distanceBetweenElements = 50;
-  bool _loading = true;
-  String genericInfo1 = '';
-  String genericInfo2 = '';
-  String description = '';
+  late String genericInfo1;
+  late String genericInfo2;
+  late String description;
 
-  Categories chosenCategory = Categories.undefined;
-  late File image;
-  late AnimationController _animationController;
+  late Picture image;
+  late Categories chosenCategory;
 
-  // TODO: prob smarter
   List<RadioModel> radioCategoryList = [
-    new RadioModel(false, Image.asset(treeImagePath), 'Baum'),
-    new RadioModel(false, Image.asset(plantImagePath), 'Pflanze'),
-    new RadioModel(false, Image.asset(mushroomImagePath), 'Pilze'),
-    new RadioModel(false, Image.asset(animalImagePath), 'Tier')
+    new RadioModel(false, Image.asset(treeImagePath), 'Baum', Categories.tree),
+    new RadioModel(
+        false, Image.asset(plantImagePath), 'Pflanze', Categories.plant),
+    new RadioModel(
+        false, Image.asset(mushroomImagePath), 'Pilze', Categories.mushroom),
+    new RadioModel(
+        false, Image.asset(animalImagePath), 'Tier', Categories.animal)
   ];
+
+  // for each category there are two questions
+  // in the list the order is: question - helper text to first question - next question - helper text to second question
 
   @override
   void initState() {
     super.initState();
-    __initializeAsync();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 1000),
-    );
+    image = widget.picture;
+    genericInfo1 = image.generic1;
+    genericInfo2 = image.generic2;
+    description = image.description;
+    chosenCategory = DatabaseManager.idToCategoryMap[image.category]!;
+    radioCategoryList.forEach((element) {
+      if (element.category == chosenCategory) {
+        element.isSelected = true;
+      }
+    });
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
     super.dispose();
-  }
-
-  Future<void> __initializeAsync() async {
-    image = widget.arguments[0];
-    Future.delayed(Duration(seconds: 0)).whenComplete(() => setState(() {
-          _loading = false;
-        }));
   }
 
   @override
@@ -72,96 +70,60 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
       appBar: AppBar(
         elevation: 10,
         title: Text(
-          "Steckbrief zum Bild",
+          "Steckbrief bearbeiten",
           style: TextStyle(color: Colors.green),
         ),
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.green),
         actions: [
-          // icon button to confirm changes and proceed to save info and image
           IconButton(
             icon: Icon(Icons.check),
             onPressed: () async {
-                ApplicationLogger.getLogger('_DescribePhotoScreenState',
-                    colors: true)
-                    .d('saving image and info with path: ${image.path} ');
-                await Future.delayed(Duration(seconds: 0)).then(
-                      (value) => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SavePhotoScreen(
-                        generic1: genericInfo1,
-                        generic2: genericInfo2,
-                        description: description,
-                        category: getChosenCategory(),
-                        image: image,
-                        imagePath: image.path,
-                        location: widget.arguments[1],
-                        //imageLocation: widget.arguments[1]
-                      ),
-                    ),
-                  ),
-                );
-              }
+              ApplicationLogger.getLogger('_EditSteckbriefScreenState',
+                      colors: true)
+                  .d('updating image and info');
+              _updatePicture();
+              Future.delayed(Duration(milliseconds: 1500)).then(
+                (value) => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Steckbrief_2(picture: image)),
+                ),
+              );
+            },
           ),
         ],
       ),
-      body: _loading
-          ? LoadingScreen()
-          : //SingleChildScrollView(
-          //child:
-          Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.all(25.0),
-              decoration: BoxDecoration(
-                color: Color(0xFFDDDDDD),
-              ),
-              // here are all the fields the user has to fill
-              child: ListView(
-                children: [
-                  Text(
-                    'Wähle eine Kategorie: ',
-                    style: TextStyle(
-                      color: Colors.green,
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  _getCategoryField(),
-                  // get all categories with icons, as a list that is horizontally scrollable
-                  (chosenCategory != Categories.undefined)
-                      // show the questions after the user has chosen a category -> animated widgets
-                      // if the user has not chosen a category -> show the picture the user took
-                      ? SlideTransition(
-                          position: Tween<Offset>(
-                            begin: Offset(0, 1), // move from bottom to top
-                            end: Offset.zero,
-                          ).animate(_animationController),
-                          child: FadeTransition(
-                            opacity: _animationController,
-                            child: Column(
-                              children: [
-                                _getQuestionsForCategory(),
-                                _getDescriptionField(),
-                              ],
-                            ),
-                          ),
-                        )
-                      : Container(
-                          height: MediaQuery.of(context).size.height * 0.5,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(85)),
-                            image: new DecorationImage(
-                              image: FileImage(image),
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                ],
+      body: Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.all(25.0),
+        decoration: BoxDecoration(
+          color: Color(0xFFDDDDDD),
+        ),
+        // here are all the fields the user has to fill
+        child: ListView(
+          children: [
+            Text(
+              'Kategorie: ',
+              style: TextStyle(
+                color: Colors.green,
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
               ),
             ),
+            _getCategoryField(),
+            // get all categories with icons, as a list that is horizontally scrollable
+            Column(
+              children: [
+                _getQuestionsForCategory(),
+                _getDescriptionField(),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
+    // bottomNavigationBar: _buildFunctions(),
   }
 
   Widget _generateQuestion(
@@ -179,6 +141,8 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
           ),
         ),
         TextField(
+          controller: TextEditingController()
+            ..text = isFirstQuestion ? image.generic1 : image.generic2,
           cursorColor: Colors.black,
           textCapitalization: TextCapitalization.words,
           textAlignVertical: TextAlignVertical.center,
@@ -216,7 +180,6 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
   }
 
   Widget _getQuestionsForCategory() {
-    _animationController.forward();
     return Column(
       children: [
         _generateQuestion(questionsForCategory[chosenCategory]![0],
@@ -243,6 +206,7 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
             ),
           ),
           TextField(
+            controller: TextEditingController()..text = image.description,
             cursorColor: Colors.black,
             textCapitalization: TextCapitalization.words,
             textAlignVertical: TextAlignVertical.center,
@@ -304,11 +268,10 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
               radioCategoryList
                   .forEach((element) => element.isSelected = false);
               radio.isSelected = true;
-              chosenCategory = getChosenCategory();
+              chosenCategory = radio.category;
               ApplicationLogger.getLogger('_DescribePhotoScreenState',
                       colors: true)
                   .d('chosen category: ${chosenCategory.toString()} ');
-              _animationController.reset();
             });
           },
           child: new RadioItem(radio),
@@ -319,29 +282,13 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
     return radioList;
   }
 
-  Categories getChosenCategory() {
-    for (RadioModel rm in radioCategoryList) {
-      if (rm.isSelected) {
-        switch (rm.description) {
-          case 'Baum':
-            chosenCategory = Categories.tree;
-            break;
-          case 'Pflanze':
-            chosenCategory = Categories.plant;
-            break;
-          case 'Pilze':
-            chosenCategory = Categories.mushroom;
-            break;
-          case 'Tier':
-            chosenCategory = Categories.animal;
-            break;
-          default:
-            chosenCategory = Categories.undefined;
-            break;
-        }
-      }
-    }
-    return chosenCategory;
+  _updatePicture() async {
+    image.generic1 = genericInfo1;
+    image.generic2 = genericInfo2;
+    image.description = description;
+    image.category = await DatabaseManager.instance
+        .getCategoryIdFromCategory(chosenCategory);
+    await DatabaseManager.instance.updatePicture(image);
   }
 }
 
@@ -387,6 +334,7 @@ class RadioModel {
   bool isSelected;
   final Widget buttonIcon;
   final String description;
+  final Categories category;
 
-  RadioModel(this.isSelected, this.buttonIcon, this.description);
+  RadioModel(this.isSelected, this.buttonIcon, this.description, this.category);
 }
