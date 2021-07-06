@@ -277,7 +277,10 @@ class _ActiveRouteState extends State<ActiveRoute> {
             currentPosition!.latitude,
             gpx.wpts[gpx.wpts.length - 1].lon as double,
             currentPosition.longitude);
-      distance += distanceToLastPosition;
+
+      setState(() {
+        distance += distanceToLastPosition;
+      });
       }
 
       if (gpx.wpts.isNotEmpty && distanceToLastPosition < 0.02) return;

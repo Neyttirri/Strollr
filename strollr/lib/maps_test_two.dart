@@ -138,8 +138,6 @@ class _MapViewState extends State<MapView> {
         );
       });
     }
-
-    if (gpx == MapRouteInterface.gpx) MapRouteInterface.gpx.wpts.clear();
   }
 
   /*
@@ -192,10 +190,12 @@ class _MapViewState extends State<MapView> {
   }
 
   _setMarkers() async {
-    List<Position> markers = await DbRouteInterface.getMarkerPositions();
+    List<LatLng> markers = await DbRouteInterface.getMarkerPositions();
 
-    for (Position marker in markers){
-      _addMarker(LatLng(marker.latitude, marker.longitude));
+    //_addMarker(MapRouteInterface.currentPosition);
+
+    for (LatLng marker in markers){
+      _addMarker(marker);
     }
   }
 

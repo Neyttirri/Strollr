@@ -193,6 +193,8 @@ Widget saveButton(BuildContext context) {
     ),
     onPressed: () async {
       if (_formKey.currentState!.validate()) {
+        MapRouteInterface.gpx.wpts.clear();
+
         await DbRouteInterface.setWalkName(name: nValue);
 
         ScaffoldMessenger.of(context)

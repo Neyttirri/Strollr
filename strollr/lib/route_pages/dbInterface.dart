@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:gpx/gpx.dart';
 import 'package:intl/intl.dart';
 import 'package:strollr/db/database_manager.dart';
@@ -133,10 +134,12 @@ class DbRouteInterface{
 
     List<Picture> picturesOfWalk = await DatabaseManager.instance.readALlPicturesFromWalk(walkId);
 
-    List<Position> markerPositions = new List.empty(growable: true);
+    List<LatLng> markerPositions = new List.empty(growable: true);
     
     for (Picture pic in picturesOfWalk){
-      //markerPosition.add(pic.location);
+      Gpx position = GpxReader().fromString(pic.location);
+
+      markerPositions.add(LatLng(position.wpts[0].lat as double, position.wpts[0].lon as double));
     }
 
     return markerPositions;
