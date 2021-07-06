@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
-import 'package:strollr/camera/take_picture.dart';
 import 'package:strollr/route_pages/PolylineIf.dart';
 import 'package:strollr/route_pages/dbInterface.dart';
 import 'package:strollr/route_pages/save_route.dart';
@@ -222,34 +220,9 @@ class _ActiveRouteState extends State<ActiveRoute> {
 
   Future<void> _openCamera() async {
 
-    // solution using the camera plugin
-    /*
-    final cameras = await availableCameras();
-    final firstCamera = cameras.first;
-    Position position = await _geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-
-    Future.delayed(Duration(seconds: 0)).then(
-          (value) => Navigator.push(
-        context,
-        // the transition
-        MaterialPageRoute(
-          builder: (context) => TakePictureScreen(camera: firstCamera, position: position,),
-        ),
-      ),
-    );
-
-     */
-
-
-  // solution using the image picker plugin
-
     var picture = (await _picker.getImage(
         source: ImageSource.camera,
-        imageQuality: 50,
-        maxHeight: 400,
-        maxWidth: 400))!;
-    // 400x400 is less than 40kB, imageQuality is also for compressing the image
+        ))!;
 
     Position position = await _geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);

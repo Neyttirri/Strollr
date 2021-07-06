@@ -1,12 +1,10 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gpx/gpx.dart';
 import 'package:strollr/db/database_manager.dart';
 import 'package:strollr/model/picture.dart';
 import 'package:strollr/model/picture_categories.dart';
-import 'package:strollr/route_pages/active_route.dart';
 import 'package:strollr/utils/shared_prefs.dart';
 import 'package:animated_check/animated_check.dart';
 
@@ -123,18 +121,6 @@ class _ConfirmationAnimationState extends State<ConfirmationAnimation>
         context,
       ),
     );
-    /*
-     Future.delayed(Duration(milliseconds: 1500)).then(
-          (value) => Navigator.push(
-            context,
-            // the transition
-            MaterialPageRoute(
-              builder: (context) => ActiveRoute()
-            ),
-          ),
-    );
-
-     */
   }
 
   @override
