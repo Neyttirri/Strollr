@@ -115,7 +115,9 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
             // get all categories with icons, as a list that is horizontally scrollable
             Column(
               children: [
-                _getQuestionsForCategory(),
+                chosenCategory != Categories.undefined
+                    ? _getQuestionsForCategory()
+                    : Text(''),
                 _getDescriptionField(),
               ],
             ),

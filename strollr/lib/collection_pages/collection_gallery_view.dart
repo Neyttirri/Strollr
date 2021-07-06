@@ -37,7 +37,7 @@ class GalleryView extends StatelessWidget {
   }) {
     categoryID = idToCategoryMap.keys.firstWhere(
         (element) => idToCategoryMap[element] == category,
-        orElse: () => -1);
+        orElse: () => 1);
   }
 
   @override
