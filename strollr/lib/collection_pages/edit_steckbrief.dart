@@ -23,9 +23,9 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
   final GlobalKey<ExtendedImageEditorState> editorKey =
       GlobalKey<ExtendedImageEditorState>();
   final double distanceBetweenElements = 50;
-  String genericInfo1 = '';
-  String genericInfo2 = '';
-  String description = '';
+  late String genericInfo1;
+  late String genericInfo2;
+  late String description;
 
   late Picture image;
   late Categories chosenCategory;
@@ -47,6 +47,9 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
   void initState() {
     super.initState();
     image = widget.picture;
+    genericInfo1 = image.generic1;
+    genericInfo2 = image.generic2;
+    description = image.description;
     chosenCategory = DatabaseManager.idToCategoryMap[image.category]!;
     radioCategoryList.forEach((element) {
       if (element.category == chosenCategory) {

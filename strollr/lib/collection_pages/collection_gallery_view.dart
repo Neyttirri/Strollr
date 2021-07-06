@@ -4,6 +4,7 @@ import 'package:strollr/collection_pages/steckbrief_secondVersion.dart';
 import 'package:strollr/db/database_manager.dart';
 import 'package:strollr/model/picture.dart';
 import 'package:strollr/model/picture_categories.dart';
+import 'package:strollr/utils/shared_prefs.dart';
 
 import '../style.dart';
 
@@ -26,6 +27,8 @@ class GalleryView extends StatelessWidget {
     List<Picture> pictures =
     await DatabaseManager.instance.readALlPicturesFromCategory(categoryID);
 
+    pictureList.addAll(pictures);
+    /*
     pictures.forEach((element) {
       pictureList.add(Picture(
           pictureData: element.pictureData,
@@ -39,6 +42,8 @@ class GalleryView extends StatelessWidget {
           walk_id: element.walk_id));
     });
 
+     */
+
     return true;
   }
 
@@ -46,7 +51,10 @@ class GalleryView extends StatelessWidget {
     required this.category,
   }) {
     categoryID = DatabaseManager.idToCategoryMap.keys.firstWhere((
-        element) => DatabaseManager.idToCategoryMap[element] == category);
+        element) => DatabaseManager.idToCategoryMap[element] == category, orElse: () => 0);
+    DatabaseManager.idToCategoryMap.entries.forEach((element) {
+      print('Key = ${element.key} : Value = ${element.value}');
+    });
   }
 
   @override

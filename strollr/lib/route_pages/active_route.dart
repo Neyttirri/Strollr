@@ -221,7 +221,7 @@ class _ActiveRouteState extends State<ActiveRoute> {
   Future<void> _openCamera() async {
 
     var picture = (await _picker.getImage(
-        source: ImageSource.camera,
+        source: ImageSource.camera, imageQuality: 100,
         ))!;
 
     Position position = await _geolocator.getCurrentPosition(

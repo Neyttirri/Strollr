@@ -1,10 +1,6 @@
 library strollr.globals;
 
-import 'package:flutter/services.dart';
-import 'package:stop_watch_timer/stop_watch_timer.dart';
-import 'package:strollr/db/database_manager.dart';
-import 'package:strollr/model/picture.dart';
-
+import 'package:strollr/stop_watch_timer.dart';
 import 'model/picture_categories.dart';
 
 export 'globals.dart';
@@ -16,6 +12,7 @@ final String plantImagePath = "assets/images/plantIcon.png";
 final String animalImagePath = "assets/images/animalFootstepIcon.png";
 final String treeImagePath = "assets/images/treeIcon.png";
 
+late Map<int, Categories> idToCategory;
 // **************** STECKBRIEF QUESTIONS ********************
 
 Map<Categories, List<String>> questionsForCategory = {
@@ -40,7 +37,7 @@ Map<Categories, List<String>> questionsForCategory = {
   Categories.tree: [
     'Was für einen Baum ist das?',
     'zB Eiche, Tanne,...',
-    'Wo wachsen solche Bäume nicht?',
+    'Wo wachsen solche Bäume?',
     'zB kann die Eiche nicht im Schatten anderer Gehölze wachsen'
   ],
 };

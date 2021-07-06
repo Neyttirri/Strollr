@@ -1,8 +1,12 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+
+import 'package:strollr/model/picture_categories.dart';
 
 class SharedPrefs {
   static SharedPreferences? _prefs; // initialised in main
   static const _keyCurrentWalkId = 'currentWalkId';
+  static const _keyIdToCategory = 'idToCategory';
 
   static Future init() async {
    if(_prefs == null)

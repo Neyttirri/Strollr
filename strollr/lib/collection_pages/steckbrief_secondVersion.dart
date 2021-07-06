@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:strollr/collection_pages/collection_gallery_view.dart';
 import 'package:strollr/db/database_manager.dart';
 import 'package:strollr/model/picture.dart';
 import 'package:strollr/model/picture_categories.dart';
@@ -143,7 +144,7 @@ class Steckbrief_2 extends StatelessWidget {
                           OutlinedButton(
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => RouteDetails(walkID: picture.walk_id,)));
+                                  builder: (context) => RouteDetails(picture.walk_id,)));
                             },
                             child: Text('Zeige Route'),
                             style: OutlinedButton.styleFrom(
@@ -260,6 +261,9 @@ class Steckbrief_2 extends StatelessWidget {
       backgroundColor: Colors.grey.shade800,
       textColor: Color(0xffffffff),
     );
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+        builder: (context) => GalleryView(category: categoryPicture)));
   }
 
   _confirmDeleting(BuildContext context) async {

@@ -5,6 +5,7 @@ import 'package:strollr/model/picture_categories.dart';
 import 'package:strollr/model/walk.dart';
 import 'package:strollr/logger.dart';
 import 'package:strollr/db/database_interface_helper.dart';
+import 'package:strollr/utils/shared_prefs.dart';
 
 import '../globals.dart';
 
@@ -13,7 +14,7 @@ class DatabaseManager {
 
   static Database? _database;
 
-  static Map<int, Categories> idToCategoryMap = new Map();
+  static late Map<int, Categories> idToCategoryMap;
 
   DatabaseManager._init();
 
@@ -27,6 +28,7 @@ class DatabaseManager {
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath(); // gets the default path
     final path = join(dbPath, filePath);
+    idToCategoryMap = new Map();
 
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
@@ -100,6 +102,7 @@ class DatabaseManager {
         .i('Table $tablePictureCategories filled.');
   }
 
+
   void _insertCategories(Database db) {
     ApplicationLogger.getLogger('DatabaseManager', colors: true)
         .d('inserting categories in the database');
@@ -110,6 +113,7 @@ class DatabaseManager {
           [v.toShortString()]); // id is automatically created
       idToCategoryMap[id] = v;
     });
+
   }
 
   Future<int> getCategoryIdFromCategory(Categories category) async {

@@ -418,14 +418,14 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
     ))!;
 
     ApplicationLogger.getLogger('_EditPhotoScreenState', colors: true).i(
-        'Finished compression. Size before: ${image.readAsBytesSync().lengthInBytes / 1024}. Size after: ${compressedImage.lengthInBytes / 1024}');
+        'Finished compression. Size before: ${image.readAsBytesSync().lengthInBytes / 1024}. Size after with compression quiality ${extraQuality ? highQuality : defaultQuality}: ${compressedImage.lengthInBytes / 1024}');
     image.writeAsBytesSync(
         compressedImage);
 
     ApplicationLogger.getLogger('_EditPhotoScreenState', colors: true)
         .d('Finished editing picture');
     Future.delayed(Duration(seconds: 0)).then(
-      (value) => Navigator.of(context).push(
+      (value) => Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => DescribePhotoScreen(arguments: [
             image,

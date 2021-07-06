@@ -127,7 +127,7 @@ class Steckbrief extends StatelessWidget {
                         children: [
                           OutlinedButton(
                             onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(walkID : walkID)));
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(walkID)));
                             },
                             child: Text('Bearbeiten'),
                             style: OutlinedButton.styleFrom(
@@ -143,7 +143,7 @@ class Steckbrief extends StatelessWidget {
                           Spacer(),
                           OutlinedButton(
                             onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(walkID : walkID)));
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(walkID)));
                             },
                             child: Text('Zeige Route'),
                             style: OutlinedButton.styleFrom(
