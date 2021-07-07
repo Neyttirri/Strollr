@@ -76,7 +76,7 @@ class GalleryView extends StatelessWidget {
                             borderRadius: BorderRadius.all(Radius.circular(15)),
                             image: new DecorationImage(
                               image: MemoryImage(pictureList[index].pictureData),
-                              fit: BoxFit.scaleDown,
+                              fit: BoxFit.fill,
                             ),
                           ),
                         ),

@@ -48,12 +48,12 @@ class Steckbrief_2 extends StatelessWidget {
                 tag: "gallery_view",
                 child: Container(
                   height: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(top: 15),
+                  margin: EdgeInsets.all(15),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                     image: new DecorationImage(
                       image: MemoryImage(picture.pictureData),
-                      fit: BoxFit.scaleDown,
+                      fit: BoxFit.fill,
                     ),
                   ),
                 )
@@ -264,7 +264,7 @@ class Steckbrief_2 extends StatelessWidget {
           child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Icon(Icons.download),
+                Icon(Icons.download_rounded),
                 Container(
                   margin: EdgeInsets.only(left: 10),
                   width: 90,
@@ -326,7 +326,7 @@ class Steckbrief_2 extends StatelessWidget {
                   primary: Colors.green,
                 ),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  //Navigator.of(context).pop();
                   _deleteImage(context);
                 },
               ),
