@@ -16,7 +16,7 @@ class Routes extends StatelessWidget {
     List<Walk> walks = await DbRouteInterface.getAllWalks();
 
     walks.forEach((element) {
-      routeList.add(new RouteListCard(element.id as int, element.startedAtTime, "Berlin", element.name, element.durationTime, element.distanceInKm));
+      routeList.add(new RouteListCard(element.id as int, element.startedAtTime, "Datum:", element.name, element.durationTime, element.distanceInKm));
     });
 
     return true;
@@ -79,10 +79,13 @@ class Routes extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
                 child: Row(
                   children: <Widget>[
-                    Text(route.routeName, style: new TextStyle(fontSize: 18.0),),
+                    Text(
+                      route.routeName,
+                      style: new TextStyle(
+                          fontSize: 18.0, color: headerGreen),),
                     Spacer(),
                   ]
                 ),
@@ -95,7 +98,6 @@ class Routes extends StatelessWidget {
                       Text(route.routeLocation),
                       Spacer(),
                       Text("${DateFormat('dd/MM/yyyy').format(route.routeTime).toString()}", textAlign: TextAlign.left,),
-                      Spacer(),
                     ]
                 ),
               ),

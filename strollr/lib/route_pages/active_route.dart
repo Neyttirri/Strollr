@@ -95,25 +95,31 @@ class _OverviewState extends State<Overview> {
                 ),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Padding(
-                    padding: EdgeInsets.fromLTRB(45, 10, 3, 5),
+                    padding: EdgeInsets.all(10),
                     child: CustomButton(),
                   ),
                   Padding(
-                    padding: EdgeInsets.fromLTRB(60, 10, 0, 5),
-                    child: ElevatedButton(
-                        child: Text('Route beenden'),
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.grey[500])),
-                        onPressed: () async {
-                          globals.stopWatchTimer.onExecute
-                              .add(StopWatchExecuted.stop);
+                    padding: EdgeInsets.all(10),
+                    child: SizedBox(
+                      width: 150,
+                      child: ElevatedButton(
+                          child: Text('Route beenden'),
+                          style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.all(10),
+                            primary: headerGreen,
+                            textStyle: TextStyle(fontSize: 18),
+                            backgroundColor: Colors.white,
+                          ),
+                          onPressed: () async {
+                            globals.stopWatchTimer.onExecute
+                                .add(StopWatchExecuted.stop);
 
-                          await finishedWalk();
-                          MapRouteInterface.walkFinished = true;
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (context) => RouteSaver()));
-                        }),
+                            await finishedWalk();
+                            MapRouteInterface.walkFinished = true;
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (context) => RouteSaver()));
+                          }),
+                    ),
                   ),
                 ])
               ],
@@ -200,7 +206,8 @@ class _ActiveRouteState extends State<ActiveRoute> {
       floatingActionButton: FloatingActionButton(
           tooltip: 'Foto aufnehmen',
           child: Icon(Icons.add_a_photo_outlined),
-          backgroundColor: Colors.grey[500],
+          backgroundColor: headerGreen,
+          foregroundColor: Colors.white,
           onPressed: () {
             _openCamera();
           }
@@ -309,41 +316,47 @@ class _CustomButtonState extends State<CustomButton> {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.green),
-      ),
-      onPressed: () {
-        if (label == 'Start') {
-          setState(() {
-            label = 'Pause';
-            MapRouteInterface.walkPaused = false;
+    return SizedBox(
+      width: 150,
+      child: ElevatedButton(
+        style: OutlinedButton.styleFrom(
+          padding: EdgeInsets.all(10),
+          primary: Colors.white,
+          textStyle: TextStyle(fontSize: 18),
+          backgroundColor: headerGreen,
+        ),
+        onPressed: () {
+          if (label == 'Start') {
+            setState(() {
+              label = 'Pause';
+              MapRouteInterface.walkPaused = false;
 
-            MapRouteInterface.walkFinished = false;
+              MapRouteInterface.walkFinished = false;
 
-            globals.stopWatchTimer.onExecute.add(StopWatchExecuted.start);
-          });
-        } else if (label == 'Pause') {
-          setState(() {
-            label = 'Weiter';
-            MapRouteInterface.walkPaused = true;
+              globals.stopWatchTimer.onExecute.add(StopWatchExecuted.start);
+            });
+          } else if (label == 'Pause') {
+            setState(() {
+              label = 'Weiter';
+              MapRouteInterface.walkPaused = true;
 
-            globals.stopWatchTimer.onExecute.add(StopWatchExecuted.stop);
-          });
-        } else if (label == 'Weiter') {
-          setState(() {
-            label = 'Pause';
-            MapRouteInterface.walkPaused = false;
+              globals.stopWatchTimer.onExecute.add(StopWatchExecuted.stop);
+            });
+          } else if (label == 'Weiter') {
+            setState(() {
+              label = 'Pause';
+              MapRouteInterface.walkPaused = false;
 
-            MapRouteInterface.walkFinished = false;
+              MapRouteInterface.walkFinished = false;
 
-            globals.stopWatchTimer.onExecute.add(StopWatchExecuted.start);
-          });
-        }
-      },
-      child: Text(
-        label,
-        style: TextStyle(color: Colors.white),
+              globals.stopWatchTimer.onExecute.add(StopWatchExecuted.start);
+            });
+          }
+        },
+        child: Text(
+          label,
+          style: TextStyle(color: Colors.white),
+        ),
       ),
     );
   }

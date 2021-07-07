@@ -6,6 +6,7 @@ import 'package:strollr/collection_pages/steckbrief_secondVersion.dart';
 import 'package:strollr/db/database_manager.dart';
 import 'package:strollr/model/picture_categories.dart';
 import 'package:strollr/model/picture.dart';
+import 'package:strollr/style.dart';
 import '../globals.dart';
 import '../logger.dart';
 
@@ -22,7 +23,7 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ExtendedImageEditorState> editorKey =
       GlobalKey<ExtendedImageEditorState>();
-  final double distanceBetweenElements = 50;
+  final double distanceBetweenElements = 25;
   late String genericInfo1;
   late String genericInfo2;
   late String description;
@@ -96,19 +97,22 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
       ),
       body: Container(
         alignment: Alignment.center,
-        padding: EdgeInsets.all(25.0),
+        padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Color(0xFFDDDDDD),
+          color: backgroundGrey,
         ),
         // here are all the fields the user has to fill
         child: ListView(
           children: [
-            Text(
-              'Kategorie: ',
-              style: TextStyle(
-                color: Colors.green,
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+              child: Text(
+                'Kategorie: ',
+                style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             _getCategoryField(),
@@ -134,19 +138,22 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          question,
-          style: TextStyle(
-            color: Colors.green,
-            fontSize: 16.0,
-            fontWeight: FontWeight.bold,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 8),
+          child: Text(
+            question,
+            style: TextStyle(
+              color: Colors.green,
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         TextField(
           controller: TextEditingController()
             ..text = isFirstQuestion ? image.generic1 : image.generic2,
           cursorColor: Colors.black,
-          textCapitalization: TextCapitalization.words,
+          //textCapitalization: TextCapitalization.words,
           textAlignVertical: TextAlignVertical.center,
           onEditingComplete: () => FocusScope.of(context).nextFocus(),
           onChanged: (value) {
@@ -169,7 +176,7 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(15),
               borderSide: BorderSide(
                 color: Colors.green.shade500,
                 width: 2.0,
@@ -199,12 +206,15 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            descriptionField,
-            style: TextStyle(
-              color: Colors.green,
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              descriptionField,
+              style: TextStyle(
+                color: Colors.green,
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           TextField(
@@ -302,23 +312,24 @@ class RadioItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(10.0),
+      margin: EdgeInsets.fromLTRB(0, 15, 10, 0),
       child: Column(
         children: <Widget>[
           Container(
+            padding: EdgeInsets.all(10),
             // TODO: % of the screen or hard coded?
-            height: MediaQuery.of(context).size.width * 0.16,
-            width: MediaQuery.of(context).size.width * 0.16,
+            height: MediaQuery.of(context).size.width * 0.20,
+            width: MediaQuery.of(context).size.width * 0.20,
             child: Center(
               child: _item.buttonIcon,
             ),
             decoration: BoxDecoration(
               color:
-                  _item.isSelected ? Colors.green.shade300 : Colors.transparent,
+                  _item.isSelected ? Colors.green.shade300 : Colors.grey.shade300,
               border: Border.all(
                   width: 1.0,
                   color:
-                      _item.isSelected ? Colors.green.shade500 : Colors.grey),
+                      _item.isSelected ? Colors.green.shade500 : Colors.grey.shade300),
               borderRadius: BorderRadius.all(Radius.circular(6.0)),
             ),
           ),

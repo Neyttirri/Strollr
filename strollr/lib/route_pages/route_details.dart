@@ -52,7 +52,7 @@ class _RouteDetailsState extends State<RouteDetails> {
         ),
         body: Center(
             child: Container(
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                 child: SingleChildScrollView(
                   child: Column(
                     children: [RouteForm(walkId), buttonRow(context)],
@@ -149,37 +149,40 @@ class RouteFormState extends State<RouteForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FutureBuilder(
-              future: setName(),
-              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                if (snapshot.hasData){
-                  return nameWidget(context);
-                }
-                return Row();
-              }),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: FutureBuilder(
+                future: setName(),
+                builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                  if (snapshot.hasData){
+                    return nameWidget(context);
+                  }
+                  return Row();
+                }),
+          ),
           Row(
             children: [new Expanded(child: map)],
           ), //insert map
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
             child: FutureBuilder(
               future: setDistance(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                 if (snapshot.hasData){
                   return Row(
                     children: <Widget>[
-                      Text("Distanz:"),
+                      Text("Distanz:", style: TextStyle(fontSize: 18),),
                       Spacer(),
-                      Text(distance.toString() + 'km'),
+                      Text(distance.toString() + 'km', style: TextStyle(fontSize: 18),),
                     ],
                   );
                 }
                 else {
                   return Row(
                     children: <Widget>[
-                      Text("Distanz:"),
+                      Text("Distanz:", style: TextStyle(fontSize: 18),),
                       Spacer(),
-                      Text(''),
+                      Text('', style: TextStyle(fontSize: 18),),
                     ],
                   );
                 }
@@ -187,25 +190,25 @@ class RouteFormState extends State<RouteForm> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
             child: FutureBuilder(
               future: setDuration(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                 if (snapshot.hasData){
                   return Row(
                     children: <Widget>[
-                      Text("Dauer:"),
+                      Text("Dauer:", style: TextStyle(fontSize: 18),),
                       Spacer(),
-                      Text(duration.toString() + 'h'),
+                      Text(duration.toString() + 'h', style: TextStyle(fontSize: 18),),
                     ],
                   );
                 }
                 else {
                   return Row(
                     children: <Widget>[
-                      Text("Dauer:"),
+                      Text("Dauer:", style: TextStyle(fontSize: 18),),
                       Spacer(),
-                      Text(''),
+                      Text('', style: TextStyle(fontSize: 18),),
                     ],
                   );
                 }
@@ -225,7 +228,13 @@ class RouteFormState extends State<RouteForm> {
           enabled: _isEnable,
           decoration: const InputDecoration(
               hintText: 'Gib deiner Route einen Namen',
-              labelText: 'Routenname'),
+              //labelText: 'Routenname'
+            border: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            errorBorder: InputBorder.none,
+            disabledBorder: InputBorder.none,
+          ),
           validator: (value) {
             nName = value!;
 
@@ -234,6 +243,11 @@ class RouteFormState extends State<RouteForm> {
             }
             return null;
           },
+          style: TextStyle(
+            color: headerGreen,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       IconButton(
@@ -253,49 +267,63 @@ class SaveButton extends StatefulWidget {
 
 class _SaveButtonState extends State<SaveButton> {
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.green),
-      ),
-      onPressed: () async {
-        if (_formKey.currentState!.validate()) {
-          await DbRouteInterface.setWalkName(walkId: walkId, name: nName);
+    return SizedBox(
+      width: 150,
+      child: ElevatedButton(
+        style: OutlinedButton.styleFrom(
+          padding:
+          EdgeInsets.all(10),
+          primary: Colors.white,
+          textStyle: TextStyle(fontSize: 18),
+          backgroundColor: headerGreen,
+        ),
+        onPressed: () async {
+          if (_formKey.currentState!.validate()) {
+            await DbRouteInterface.setWalkName(walkId: walkId, name: nName);
 
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('Route wird gespeichert')));
-          setState(() {
-            _isEnable = false;
-          });
-          Navigator.of(context).pop();
-              //.push(MaterialPageRoute(builder: (context) => Routes()));
-          // neuen Routennamen in Datenbank übernehmen
-        }
-      },
-      child: Text('speichern'),
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('Route wird gespeichert', style: TextStyle(fontSize: 50),)));
+            setState(() {
+              _isEnable = false;
+            });
+            Navigator.of(context).pop();
+                //.push(MaterialPageRoute(builder: (context) => Routes()));
+            // neuen Routennamen in Datenbank übernehmen
+          }
+        },
+        child: Text('Speichern'),
+      ),
     );
   }
 }
 
 Widget deleteButton(BuildContext context) {
-  return ElevatedButton(
-    style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all(Colors.grey),
-    ),
-    onPressed: () async {
-      await DbRouteInterface.deleteWalk(walkId: walkId);
+  return SizedBox(
+    width: 150,
+    //height: 50,
+    child: ElevatedButton(
+      style: OutlinedButton.styleFrom(
+        padding: EdgeInsets.all(10),
+        primary: headerGreen,
+        textStyle: TextStyle(fontSize: 18),
+        backgroundColor: Colors.white,
+      ),
+      onPressed: () async {
+        await DbRouteInterface.deleteWalk(walkId: walkId);
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Route wird gelöscht')));
-      Navigator.of(context)
-          .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
-    },
-    child: Text(' Route löschen'),
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Route wird gelöscht', style: TextStyle(fontSize: 20),)));
+        Navigator.of(context)
+            .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
+      },
+      child: Text(' Route löschen'),
+    ),
   );
 }
 
 Widget buttonRow(BuildContext context) {
   return Container(
-      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+      padding: EdgeInsets.fromLTRB(30, 15, 30, 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [deleteButton(context), SaveButton()],

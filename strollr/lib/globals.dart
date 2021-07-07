@@ -22,7 +22,7 @@ final Map<int, Categories> idToCategoryMap = {
   6: Categories.mushroom,
 };
 // **************** STECKBRIEF QUESTIONS ********************
-
+/*
 Map<Categories, List<String>> questionsForCategory = {
   Categories.animal: [
     'Was für ein Tier ist das?',
@@ -50,4 +50,35 @@ Map<Categories, List<String>> questionsForCategory = {
   ],
 };
 
+ */
+
 final String descriptionField = "Erzähl was du darüber weißt!";
+
+
+Map<Categories, List<String>> questionsForCategory = {
+  Categories.animal: [
+    'Name des Tieres:',
+    'zB Hase, Ameise,...',
+    'Art der Ernährung:',
+    'zB Fleischfresser oder Pflanzenfresser'
+  ],
+  Categories.mushroom: [
+    'Name des Pilzes:',
+    'zB Pfifferling, Austernpilz',
+    'Ist der Pilz giftig oder kann man ihn essen?',
+    'Austernpilz ist essbar, kann aber mit Gelbstieligen Muschelseitling verwechelt werden, der auch Giftstoffe enthalten kann'
+  ],
+  Categories.plant: [
+    'Name der Pflanze:',
+    'zB Goldtaler, Kapkörbchen, ... ',
+    'Blütezeit der Pflanze:',
+    'zB hat Kapkörbchen eine Blütezeit von Mai bis September'
+  ],
+  Categories.tree: [
+    'Name des Baumes:',
+    'zB Eiche, Tanne,...',
+    'Wo wachsen solche Bäume?',
+    'zB kann die Eiche nicht im Schatten anderer Gehölze wachsen'
+  ],
+};
+

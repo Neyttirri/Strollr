@@ -29,4 +29,4 @@ const String FontNameDefault = '...tbd...';
 
 //Colors
 const headerGreen = Colors.green;
-const backgroundGrey = Color(0xDDDDDDDD);
+const backgroundGrey = Color(0xF7F7F7F7F7);
