@@ -32,8 +32,11 @@ class Steckbrief_2 extends StatelessWidget {
   Widget build(BuildContext context)  {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(
-          color: headerGreen, //change your color here
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: headerGreen),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture,)),
+          ),
         ),
         title: Text("Steckbrief", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
