@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:strollr/model/picture_categories.dart';
+import 'package:strollr/style.dart';
 import 'package:strollr/utils/loading_screen.dart';
 import 'save_picture.dart';
 import '../globals.dart';
@@ -114,7 +115,7 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
               alignment: Alignment.center,
               padding: EdgeInsets.all(25.0),
               decoration: BoxDecoration(
-                color: Color(0xFFDDDDDD),
+                color: backgroundGrey,
               ),
               // here are all the fields the user has to fill
               child: ListView(
@@ -353,23 +354,24 @@ class RadioItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(10.0),
+      margin: EdgeInsets.fromLTRB(0, 15, 10, 0),
       child: Column(
         children: <Widget>[
           Container(
+            padding: EdgeInsets.all(10),
             // TODO: % of the screen or hard coded?
-            height: MediaQuery.of(context).size.width * 0.16,
-            width: MediaQuery.of(context).size.width * 0.16,
+            height: MediaQuery.of(context).size.width * 0.20,
+            width: MediaQuery.of(context).size.width * 0.20,
             child: Center(
               child: _item.buttonIcon,
             ),
             decoration: BoxDecoration(
               color:
-                  _item.isSelected ? Colors.green.shade300 : Colors.transparent,
+              _item.isSelected ? Colors.green.shade300 : Colors.grey.shade300,
               border: Border.all(
                   width: 1.0,
                   color:
-                      _item.isSelected ? Colors.green.shade500 : Colors.grey),
+                  _item.isSelected ? Colors.green.shade500 : Colors.grey.shade300),
               borderRadius: BorderRadius.all(Radius.circular(6.0)),
             ),
           ),

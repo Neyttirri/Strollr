@@ -21,10 +21,15 @@ class _RouteSaverState extends State<RouteSaver> {
           title: const Text('Routenübersicht',
               style: TextStyle(color: headerGreen)),
           backgroundColor: Colors.white,
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: headerGreen),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
         ),
         body: Center(
             child: Container(
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                 child: SingleChildScrollView(
                   child: Column(
                     children: [RouteForm(), buttonRow(context)],
@@ -87,9 +92,20 @@ class RouteFormState extends State<RouteForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           TextFormField(
+            style: TextStyle(
+              color: headerGreen,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
             decoration: const InputDecoration(
-                hintText: 'Gib deiner Route einen Namen',
-                labelText: 'Routenname'),
+              hintText: 'Gib deiner Route einen Namen',
+              //labelText: 'Routenname'
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
+            ),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Bitte gib einen Routennamen ein';
@@ -109,45 +125,48 @@ class RouteFormState extends State<RouteForm> {
               if (snapshot.hasData){
                 print(snapshot.data.toString());
 
-                return Row(
-                  children: <Widget>[
-                    Text("Start am/um:"),
-                    Spacer(),
-                    Text(started.toString() + ' Uhr'),
-                  ],
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                  child: Row(
+                    children: <Widget>[
+                      Text("Datum:", style: TextStyle(fontSize: 18),),
+                      Spacer(),
+                      Text(started.toString() + ' Uhr', style: TextStyle(fontSize: 18),),
+                    ],
+                  ),
                 );
               }
               else {
                 return Row(
                   children: <Widget>[
-                    Text("Start am/um:"),
+                    Text("Start am/um:", style: TextStyle(fontSize: 18),),
                     Spacer(),
-                    Text(''),
+                    Text('', style: TextStyle(fontSize: 18),),
                   ],
                 );
               }
             },
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
             child: FutureBuilder(
               future: setDistance(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                 if (snapshot.hasData){
                   return Row(
                     children: <Widget>[
-                      Text("Distanz:"),
+                      Text("Distanz:", style: TextStyle(fontSize: 18),),
                       Spacer(),
-                      Text(distance.toString() + 'km'),
+                      Text(distance.toString() + 'km', style: TextStyle(fontSize: 18),),
                     ],
                   );
                 }
                 else {
                   return Row(
                     children: <Widget>[
-                      Text("Distanz:"),
+                      Text("Distanz:", style: TextStyle(fontSize: 18),),
                       Spacer(),
-                      Text(''),
+                      Text('', style: TextStyle(fontSize: 18),),
                     ],
                   );
                 }
@@ -155,25 +174,25 @@ class RouteFormState extends State<RouteForm> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
             child: FutureBuilder(
               future: setDuration(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                 if (snapshot.hasData){
                   return Row(
                     children: <Widget>[
-                      Text("Dauer:"),
+                      Text("Dauer:", style: TextStyle(fontSize: 18),),
                       Spacer(),
-                      Text(duration.toString() + 'h'),
+                      Text(duration.toString() + 'h', style: TextStyle(fontSize: 18),),
                     ],
                   );
                 }
                 else {
                   return Row(
                     children: <Widget>[
-                      Text("Dauer:"),
+                      Text("Dauer:", style: TextStyle(fontSize: 18),),
                       Spacer(),
-                      Text(''),
+                      Text('', style: TextStyle(fontSize: 18),),
                     ],
                   );
                 }
@@ -187,40 +206,53 @@ class RouteFormState extends State<RouteForm> {
 }
 
 Widget saveButton(BuildContext context) {
-  return ElevatedButton(
-    style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all(Colors.green),
+  return SizedBox(
+    width: 150,
+    child: ElevatedButton(
+      style: OutlinedButton.styleFrom(
+        padding:
+        EdgeInsets.all(10),
+        primary: Colors.white,
+        textStyle: TextStyle(fontSize: 18),
+        backgroundColor: headerGreen,
+      ),
+      onPressed: () async {
+        if (_formKey.currentState!.validate()) {
+          MapRouteInterface.gpx.wpts.clear();
+
+          await DbRouteInterface.setWalkName(name: nValue);
+
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Route wird gespeichert')));
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => Routes()));
+        }
+      },
+      child: Text('Speichern'),
     ),
-    onPressed: () async {
-      if (_formKey.currentState!.validate()) {
-        MapRouteInterface.gpx.wpts.clear();
-
-        await DbRouteInterface.setWalkName(name: nValue);
-
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Route wird gespeichert')));
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => Routes()));
-      }
-    },
-    child: Text('speichern'),
   );
 }
 
 Widget deleteButton(BuildContext context) {
-  return ElevatedButton(
-    style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all(Colors.grey),
-    ),
-    onPressed: () async {
-      await DbRouteInterface.deleteWalk();
+  return SizedBox(
+    width: 150,
+    child: ElevatedButton(
+      style: OutlinedButton.styleFrom(
+        padding: EdgeInsets.all(10),
+        primary: headerGreen,
+        textStyle: TextStyle(fontSize: 18),
+        backgroundColor: Colors.white,
+      ),
+      onPressed: () async {
+        await DbRouteInterface.deleteWalk();
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Route wird gelöscht')));
-      Navigator.of(context)
-          .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
-    },
-    child: Text(' Route löschen'),
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Route wird gelöscht')));
+        Navigator.of(context)
+            .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
+      },
+      child: Text(' Route löschen'),
+    ),
   );
 }
 

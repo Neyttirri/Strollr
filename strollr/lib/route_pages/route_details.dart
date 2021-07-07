@@ -164,7 +164,7 @@ class RouteFormState extends State<RouteForm> {
             children: [new Expanded(child: map)],
           ), //insert map
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
+            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
             child: FutureBuilder(
               future: setDistance(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
