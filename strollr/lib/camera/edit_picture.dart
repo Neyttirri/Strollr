@@ -150,9 +150,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        //navigatorKey: MainScree().,
-        home: Scaffold(
+    return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         title: Text(
@@ -319,7 +317,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
                 ],
               ),
             ),
-    ));
+    );
   }
 
   Widget buildImage() {

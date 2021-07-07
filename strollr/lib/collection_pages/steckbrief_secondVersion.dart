@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:strollr/Tabs/collectionTwo.dart';
 import 'package:strollr/collection_pages/collection_gallery_view.dart';
 import 'package:strollr/db/database_manager.dart';
+import 'package:strollr/main_screen.dart';
 import 'package:strollr/model/picture.dart';
 import 'package:strollr/model/picture_categories.dart';
 import 'package:strollr/route_pages/route_details.dart';
@@ -301,9 +303,30 @@ class Steckbrief_2 extends StatelessWidget {
       backgroundColor: Colors.grey.shade800,
       textColor: Color(0xffffffff),
     );
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
+/*
+    Future.delayed(Duration.zero, () {
+      Navigator.of(context).pop();
+    });
+    Future.delayed(Duration.zero, () {
+      Navigator.of(context).pop();
+    });
+
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => MainScreen()));
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => CollectionTwo()));
+    Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => GalleryView(category: categoryPicture)));
+
+     */
+
+    /*
+    replace(oldRoute: MaterialPageRoute(
+        builder: (context) => this), newRoute: MaterialPageRoute(
+        builder: (context) => GalleryView(category: categoryPicture))
+        );
+
+     */
   }
 
   _confirmDeleting(BuildContext context) async {
@@ -326,8 +349,14 @@ class Steckbrief_2 extends StatelessWidget {
                   primary: Colors.green,
                 ),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Future.delayed(Duration.zero, () {
+                    Navigator.of(context).maybePop();
+                  });
+                  Future.delayed(Duration.zero, () {
+                    Navigator.of(context).maybePop();
+                  });
                   _deleteImage(context);
+
                 },
               ),
               TextButton(
