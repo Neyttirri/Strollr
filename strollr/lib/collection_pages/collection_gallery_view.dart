@@ -64,22 +64,23 @@ class GalleryView extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   return new GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => Steckbrief_2(
-                                picture: pictureList[index],
-                              )));
+                      Navigator.of(context).push(
+                          _createRoute(pictureList[index]));
                     },
                     child: Container(
                       padding: EdgeInsets.all(4),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          image: new DecorationImage(
-                            image: MemoryImage(pictureList[index].pictureData),
-                            fit: BoxFit.scaleDown,
+                      child: Hero(
+                        tag: "gallery_view",
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            image: new DecorationImage(
+                              image: MemoryImage(pictureList[index].pictureData),
+                              fit: BoxFit.scaleDown,
+                            ),
                           ),
                         ),
-                      ),
+                      )
                     ),
                   );
                 });
@@ -149,23 +150,48 @@ class GalleryView extends StatelessWidget {
           onTap: () {
             pictureID = selectedPicture.id!;
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => Steckbrief(
-                      walkID: walkID,
-                      selectedPicture: selectedPicture,
+                builder: (context) => Steckbrief_2(
+                      picture: selectedPicture,
                     )));
           },
-          child: Container(
-            padding: EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(15)),
-              image: new DecorationImage(
-                image: MemoryImage(pictureList[index].pictureData),
-                fit: BoxFit.scaleDown,
+          child: Hero(
+            tag: "gallery_view",
+            child: Container(
+              padding: EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                image: new DecorationImage(
+                  image: MemoryImage(pictureList[index].pictureData),
+                  fit: BoxFit.scaleDown,
+                ),
               ),
             ),
-          ),
+          )
         );
       },
     );
   }
+
+  Route _createRoute(Picture picture) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => Steckbrief_2(picture: picture),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          var begin = Offset(0.0, 1.0);
+          var end = Offset.zero;
+          var curve = Curves.ease;
+
+          var tween = Tween(begin: begin, end: end);
+          var curvedAnimation = CurvedAnimation(
+            parent: animation,
+            curve: curve,
+          );
+
+          return SlideTransition(
+            position: tween.animate(curvedAnimation),
+            child: child,
+          );
+        }
+    );
+  }
+
 }

@@ -46,7 +46,17 @@ class Steckbrief_2 extends StatelessWidget {
             children: <Widget>[
               Hero(
                 tag: "gallery_view",
-                child: Image.memory(picture.pictureData),
+                child: Container(
+                  height: MediaQuery.of(context).size.width,
+                  margin: EdgeInsets.only(top: 15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    image: new DecorationImage(
+                      image: MemoryImage(picture.pictureData),
+                      fit: BoxFit.scaleDown,
+                    ),
+                  ),
+                )
               ),
               Container(
                 child: Column(
@@ -63,6 +73,7 @@ class Steckbrief_2 extends StatelessWidget {
                           ),
                           categoryPicture != Categories.undefined ?
                               Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     questionsForCategory[categoryPicture]![0],
