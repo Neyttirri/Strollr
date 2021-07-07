@@ -17,6 +17,9 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
+    return MapView();
+    /*
     return MaterialApp(
       title: 'Flutter Maps',
       theme: ThemeData(
@@ -24,6 +27,8 @@ class MyApp extends StatelessWidget {
       ),
       home: MapView(),
     );
+
+     */
   }
 }
 
