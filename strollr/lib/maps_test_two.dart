@@ -226,7 +226,7 @@ class _MapViewState extends State<MapView> {
               latlong.longitude,
             ),
             infoWindow: InfoWindow(
-              title: 'Start',
+              //title: 'Start',
             ),
             onTap: () async {
               print(pics);
@@ -237,7 +237,7 @@ class _MapViewState extends State<MapView> {
                   LatLng location = LatLng(position.wpts[0].lat as double, position.wpts[0].lon as double);
 
                   if (location == latlong){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => Steckbrief_2(picture : picture, navigationID: navigationID,)));
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Steckbrief_2(picture : picture, navigationID: navigationID)), (Route<dynamic> route) => false);
                   }
                 }
               }

@@ -37,11 +37,12 @@ class Steckbrief_2 extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: headerGreen),
           onPressed: () {
-            print(navigationID);
+            print("Navigation ID: " + navigationID.toString());
+            print("Walk ID: " + picture.walk_id.toString());
             if(navigationID == 1) {
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture)));
             } else if ( navigationID == 2) {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(picture.walk_id)));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(picture.walk_id, navigationID)));
             }
           },
           //push(MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture,)),
@@ -247,7 +248,7 @@ class Steckbrief_2 extends StatelessWidget {
                     ),
 // ---------------- UNTEN LEISTE
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
+                      padding: const EdgeInsets.fromLTRB(10.0, 0, 1.0, 0),
                       child: ButtonBar(
                         alignment: MainAxisAlignment.center,
                         children: <Widget> [
@@ -258,7 +259,7 @@ class Steckbrief_2 extends StatelessWidget {
                               child: Text("Bearbeiten"),
                             style: OutlinedButton.styleFrom(
                               padding:
-                              EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0),
+                              EdgeInsets.all(10),
                               primary: headerGreen,
                               textStyle: TextStyle(fontSize: 20),
                               backgroundColor: Colors.white,
@@ -268,12 +269,12 @@ class Steckbrief_2 extends StatelessWidget {
                           ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => RouteDetails(picture.walk_id,)));
+                                    builder: (context) => RouteDetails(picture.walk_id, navigationID)));
                               },
                               child: Text("Zeige Route"),
                             style: OutlinedButton.styleFrom(
                                 padding:
-                                EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0),
+                                EdgeInsets.all(10.0),
                                 primary: headerGreen,
                                 textStyle: TextStyle(fontSize: 20),
                                 backgroundColor: Colors.white,

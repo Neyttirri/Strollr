@@ -3,7 +3,7 @@ import 'package:strollr/model/picture.dart';
 import 'package:strollr/route_pages/route_details.dart';
 
 import '../style.dart';
-
+/*
 class Steckbrief extends StatelessWidget {
 
   final int walkID;
@@ -172,6 +172,7 @@ class Steckbrief extends StatelessWidget {
     );
   }
 }
+ */
 
 
 /*

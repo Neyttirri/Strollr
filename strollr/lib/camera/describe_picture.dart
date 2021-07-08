@@ -245,7 +245,7 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
           ),
           TextField(
             cursorColor: Colors.black,
-            textCapitalization: TextCapitalization.words,
+            textCapitalization: TextCapitalization.sentences,
             textAlignVertical: TextAlignVertical.center,
             onEditingComplete: () => FocusScope.of(context).nextFocus(),
             onChanged: (value) {

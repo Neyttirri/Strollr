@@ -226,7 +226,7 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
           TextField(
             controller: TextEditingController()..text = image.description,
             cursorColor: Colors.black,
-            textCapitalization: TextCapitalization.words,
+            textCapitalization: TextCapitalization.sentences,
             textAlignVertical: TextAlignVertical.center,
             onEditingComplete: () => FocusScope.of(context).nextFocus(),
             onChanged: (value) {

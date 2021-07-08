@@ -52,7 +52,7 @@ class GalleryView extends StatelessWidget {
             MaterialPageRoute(builder: (context) => CollectionTwo()),
           ),
         ),
-        title: Text("Gallery View", style: TextStyle(color: headerGreen)),
+        title: Text("Hebarium", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
       body: FutureBuilder(
