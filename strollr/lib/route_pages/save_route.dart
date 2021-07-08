@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:strollr/Tabs/routes.dart';
 import 'package:strollr/maps_test_two.dart';
 import 'package:strollr/route_pages/dbInterface.dart';
+import '../globals.dart';
+import '../stop_watch_timer.dart';
 import '../style.dart';
 import 'PolylineIf.dart';
 
@@ -231,6 +233,8 @@ Widget saveButton(BuildContext context) {
 
           await DbRouteInterface.setWalkName(name: nValue);
 
+          stopWatchTimer.onExecute.add(StopWatchExecuted.reset);
+
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text('Route wird gespeichert')));
           Navigator.of(context)
@@ -254,6 +258,8 @@ Widget deleteButton(BuildContext context) {
       ),
       onPressed: () async {
         await DbRouteInterface.deleteWalk();
+
+        stopWatchTimer.onExecute.add(StopWatchExecuted.reset);
 
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Route wird gelöscht')));

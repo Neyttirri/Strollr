@@ -32,6 +32,7 @@ class Overview extends StatefulWidget {
 }
 
 class _OverviewState extends State<Overview> {
+  CustomButton startPause = CustomButton();
 
   @override
   void initState() {
@@ -104,7 +105,7 @@ class _OverviewState extends State<Overview> {
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Padding(
                     padding: EdgeInsets.all(10),
-                    child: CustomButton(),
+                    child: startPause,
                   ),
                   Padding(
                     padding: EdgeInsets.all(10),
@@ -122,21 +123,23 @@ class _OverviewState extends State<Overview> {
                             globals.stopWatchTimer.onExecute
                                 .add(StopWatchExecuted.stop);
 
-                          globals.stopWatchTimer.onExecute.add(StopWatchExecuted.reset);
+                            setState(() {
+                              startPause.changeLabel();
+                            });
 
-                          await finishedWalk();
-                          MapRouteInterface.walkFinished = true;
-                          Navigator.of(context)
-                              .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => RouteSaver()), (Route<dynamic> route) => false);
+                            await finishedWalk();
+                            MapRouteInterface.walkFinished = true;
+                            Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (context) => RouteSaver()));
                         }),
                   ),
-                ])
+                )
               ],
             ),
-          ],
+            ]
         ),
-      ),
-    );
+      ]),
+    ));
   }
 }
 
@@ -317,11 +320,24 @@ class _ActiveRouteState extends State<ActiveRoute> {
 }
 
 class CustomButton extends StatefulWidget {
-  _CustomButtonState createState() => _CustomButtonState();
+  final _CustomButtonState button = _CustomButtonState();
+
+  changeLabel(){
+    button._changeLabel();
+  }
+
+  _CustomButtonState createState() => button;
 }
 
 class _CustomButtonState extends State<CustomButton> {
   String label = 'Start';
+
+  _changeLabel(){
+    setState(() {
+      if (label == "Start") label = "Pause";
+      else label = "Start";
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
