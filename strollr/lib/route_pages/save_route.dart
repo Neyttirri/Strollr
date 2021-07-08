@@ -5,7 +5,7 @@ import 'package:strollr/route_pages/dbInterface.dart';
 import '../style.dart';
 import 'PolylineIf.dart';
 
-final _formKey = GlobalKey<FormState>();
+GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 late String nValue;
 
@@ -14,6 +14,15 @@ class RouteSaver extends StatefulWidget {
 }
 
 class _RouteSaverState extends State<RouteSaver> {
+  @override
+  void initState() {
+    super.initState();
+
+    setState(() {
+      _formKey = GlobalKey<FormState>();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +69,7 @@ class RouteFormState extends State<RouteForm> {
 
     ///creates polylines after widget is built
     WidgetsBinding.instance!
-        .addPostFrameCallback((_) => map.createPolyLines(MapRouteInterface.gpx));
+        .addPostFrameCallback((_) => map.createPolyLines(gpx: MapRouteInterface.gpx));
   }
 
   ///returns true when each attribute is set
