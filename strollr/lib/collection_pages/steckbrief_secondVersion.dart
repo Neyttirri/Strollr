@@ -18,14 +18,16 @@ import '../style.dart';
 import 'edit_steckbrief.dart';
 
 class Steckbrief_2 extends StatelessWidget {
+  late int navigationID;
   late Picture picture;
   late final Categories categoryPicture;
   final int ID_SHARE = 0;
   final int ID_DELETE = 1;
   final int ID_DOWNLOAD = 2;
 
-  Steckbrief_2({required this.picture}) {
+  Steckbrief_2({required this.picture, required this.navigationID}) {
     categoryPicture = idToCategoryMap[picture.category]!;
+    navigationID = navigationID;
   }
 
   @override
@@ -34,9 +36,18 @@ class Steckbrief_2 extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: headerGreen),
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture,)),
-          ),
+          onPressed: () {
+            print(navigationID);
+            if(navigationID == 1) {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture)));
+            } else if ( navigationID == 2) {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(picture.walk_id)));
+            }
+          },
+          //push(MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture,)),
+        ),
+        iconTheme: IconThemeData(
+          color: headerGreen,
         ),
         title: Text("Steckbrief", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
@@ -242,7 +253,7 @@ class Steckbrief_2 extends StatelessWidget {
                         children: <Widget> [
                           ElevatedButton(
                               onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditSteckbriefScreen(picture: picture,)));
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditSteckbriefScreen(picture: picture, navigationID: navigationID,)));
                               },
                               child: Text("Bearbeiten"),
                             style: OutlinedButton.styleFrom(

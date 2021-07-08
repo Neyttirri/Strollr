@@ -164,7 +164,7 @@ class RouteFormState extends State<RouteForm> {
             children: [new Expanded(child: map)],
           ), //insert map
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
             child: FutureBuilder(
               future: setDistance(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -173,7 +173,7 @@ class RouteFormState extends State<RouteForm> {
                     children: <Widget>[
                       Text("Distanz:", style: TextStyle(fontSize: 18),),
                       Spacer(),
-                      Text(distance.toString() + 'km', style: TextStyle(fontSize: 18),),
+                      Text(distance.toString() + ' km', style: TextStyle(fontSize: 18),),
                     ],
                   );
                 }
@@ -199,7 +199,7 @@ class RouteFormState extends State<RouteForm> {
                     children: <Widget>[
                       Text("Dauer:", style: TextStyle(fontSize: 18),),
                       Spacer(),
-                      Text(duration.toString() + 'h', style: TextStyle(fontSize: 18),),
+                      Text(duration.toString() + ' h', style: TextStyle(fontSize: 18),),
                     ],
                   );
                 }
@@ -226,6 +226,7 @@ class RouteFormState extends State<RouteForm> {
         child: TextFormField(
           controller: _controller,
           enabled: _isEnable,
+          textCapitalization: TextCapitalization.sentences,
           decoration: const InputDecoration(
               hintText: 'Gib deiner Route einen Namen',
               //labelText: 'Routenname'
@@ -282,7 +283,7 @@ class _SaveButtonState extends State<SaveButton> {
             await DbRouteInterface.setWalkName(walkId: walkId, name: nName);
 
             ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Route wird gespeichert', style: TextStyle(fontSize: 50),)));
+                .showSnackBar(SnackBar(content: Text('Route wird gespeichert', style: TextStyle(fontSize: 20),)));
             setState(() {
               _isEnable = false;
             });
@@ -313,8 +314,11 @@ Widget deleteButton(BuildContext context) {
 
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Route wird gelöscht', style: TextStyle(fontSize: 20),)));
+        Navigator.of(context).pop();
+        /*
         Navigator.of(context)
             .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
+         */
       },
       child: Text(' Route löschen'),
     ),

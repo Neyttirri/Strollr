@@ -152,7 +152,7 @@ class _DescribePhotoScreenState extends State<DescribePhotoScreen>
                           height: MediaQuery.of(context).size.height * 0.5,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(85)),
+                            borderRadius: BorderRadius.all(Radius.circular(25)),
                             image: new DecorationImage(
                               image: FileImage(image),
                               fit: BoxFit.contain,

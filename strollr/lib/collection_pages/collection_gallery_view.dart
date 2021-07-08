@@ -13,6 +13,8 @@ class GalleryView extends StatelessWidget {
   //int indexTemp;
   Categories category;
 
+  late int navigationID = 1;
+
   late int categoryID;
   late int walkID;
   late int pictureID;
@@ -96,8 +98,10 @@ class GalleryView extends StatelessWidget {
                       pictureID = selectedPicture.id!;
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => Steckbrief_2(
-                                picture: selectedPicture,
-                              )));
+                            picture: selectedPicture,
+                            navigationID: navigationID,
+                          )
+                      ));
                     },
                     child: Container(
                       padding: EdgeInsets.all(4),
@@ -128,6 +132,7 @@ class GalleryView extends StatelessWidget {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => Steckbrief_2(
                 picture: selectedPicture,
+                navigationID: navigationID,
               ),
             ));
           },
@@ -151,8 +156,10 @@ class GalleryView extends StatelessWidget {
             pictureID = selectedPicture.id!;
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => Steckbrief_2(
-                      picture: selectedPicture,
-                    )));
+                  picture: selectedPicture,
+                  navigationID: navigationID,
+                )
+            ));
           },
           child: Hero(
             tag: "gallery_view",
@@ -174,7 +181,7 @@ class GalleryView extends StatelessWidget {
 
   Route _createRoute(Picture picture) {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => Steckbrief_2(picture: picture),
+      pageBuilder: (context, animation, secondaryAnimation) => Steckbrief_2(picture: picture, navigationID: navigationID,),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           var begin = Offset(0.0, 1.0);
           var end = Offset.zero;

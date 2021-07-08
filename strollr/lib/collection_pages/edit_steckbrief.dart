@@ -12,11 +12,13 @@ import '../logger.dart';
 
 class EditSteckbriefScreen extends StatefulWidget {
   final Picture picture;
+  late int navigationID;
 
-  EditSteckbriefScreen({required this.picture});
+    EditSteckbriefScreen({required this.picture, required this.navigationID});
 
-  @override
-  _EditSteckbriefScreenState createState() => _EditSteckbriefScreenState();
+    @override
+    _EditSteckbriefScreenState createState() => _EditSteckbriefScreenState();
+
 }
 
 class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
@@ -30,6 +32,9 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
 
   late Picture image;
   late Categories chosenCategory;
+
+  late int _navigationID;
+
 
   List<RadioModel> radioCategoryList = [
     new RadioModel(false, Image.asset(treeImagePath), 'Baum', Categories.tree),
@@ -47,6 +52,7 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
   @override
   void initState() {
     super.initState();
+    _navigationID = widget.navigationID;
     image = widget.picture;
     genericInfo1 = image.generic1;
     genericInfo2 = image.generic2;
@@ -88,7 +94,7 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
                 (value) => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => Steckbrief_2(picture: image)),
+                      builder: (context) => Steckbrief_2(picture: image, navigationID: _navigationID)),
                 ),
               );
             },
