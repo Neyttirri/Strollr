@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:strollr/Tabs/collectionTwo.dart';
-import 'package:strollr/collection_pages/steckbrief.dart';
 import 'package:strollr/collection_pages/steckbrief_secondVersion.dart';
 import 'package:strollr/db/database_manager.dart';
 import 'package:strollr/model/picture.dart';

@@ -31,17 +31,20 @@ class Steckbrief_2 extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context)  {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: headerGreen),
           onPressed: () {
             print(navigationID);
-            if(navigationID == 1) {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture)));
-            } else if ( navigationID == 2) {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(picture.walk_id)));
+            if (navigationID == 1) {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      GalleryView(category: categoryPicture)));
+            } else if (navigationID == 2) {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => RouteDetails(picture.walk_id)));
             }
           },
           //push(MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture,)),
@@ -92,197 +95,220 @@ class Steckbrief_2 extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          categoryPicture != Categories.undefined ?
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Column(
+                          categoryPicture != Categories.undefined
+                              ? Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        questionsForCategory[categoryPicture]![
+                                            0],
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: headerGreen,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        //height: 70,
+                                        padding: EdgeInsets.all(10),
+                                        //color: Colors.grey.shade300,
+                                        alignment: Alignment.centerLeft,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                          border: Border.all(
+                                              color: Colors.green.shade300),
+                                          color: Colors.white,
+                                        ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      0, 8.0, 0, 8),
+                                              child: Text(
+                                                picture.generic1,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 40,
+                                      ),
+                                      Text(
+                                        questionsForCategory[categoryPicture]![
+                                            2],
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: headerGreen,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        //height: 70,
+                                        padding: EdgeInsets.all(10),
+                                        //color: Colors.grey.shade300,
+                                        alignment: Alignment.centerLeft,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                          border: Border.all(
+                                              color: Colors.green.shade300),
+                                          color: Colors.white,
+                                        ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      0, 8.0, 0, 8),
+                                              child: Text(
+                                                picture.generic2,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 40,
+                                      ),
+                                      Text(
+                                        descriptionField,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: headerGreen,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        //height: 70,
+                                        padding: EdgeInsets.all(10),
+                                        //color: Colors.grey.shade300,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                          border: Border.all(
+                                              color: Colors.green.shade300),
+                                          color: Colors.white,
+                                        ),
+                                        alignment: Alignment.centerLeft,
+                                        child: Column(
+                                          children: <Widget>[
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      0, 8.0, 0, 8),
+                                              child: Text(
+                                                picture.description,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 30,
+                                      )
+                                    ],
+                                  ),
+                                )
+                              : Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      questionsForCategory[categoryPicture]![0],
+                                      'Erzähl was das ist oder füge es zu einer Kategorie hinzu!',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18,
-                                        color: headerGreen,
                                       ),
                                     ),
                                     SizedBox(
-                                      height: 10,
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      //height: 70,
-                                      padding: EdgeInsets.all(10),
-                                      //color: Colors.grey.shade300,
-                                      alignment: Alignment.centerLeft,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                                        border: Border.all(color: Colors.green.shade300),
-                                        color: Colors.white,
-                                      ),
-                                      child: Column(
-                                        children: <Widget> [
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(0, 8.0, 0, 8),
-                                            child: Text(
-                                              picture.generic1,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 40,
+                                      height: 15,
                                     ),
                                     Text(
-                                      questionsForCategory[categoryPicture]![2],
+                                      picture.description,
                                       style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: headerGreen,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      //height: 70,
-                                      padding: EdgeInsets.all(10),
-                                      //color: Colors.grey.shade300,
-                                      alignment: Alignment.centerLeft,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                                        border: Border.all(color: Colors.green.shade300),
-                                        color: Colors.white,
-                                      ),
-                                      child: Column(
-                                        children: <Widget> [
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(0, 8.0, 0, 8),
-                                            child: Text(
-                                              picture.generic2,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 40,
-                                    ),
-                                    Text(
-                                      descriptionField,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: headerGreen,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      //height: 70,
-                                      padding: EdgeInsets.all(10),
-                                      //color: Colors.grey.shade300,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                                        border: Border.all(color: Colors.green.shade300),
-                                        color: Colors.white,
-                                      ),
-                                      alignment: Alignment.centerLeft,
-                                      child: Column(
-                                        children: <Widget> [
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(0, 8.0, 0, 8),
-                                            child: Text(
-                                              picture.description,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                        fontSize: 16,
                                       ),
                                     ),
                                     SizedBox(
                                       height: 30,
                                     )
                                   ],
-                                ),
-                              )
-
-                          : Column(
-                            children: [
-                              Text(
-                                'Erzähl was das ist oder füge es zu einer Kategorie zu!',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Text(
-                                picture.description,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 30,
-                              )
-                            ],
-                          )
+                                )
                         ],
                       ),
                     ),
 // ---------------- UNTEN LEISTE
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
-                      child: ButtonBar(
-                        alignment: MainAxisAlignment.center,
-                        children: <Widget> [
-                          ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditSteckbriefScreen(picture: picture, navigationID: navigationID,)));
-                              },
-                              child: Text("Bearbeiten"),
-                            style: OutlinedButton.styleFrom(
-                              padding:
-                              EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0),
-                              primary: headerGreen,
-                              textStyle: TextStyle(fontSize: 20),
-                              backgroundColor: Colors.white,
-                            ),
-                          ),
-                          Spacer(),
-                          ElevatedButton(
+                        padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
+                        child: ButtonBar(
+                          alignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => RouteDetails(picture.walk_id,)));
+                                    builder: (context) => EditSteckbriefScreen(
+                                          picture: picture,
+                                          navigationID: navigationID,
+                                        )));
                               },
-                              child: Text("Zeige Route"),
-                            style: OutlinedButton.styleFrom(
+                              child: Text("Bearbeiten"),
+                              style: OutlinedButton.styleFrom(
                                 padding:
-                                EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0),
+                                    EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0),
                                 primary: headerGreen,
                                 textStyle: TextStyle(fontSize: 20),
                                 backgroundColor: Colors.white,
+                              ),
                             ),
-                          ),
-                        ],
-                        buttonMinWidth: 150,
-                      )
-                    ),
+                            Spacer(),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => RouteDetails(
+                                          picture.walk_id,
+                                        )));
+                              },
+                              child: Text("Zeige Route"),
+                              style: OutlinedButton.styleFrom(
+                                padding:
+                                    EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0),
+                                primary: headerGreen,
+                                textStyle: TextStyle(fontSize: 20),
+                                backgroundColor: Colors.white,
+                              ),
+                            ),
+                          ],
+                          buttonMinWidth: 150,
+                        )),
                     SizedBox(
                       height: 20,
                     ),
@@ -317,28 +343,28 @@ class Steckbrief_2 extends StatelessWidget {
         PopupMenuItem<int>(
           value: 0,
           child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(Icons.share),
-                Container(
-                  margin: EdgeInsets.only(left:10),
-                  child: Text('teilen'),
-                ),
-              ],
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(Icons.share),
+              Container(
+                margin: EdgeInsets.only(left: 10),
+                child: Text('teilen'),
+              ),
+            ],
           ),
         ),
         PopupMenuDivider(),
         PopupMenuItem<int>(
           value: 1,
-          child:  Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(Icons.delete_outline),
-                Container(
-                  margin: EdgeInsets.only(left:10),
-                  child: Text('löschen'),
-                ),
-              ],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(Icons.delete_outline),
+              Container(
+                margin: EdgeInsets.only(left: 10),
+                child: Text('löschen'),
+              ),
+            ],
           ),
           //width: 10,
         ),
@@ -346,18 +372,18 @@ class Steckbrief_2 extends StatelessWidget {
         PopupMenuItem<int>(
           value: 2,
           child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(Icons.download_rounded),
-                Container(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(Icons.download_rounded),
+              Container(
                   margin: EdgeInsets.only(left: 10),
                   width: 90,
-                    child: Text(
-                  'in Galerie speichern',
-                  maxLines: 2,
-                  softWrap: true,
-                )),
-              ],
+                  child: Text(
+                    'in Galerie speichern',
+                    maxLines: 2,
+                    softWrap: true,
+                  )),
+            ],
           ),
         ),
       ],
@@ -431,14 +457,12 @@ class Steckbrief_2 extends StatelessWidget {
                   primary: Colors.green,
                 ),
                 onPressed: () {
-
                   Navigator.of(context).pop();
-             
+
                   Future.delayed(Duration.zero, () {
                     Navigator.of(context).maybePop();
                   });
                   _deleteImage(context);
-
                 },
               ),
               TextButton(
