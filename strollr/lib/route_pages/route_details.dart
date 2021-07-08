@@ -105,7 +105,7 @@ class RouteFormState extends State<RouteForm> {
     var gpxString = GpxWriter().asString(route, pretty: true);
     print(gpxString);
 
-    map.createPolyLines(route);
+    map.createPolyLines(gpx: route, walkId: walkId);
   }
 
   setRoute() async {

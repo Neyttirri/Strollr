@@ -34,6 +34,14 @@ class Overview extends StatefulWidget {
 class _OverviewState extends State<Overview> {
 
   @override
+  void initState() {
+    super.initState();
+
+    distance = 0.0;
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       child: Container(
@@ -109,10 +117,12 @@ class _OverviewState extends State<Overview> {
                           globals.stopWatchTimer.onExecute
                               .add(StopWatchExecuted.stop);
 
+                          globals.stopWatchTimer.onExecute.add(StopWatchExecuted.reset);
+
                           await finishedWalk();
                           MapRouteInterface.walkFinished = true;
                           Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (context) => RouteSaver()));
+                              .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => RouteSaver()), (Route<dynamic> route) => false);
                         }),
                   ),
                 ])

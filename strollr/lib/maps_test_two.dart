@@ -8,6 +8,9 @@ import 'package:gpx/gpx.dart';
 import 'package:strollr/model/picture.dart';
 import 'package:strollr/route_pages/PolylineIf.dart';
 import 'package:strollr/route_pages/dbInterface.dart';
+import 'package:strollr/utils/shared_prefs.dart';
+
+import 'collection_pages/steckbrief_secondVersion.dart';
 
 
 void main() {
@@ -30,9 +33,11 @@ class MyApp extends StatelessWidget {
 class MapView extends StatefulWidget {
   late _MapViewState map = new _MapViewState();
 
-  void createPolyLines(Gpx gpx){
+  void createPolyLines({required Gpx gpx, int walkId = -1}) async {
+    if (walkId == -1) walkId = await SharedPrefs.getCurrentWalkId();
+
     Timer(Duration (seconds: 2), () => map._createPolylines(gpx));
-    Timer(Duration (seconds: 2), () => map._setMarkers());
+    Timer(Duration (seconds: 2), () => map._setMarkers(walkId));
   }
 
   @override
@@ -114,8 +119,6 @@ class _MapViewState extends State<MapView> {
     LatLng southWestBound = _getBound(true, gpx);
     LatLng northEastBound = _getBound(false, gpx);
 
-    print(mounted);
-
     if (mounted) {
       setState(() {
 
@@ -194,9 +197,9 @@ class _MapViewState extends State<MapView> {
     return res;
   }
 
-  _setMarkers() async {
-    List<LatLng> markers = await DbRouteInterface.getMarkerPositions();
-    pics = await DbRouteInterface.getPicuturesOfWalk();
+  _setMarkers(int walkId) async {
+    List<LatLng> markers = await DbRouteInterface.getMarkerPositions(walkId: walkId);
+    pics = await DbRouteInterface.getPicuturesOfWalk(walkId: walkId);
 
     //_addMarker(MapRouteInterface.currentPosition);
 
@@ -219,10 +222,15 @@ class _MapViewState extends State<MapView> {
               title: 'Start',
             ),
             onTap: () async {
+              print(pics);
               if (pics.isNotEmpty){
                 for (Picture picture in pics){
-                  if (picture.location == latlong){
-                    //Navigator.of(context).push(MaterialPageRoute(builder: (context) => Steckbrief_2(picture : picture)))
+                  Gpx position = GpxReader().fromString(picture.location);
+
+                  LatLng location = LatLng(position.wpts[0].lat as double, position.wpts[0].lon as double);
+
+                  if (location == latlong){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => Steckbrief_2(picture : picture)));
                   }
                 }
               }
