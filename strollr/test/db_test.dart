@@ -23,7 +23,7 @@ void main() {
     Walk walk1 = _createTestWalk('second test walk');
     Walk walk2 = Walk(
       name: 'third walk ',
-      durationTime: DateTime.parse("2021-04-12 01:30:00Z"),
+      durationTime: ("2021-04-12 01:30:00Z"),
       distanceInKm: 4.1,
       route: 'should be a xml file',
       startedAtTime: DateTime.parse("2022-04-23 11:30:00Z"),

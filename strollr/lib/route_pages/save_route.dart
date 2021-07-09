@@ -258,6 +258,7 @@ Widget deleteButton(BuildContext context) {
       ),
       onPressed: () async {
         await DbRouteInterface.deleteWalk();
+        MapRouteInterface.gpx.wpts.clear();
 
         stopWatchTimer.onExecute.add(StopWatchExecuted.reset);
 
