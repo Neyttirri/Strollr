@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:strollr/db/database_interface_helper.dart';
 
-class KilometerSeries {
+class MonthlyKilometerSeries {
   final String month;
-  final int kilometers;
-  final charts.Color barColor;
+  final double kilometers;
 
-  KilometerSeries(this.month, this.kilometers, this.barColor);
+  MonthlyKilometerSeries(this.month, this.kilometers);
 }

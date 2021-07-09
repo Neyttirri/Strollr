@@ -16,6 +16,7 @@ class CollectionTwo extends StatelessWidget {
     CollectionListCard(plantImagePath, "Pflanzen", 23),
     CollectionListCard(animalImagePath, "Tiere", 3),
     CollectionListCard(mushroomImagePath, "Pilze", 7),
+    CollectionListCard(undefinedCategoryImagePath, "Andere", 7),
   ];
 
   @override
@@ -42,6 +43,9 @@ class CollectionTwo extends StatelessWidget {
                   Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category)));
                 } else if(index == 3) {
                   category = Categories.mushroom;
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category)));
+                } else if(index == 4) {
+                  category = Categories.undefined;
                   Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category)));
                 }
               },

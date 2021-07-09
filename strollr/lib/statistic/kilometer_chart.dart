@@ -4,7 +4,7 @@ import 'package:strollr/Tabs/stats.dart';
 import 'package:strollr/statistic/kilometerSeries.dart';
 
 class KilometerChart extends StatefulWidget {
-  final List<KilometerSeries> kilometer;
+  final List<MonthlyKilometerSeries> kilometer;
 
   KilometerChart(this.kilometer);
 
@@ -14,15 +14,15 @@ class KilometerChart extends StatefulWidget {
 class KilometerChartState extends State<KilometerChart> {
   @override
   Widget build(BuildContext context) {
-    List<charts.Series<KilometerSeries, String>> series = [
+    List<charts.Series<MonthlyKilometerSeries, String>> series = [
       charts.Series(
           id: "Kilometers",
           data: widget.kilometer,
-          domainFn: (KilometerSeries series, _) => series.month,
-          measureFn: (KilometerSeries series, _) => series.kilometers,
-          colorFn: (KilometerSeries series, _) => series.barColor)
+          colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
+          domainFn: (MonthlyKilometerSeries series, _) => series.month,
+          measureFn: (MonthlyKilometerSeries series, _) => series.kilometers)
+      //colorFn: (KilometerSeries series, _) => series.barColor)
     ];
-
     return Container(
       height: 400,
       padding: EdgeInsets.all(20),
@@ -59,5 +59,55 @@ class KilometerChartState extends State<KilometerChart> {
     if (selectedDatum.isNotEmpty) {
       print("hello");
     }
+  }
+}
+
+class SliderWidget extends StatefulWidget {
+  const SliderWidget({Key? key}) : super(key: key);
+
+  @override
+  State<SliderWidget> createState() => SliderState();
+}
+
+class SliderState extends State<SliderWidget> {
+  int currentSliderValue = 2021;
+  /*  Stats stats1 = new Stats();
+  int chosenyear = stats1.getYear(); */
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(3, 10, 10, 5),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(width: 1.0, color: Colors.black),
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(height: 15),
+          Text(
+            currentSliderValue.toString(),
+            style: TextStyle(fontSize: 21.0, fontWeight: FontWeight.w500),
+          ),
+          Slider(
+            value: currentSliderValue.toDouble(),
+            min: 2021,
+            max: 2024,
+            divisions: 3,
+            label: currentSliderValue.round().toString(),
+            onChanged: (double value) {
+              setState(() {
+                currentSliderValue = value.toInt();
+                Stats stats1 = Stats();
+                stats1.setYear(currentSliderValue);
+              });
+            },
+          )
+        ],
+      ),
+    );
   }
 }

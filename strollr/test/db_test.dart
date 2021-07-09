@@ -36,15 +36,15 @@ void main() {
       walk1 = await DatabaseOperations.insertWalk(walk1);
       walk2 = await DatabaseOperations.insertWalk(walk2);
       //expect((await DatabaseManager.instance.readALlWalks()).length,
-       //   DatabaseOperations.walksCounter);
+      //   DatabaseOperations.walksCounter);
 
-      List<DailyDistance> res = await DatabaseManager.instance.readAllWalkDistancesInAMonth('04', '2023');
+      List<DailyDistance> res = await DatabaseManager.instance
+          .readAllWalkDistancesInAMonth('04', '2023');
       print(res.length);
-      for( DailyDistance dist in res) {
+      for (DailyDistance dist in res) {
         print('day: ${dist.day}, distance: ${dist.distance}');
       }
     });
-
 
 /*
     test('Insert picture', () async {

@@ -11,6 +11,7 @@ final String mushroomImagePath = "assets/images/mushroomIcon.png";
 final String plantImagePath = "assets/images/plantIcon.png";
 final String animalImagePath = "assets/images/animalFootstepIcon.png";
 final String treeImagePath = "assets/images/treeIcon.png";
+final String undefinedCategoryImagePath = "assets/images/defaultIcon.png";
 
 // ugly stuff TODO better ^^
 final Map<int, Categories> idToCategoryMap = {
