@@ -50,11 +50,8 @@ class Routes extends StatelessWidget {
           }
 
           else {
-            return ListView.builder(
-                itemCount: routeList.length, //Database length
-                itemBuilder: (BuildContext context, int index) {
-                  return Row();
-                }
+            return Row(
+              children: [Text('Loading')],
             );
           }
         }

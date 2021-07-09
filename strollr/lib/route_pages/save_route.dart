@@ -239,7 +239,8 @@ Widget saveButton(BuildContext context) {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text('Route wird gespeichert', style: TextStyle(fontSize: 20),)));
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => Routes()));
+              .pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
+              //.push(MaterialPageRoute(builder: (context) => Routes()));
         }
       },
       child: Text('Speichern'),
@@ -266,7 +267,8 @@ Widget deleteButton(BuildContext context) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Route wird gelöscht')));
         Navigator.of(context)
-            .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
+            .pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
+            //.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
       },
       child: Text(' Route löschen'),
     ),
