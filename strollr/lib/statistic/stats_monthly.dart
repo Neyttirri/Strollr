@@ -15,6 +15,23 @@ class MonthlyStats extends StatefulWidget {
   late List<DailyKilometerSeries> dailykilometers = [
     DailyKilometerSeries(1, 10),
     DailyKilometerSeries(2, 5),
+    DailyKilometerSeries(3, 5),
+    DailyKilometerSeries(4, 5),
+    DailyKilometerSeries(5, 5),
+    DailyKilometerSeries(6, 5),
+    DailyKilometerSeries(7, 5),
+    DailyKilometerSeries(8, 5),
+    DailyKilometerSeries(9, 5),
+    DailyKilometerSeries(10, 5),
+    DailyKilometerSeries(11, 5),
+    DailyKilometerSeries(12, 5),
+    DailyKilometerSeries(13, 5),
+    DailyKilometerSeries(14, 5),
+    DailyKilometerSeries(15, 5),
+    DailyKilometerSeries(16, 5),
+    DailyKilometerSeries(17, 5),
+    DailyKilometerSeries(18, 5),
+    DailyKilometerSeries(19, 5),
   ];
 
   MonthlyStatsState createState() => MonthlyStatsState();
@@ -60,12 +77,12 @@ class CategoriesState extends State<Categories> {
         margin: const EdgeInsets.only(left: 22.0, right: 22.0),
         child: Column(children: [
           Padding(
-            padding: const EdgeInsets.only(top: 10.0, left: 20),
+            padding: const EdgeInsets.only(top: 10.0, left: 20, bottom: 20.0),
             child: Text(
               'Anzahl gesammelter Bilder',
               style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 17,
                   color: headerGreen),
             ),
           ),
@@ -83,7 +100,7 @@ class CategoriesState extends State<Categories> {
                   "Anzahl",
                   style: TextStyle(
                     fontSize: 16,
-                    color: headerGreen,
+                    color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -104,7 +121,7 @@ class CategoriesState extends State<Categories> {
                   "Anzahl",
                   style: TextStyle(
                     fontSize: 16,
-                    color: headerGreen,
+                    color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -125,7 +142,7 @@ class CategoriesState extends State<Categories> {
                   "Anzahl",
                   style: TextStyle(
                     fontSize: 16,
-                    color: headerGreen,
+                    color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -146,7 +163,7 @@ class CategoriesState extends State<Categories> {
                   "Anzahl",
                   style: TextStyle(
                     fontSize: 16,
-                    color: headerGreen,
+                    color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -167,7 +184,7 @@ class CategoriesState extends State<Categories> {
                   "Anzahl",
                   style: TextStyle(
                     fontSize: 16,
-                    color: headerGreen,
+                    color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

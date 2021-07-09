@@ -24,25 +24,29 @@ class MonthlyKilometerChartState extends State<MonthlyKilometerChart> {
           measureFn: (DailyKilometerSeries series, _) => series.dailykilometers)
       //colorFn: (KilometerSeries series, _) => series.barColor)
     ];
-    return Container(
-      height: 400,
-      padding: EdgeInsets.all(20),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              Text(
-                "Monatsübersicht Monat",
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
-              Expanded(
-                child: charts.BarChart(
-                  series,
-                  animate: true,
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Container(
+        width: 600,
+        height: 400,
+        padding: EdgeInsets.only(bottom: 20),
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: <Widget>[
+                Text(
+                  "Monatsübersicht Monat",
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
-              )
-            ],
+                Expanded(
+                  child: charts.BarChart(
+                    series,
+                    animate: true,
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
