@@ -295,7 +295,7 @@ class Steckbrief_2 extends StatelessWidget {
         } else if (choice == ID_DOWNLOAD) {
           _saveImageInGallery();
         } else if (choice == ID_BEARBEITEN) {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditSteckbriefScreen(picture: picture, navigationID: navigationID,)));
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => EditSteckbriefScreen(picture: picture, navigationID: navigationID,)));
         } else if (choice == ID_ROUTE) {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => RouteDetails(picture.walk_id, navigationID)));

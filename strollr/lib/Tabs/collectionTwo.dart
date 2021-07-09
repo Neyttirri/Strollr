@@ -82,6 +82,20 @@ class CollectionTwo extends StatelessWidget {
                         color: headerGreen,
                         fontWeight: FontWeight.bold,
                       ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      width: 150,
+                      child: Text(
+                        "Gesammelt: 24",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: headerGreen,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
                     )
                   ],
                 ),

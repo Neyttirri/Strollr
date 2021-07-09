@@ -52,7 +52,7 @@ class GalleryView extends StatelessWidget {
             //Navigator.of(context).pop();
           },
         ),
-        title: Text("Hebarium", style: TextStyle(color: headerGreen)),
+        title: Text("Herbarium", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
       body: FutureBuilder(
