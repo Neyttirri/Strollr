@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:strollr/Tabs/stats.dart';
 import 'package:strollr/statistic/kilometerSeries.dart';
+import 'dailyKilometerSeries.dart';
 
 class MonthlyKilometerChart extends StatefulWidget {
   final List<DailyKilometerSeries> dailykilometer;
@@ -19,7 +20,7 @@ class MonthlyKilometerChartState extends State<MonthlyKilometerChart> {
           id: "DailyKilometers",
           data: widget.dailykilometer,
           colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
-          domainFn: (DailyKilometerSeries series, _) => series.day,
+          domainFn: (DailyKilometerSeries series, _) => series.day.toString(),
           measureFn: (DailyKilometerSeries series, _) => series.dailykilometers)
       //colorFn: (KilometerSeries series, _) => series.barColor)
     ];
@@ -32,7 +33,7 @@ class MonthlyKilometerChartState extends State<MonthlyKilometerChart> {
           child: Column(
             children: <Widget>[
               Text(
-                "Monatsübersicht",
+                "Monatsübersicht Monat",
                 style: Theme.of(context).textTheme.bodyText1,
               ),
               Expanded(

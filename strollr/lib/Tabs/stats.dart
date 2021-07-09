@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:strollr/statistic/dailyKilometerSeries.dart';
 import '../style.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:strollr/statistic/kilometerSeries.dart';
@@ -34,7 +35,7 @@ class Stats extends StatefulWidget {
     ),
     MonthlyKilometerSeries(
       "FEB",
-      distances.getMonthlyDistance(1),
+      7,
     ),
     MonthlyKilometerSeries(
       "MRZ",
@@ -78,7 +79,7 @@ class Stats extends StatefulWidget {
     ),
   ];
 
-  final List<TimeSeries> minutes = [
+  late List<TimeSeries> minutes = [
     TimeSeries(
       "JAN",
       5,
@@ -152,16 +153,13 @@ class StatsState extends State<Stats> {
         title: Text("Statistiken", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
-      body: PageView(children: [
-        Column(children: [
+      body: SingleChildScrollView(
+        child: Column(children: [
           SliderWidget(),
-          new Expanded(child: KilometerChart(widget.kilometers))
+          KilometerChart(widget.kilometers),
+          TimeChart(widget.minutes)
         ]),
-        Column(children: [
-          SliderWidget(),
-          new Expanded(child: TimeChart(widget.minutes))
-        ]),
-      ]),
+      ),
     );
   }
 }

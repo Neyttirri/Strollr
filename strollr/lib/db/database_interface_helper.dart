@@ -134,6 +134,7 @@ class YearWithDistances {
 
   double getMonthlyDistance(int pos) {
     double distanceOfmonth = distancesPerMonth[pos];
+    print('$pos : ${distanceOfmonth.toString()}');
     return distanceOfmonth;
   }
 }
