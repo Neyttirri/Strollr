@@ -89,7 +89,7 @@ class CollectionTwo extends StatelessWidget {
                     Container(
                       width: 150,
                       child: Text(
-                        "Gesammelt: 24",
+                        "Gesammelt: " + category.itemCount.toString(),
                         style: TextStyle(
                           fontSize: 20,
                           color: headerGreen,
