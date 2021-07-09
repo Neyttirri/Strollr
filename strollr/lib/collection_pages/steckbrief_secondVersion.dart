@@ -18,14 +18,16 @@ import '../style.dart';
 import 'edit_steckbrief.dart';
 
 class Steckbrief_2 extends StatelessWidget {
+  late int navigationID;
   late Picture picture;
   late final Categories categoryPicture;
   final int ID_SHARE = 0;
   final int ID_DELETE = 1;
   final int ID_DOWNLOAD = 2;
 
-  Steckbrief_2({required this.picture}) {
+  Steckbrief_2({required this.picture, required this.navigationID}) {
     categoryPicture = idToCategoryMap[picture.category]!;
+    navigationID = navigationID;
   }
 
   @override
@@ -34,9 +36,19 @@ class Steckbrief_2 extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: headerGreen),
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture,)),
-          ),
+          onPressed: () {
+            print("Navigation ID: " + navigationID.toString());
+            print("Walk ID: " + picture.walk_id.toString());
+            if(navigationID == 1) {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture)));
+            } else if ( navigationID == 2) {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(picture.walk_id, navigationID)));
+            }
+          },
+          //push(MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture,)),
+        ),
+        iconTheme: IconThemeData(
+          color: headerGreen,
         ),
         title: Text("Steckbrief", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
@@ -236,18 +248,18 @@ class Steckbrief_2 extends StatelessWidget {
                     ),
 // ---------------- UNTEN LEISTE
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
+                      padding: const EdgeInsets.fromLTRB(10.0, 0, 1.0, 0),
                       child: ButtonBar(
                         alignment: MainAxisAlignment.center,
                         children: <Widget> [
                           ElevatedButton(
                               onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditSteckbriefScreen(picture: picture,)));
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditSteckbriefScreen(picture: picture, navigationID: navigationID,)));
                               },
                               child: Text("Bearbeiten"),
                             style: OutlinedButton.styleFrom(
                               padding:
-                              EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0),
+                              EdgeInsets.all(10),
                               primary: headerGreen,
                               textStyle: TextStyle(fontSize: 20),
                               backgroundColor: Colors.white,
@@ -257,12 +269,12 @@ class Steckbrief_2 extends StatelessWidget {
                           ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => RouteDetails(picture.walk_id,)));
+                                    builder: (context) => RouteDetails(picture.walk_id, navigationID)));
                               },
                               child: Text("Zeige Route"),
                             style: OutlinedButton.styleFrom(
                                 padding:
-                                EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0),
+                                EdgeInsets.all(10.0),
                                 primary: headerGreen,
                                 textStyle: TextStyle(fontSize: 20),
                                 backgroundColor: Colors.white,

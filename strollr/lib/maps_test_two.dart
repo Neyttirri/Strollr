@@ -58,6 +58,8 @@ class _MapViewState extends State<MapView> {
    late GoogleMapController mapController;
    late BitmapDescriptor markerIcon;
 
+   late int navigationID = 2;
+
    late List<Picture> pics;
 
   final Geolocator _geolocator = Geolocator();
@@ -209,7 +211,7 @@ class _MapViewState extends State<MapView> {
               latlong.longitude,
             ),
             infoWindow: InfoWindow(
-              title: 'Start',
+              //title: 'Start',
             ),
             onTap: () async {
               print(pics);
@@ -220,7 +222,7 @@ class _MapViewState extends State<MapView> {
                   LatLng location = LatLng(position.wpts[0].lat as double, position.wpts[0].lon as double);
 
                   if (location == latlong){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => Steckbrief_2(picture : picture)));
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Steckbrief_2(picture : picture, navigationID: navigationID)), (Route<dynamic> route) => false);
                   }
                 }
               }

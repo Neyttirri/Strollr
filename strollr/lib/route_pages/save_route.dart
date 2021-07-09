@@ -103,6 +103,7 @@ class RouteFormState extends State<RouteForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           TextFormField(
+            textCapitalization: TextCapitalization.sentences,
             style: TextStyle(
               color: headerGreen,
               fontSize: 20,
@@ -159,7 +160,7 @@ class RouteFormState extends State<RouteForm> {
             },
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
             child: FutureBuilder(
               future: setDistance(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -168,7 +169,7 @@ class RouteFormState extends State<RouteForm> {
                     children: <Widget>[
                       Text("Distanz:", style: TextStyle(fontSize: 18),),
                       Spacer(),
-                      Text(distance.toString() + 'km', style: TextStyle(fontSize: 18),),
+                      Text(distance.toString() + ' km', style: TextStyle(fontSize: 18),),
                     ],
                   );
                 }
@@ -194,7 +195,7 @@ class RouteFormState extends State<RouteForm> {
                     children: <Widget>[
                       Text("Dauer:", style: TextStyle(fontSize: 18),),
                       Spacer(),
-                      Text(duration.toString() + 'h', style: TextStyle(fontSize: 18),),
+                      Text(duration.toString() + ' h', style: TextStyle(fontSize: 18),),
                     ],
                   );
                 }
@@ -236,7 +237,7 @@ Widget saveButton(BuildContext context) {
           stopWatchTimer.onExecute.add(StopWatchExecuted.reset);
 
           ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('Route wird gespeichert')));
+              .showSnackBar(SnackBar(content: Text('Route wird gespeichert', style: TextStyle(fontSize: 20),)));
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => Routes()));
         }

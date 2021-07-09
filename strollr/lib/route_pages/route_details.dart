@@ -6,17 +6,18 @@ import 'package:strollr/maps_test_two.dart';
 import 'dbInterface.dart';
 
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-TextEditingController _controller =
-    TextEditingController(); // Name aus Datenbank
+TextEditingController _controller = TextEditingController(); // Name aus Datenbank
 bool _isEnable = false;
 late int walkId;
 late String nName;
 
 class RouteDetails extends StatefulWidget {
   late int walkId;
+  late int navigationID;
 
-  RouteDetails(int walkId) {
+  RouteDetails(int walkId, int navigationID) {
     this.walkId = walkId;
+    this.navigationID = navigationID;
 
     setTextEditor();
   }
@@ -32,6 +33,7 @@ class RouteDetails extends StatefulWidget {
 
 class _RouteDetailsState extends State<RouteDetails> {
   late int walkId;
+  late int navigationID = widget.navigationID;
 
   _RouteDetailsState(int walkId){
     this.walkId = walkId;
@@ -47,7 +49,12 @@ class _RouteDetailsState extends State<RouteDetails> {
           leading: IconButton(
               icon: Icon(Icons.arrow_back, color: headerGreen),
               onPressed: () {
-                Navigator.of(context).pop();
+                if(navigationID == 1) {
+                  Navigator.of(context).pop();
+                } else if(navigationID == 2) {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => Routes()));
+                }
+
               }),
         ),
         body: Center(
@@ -164,7 +171,7 @@ class RouteFormState extends State<RouteForm> {
             children: [new Expanded(child: map)],
           ), //insert map
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
             child: FutureBuilder(
               future: setDistance(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -173,7 +180,7 @@ class RouteFormState extends State<RouteForm> {
                     children: <Widget>[
                       Text("Distanz:", style: TextStyle(fontSize: 18),),
                       Spacer(),
-                      Text(distance.toString() + 'km', style: TextStyle(fontSize: 18),),
+                      Text(distance.toString() + ' km', style: TextStyle(fontSize: 18),),
                     ],
                   );
                 }
@@ -199,7 +206,7 @@ class RouteFormState extends State<RouteForm> {
                     children: <Widget>[
                       Text("Dauer:", style: TextStyle(fontSize: 18),),
                       Spacer(),
-                      Text(duration.toString() + 'h', style: TextStyle(fontSize: 18),),
+                      Text(duration.toString() + ' h', style: TextStyle(fontSize: 18),),
                     ],
                   );
                 }
@@ -226,6 +233,7 @@ class RouteFormState extends State<RouteForm> {
         child: TextFormField(
           controller: _controller,
           enabled: _isEnable,
+          textCapitalization: TextCapitalization.sentences,
           decoration: const InputDecoration(
               hintText: 'Gib deiner Route einen Namen',
               //labelText: 'Routenname'
@@ -268,7 +276,7 @@ class SaveButton extends StatefulWidget {
 class _SaveButtonState extends State<SaveButton> {
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 150,
+      width: MediaQuery.of(context).size.width / 3,
       child: ElevatedButton(
         style: OutlinedButton.styleFrom(
           padding:
@@ -282,7 +290,7 @@ class _SaveButtonState extends State<SaveButton> {
             await DbRouteInterface.setWalkName(walkId: walkId, name: nName);
 
             ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Route wird gespeichert', style: TextStyle(fontSize: 50),)));
+                .showSnackBar(SnackBar(content: Text('Route wird gespeichert', style: TextStyle(fontSize: 20),)));
             setState(() {
               _isEnable = false;
             });
@@ -299,7 +307,7 @@ class _SaveButtonState extends State<SaveButton> {
 
 Widget deleteButton(BuildContext context) {
   return SizedBox(
-    width: 150,
+    width: MediaQuery.of(context).size.width / 3,
     //height: 50,
     child: ElevatedButton(
       style: OutlinedButton.styleFrom(
@@ -313,8 +321,11 @@ Widget deleteButton(BuildContext context) {
 
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Route wird gelöscht', style: TextStyle(fontSize: 20),)));
+        Navigator.of(context).pop();
+        /*
         Navigator.of(context)
             .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
+         */
       },
       child: Text(' Route löschen'),
     ),
