@@ -83,62 +83,50 @@ class Stats extends StatefulWidget {
     TimeSeries(
       "JAN",
       5,
-      charts.ColorUtil.fromDartColor(Colors.green),
     ),
     TimeSeries(
       "FEB",
       5,
-      charts.ColorUtil.fromDartColor(Colors.green),
     ),
     TimeSeries(
       "MRZ",
       5,
-      charts.ColorUtil.fromDartColor(Colors.green),
     ),
     TimeSeries(
       "APR",
       5,
-      charts.ColorUtil.fromDartColor(Colors.green),
     ),
     TimeSeries(
       "MAI",
       5,
-      charts.ColorUtil.fromDartColor(Colors.green),
     ),
     TimeSeries(
       "JUN",
       10,
-      charts.ColorUtil.fromDartColor(Colors.green),
     ),
     TimeSeries(
       "JUL",
       5,
-      charts.ColorUtil.fromDartColor(Colors.green),
     ),
     TimeSeries(
       "AUG",
       12,
-      charts.ColorUtil.fromDartColor(Colors.green),
     ),
     TimeSeries(
       "SEP",
       12,
-      charts.ColorUtil.fromDartColor(Colors.green),
     ),
     TimeSeries(
       "OKT",
       12,
-      charts.ColorUtil.fromDartColor(Colors.green),
     ),
     TimeSeries(
       "NOV",
       12,
-      charts.ColorUtil.fromDartColor(Colors.green),
     ),
     TimeSeries(
       "DEZ",
       12,
-      charts.ColorUtil.fromDartColor(Colors.green),
     ),
   ];
 
@@ -157,9 +145,78 @@ class StatsState extends State<Stats> {
         child: Column(children: [
           SliderWidget(),
           KilometerChart(widget.kilometers),
-          TimeChart(widget.minutes)
+          TimeChart(widget.minutes),
+          Summary()
         ]),
       ),
+    );
+  }
+}
+
+class Summary extends StatefulWidget {
+  SummaryState createState() => SummaryState();
+}
+
+class SummaryState extends State<Summary> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: Color(0xFFBDBDBD)),
+          borderRadius: BorderRadius.all(Radius.circular(4))),
+      margin: const EdgeInsets.only(
+          left: 22.0, right: 22.0, bottom: 20.0, top: 10.0),
+      child: Column(children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0, left: 20, bottom: 10.0),
+          child: Text(
+            'Gesamtübersicht',
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 17, color: headerGreen),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Container(
+                width: 55,
+                height: 55,
+                child: Icon(Icons.directions_walk_outlined,
+                    color: Colors.green[500])),
+            Padding(
+              padding: const EdgeInsets.all(30.0),
+              child: Text(
+                "Km",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Container(
+                width: 55,
+                height: 55,
+                child: Icon(Icons.timer, color: Colors.green[500])),
+            Padding(
+              padding: const EdgeInsets.all(30.0),
+              child: Text(
+                "Zeit",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ]),
     );
   }
 }

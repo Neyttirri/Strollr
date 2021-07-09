@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:strollr/statistic/kilometerSeries.dart';
 import 'package:strollr/statistic/stats_monthly.dart';
 import 'package:strollr/statistic/timeSeries.dart';
 
@@ -19,9 +18,9 @@ class TimeChartState extends State<TimeChart> {
       charts.Series(
           id: "Minutes",
           data: widget.minutes,
+          colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
           domainFn: (TimeSeries series, _) => series.month,
-          measureFn: (TimeSeries series, _) => series.minutes,
-          colorFn: (TimeSeries series, _) => series.barColor)
+          measureFn: (TimeSeries series, _) => series.minutes)
     ];
 
     return Container(
