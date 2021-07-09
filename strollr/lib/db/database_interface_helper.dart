@@ -33,7 +33,7 @@ class DbHelper {
     return yearDist;
   }
 
-  static  Future<List<YearlyDistance>> readAllWalkDistancesYearly() async {
+  static Future<List<YearlyDistance>> readAllWalkDistancesYearly() async {
     return await DatabaseManager.instance.readAllWalkDistancesYearly();
   }
 
@@ -53,7 +53,6 @@ class DbHelper {
       return '$month';
   }
 }
-
 
 class YearlyDistancesField {
   static final String year = 'year';
@@ -103,9 +102,9 @@ class DailyDistance {
 
   DailyDistance(
       {required this.day,
-        required this.month,
-        required this.year,
-        required this.distance});
+      required this.month,
+      required this.year,
+      required this.distance});
 
   static DailyDistance fromJson(Map<String, Object?> json) => DailyDistance(
       day: DbHelper.getMonthOrDayFromString(
@@ -131,6 +130,11 @@ class YearWithDistances {
 
   YearWithDistances(this.year) {
     distancesPerMonth = List.filled(12, 0.0);
+  }
+
+  double getMonthlyDistance(int pos) {
+    double distanceOfmonth = distancesPerMonth[pos];
+    return distanceOfmonth;
   }
 }
 

@@ -6,71 +6,75 @@ import 'package:strollr/statistic/kilometerSeries.dart';
 import 'package:strollr/statistic/kilometer_chart.dart';
 import 'package:strollr/statistic/timeSeries.dart';
 import 'package:strollr/statistic/time_chart.dart';
+import 'package:strollr/db/database_interface_helper.dart';
 
 /* DateTime dateToday = DateTime(DateTime.now().year);
 String _chosenValue = dateToday.toString(); */
 
 class Stats extends StatefulWidget {
-  final List<KilometerSeries> kilometers = [
-    KilometerSeries(
+  int year = 2021;
+  late YearWithDistances distances = new YearWithDistances(year);
+
+  Stats() {
+    this.year = year;
+  }
+
+  getYear() {
+    return year;
+  }
+
+  setYear(int year) {
+    this.year = year;
+  }
+
+  late List<MonthlyKilometerSeries> kilometers = [
+    MonthlyKilometerSeries(
       "JAN",
-      5,
-      charts.ColorUtil.fromDartColor(Colors.green),
-    ),
-    KilometerSeries(
-      "FEB",
-      5,
-      charts.ColorUtil.fromDartColor(Colors.green),
-    ),
-    KilometerSeries(
-      "MRZ",
-      5,
-      charts.ColorUtil.fromDartColor(Colors.green),
-    ),
-    KilometerSeries(
-      "APR",
-      5,
-      charts.ColorUtil.fromDartColor(Colors.green),
-    ),
-    KilometerSeries(
-      "MAI",
-      5,
-      charts.ColorUtil.fromDartColor(Colors.green),
-    ),
-    KilometerSeries(
-      "JUN",
       10,
-      charts.ColorUtil.fromDartColor(Colors.green),
     ),
-    KilometerSeries(
+    MonthlyKilometerSeries(
+      "FEB",
+      distances.getMonthlyDistance(1),
+    ),
+    MonthlyKilometerSeries(
+      "MRZ",
+      distances.getMonthlyDistance(2),
+    ),
+    MonthlyKilometerSeries(
+      "APR",
+      distances.getMonthlyDistance(3),
+    ),
+    MonthlyKilometerSeries(
+      "MAI",
+      distances.getMonthlyDistance(4),
+    ),
+    MonthlyKilometerSeries(
+      "JUN",
+      distances.getMonthlyDistance(5),
+    ),
+    MonthlyKilometerSeries(
       "JUL",
-      5,
-      charts.ColorUtil.fromDartColor(Colors.green),
+      distances.getMonthlyDistance(6),
     ),
-    KilometerSeries(
+    MonthlyKilometerSeries(
       "AUG",
-      12,
-      charts.ColorUtil.fromDartColor(Colors.green),
+      distances.getMonthlyDistance(7),
     ),
-    KilometerSeries(
+    MonthlyKilometerSeries(
       "SEP",
-      12,
-      charts.ColorUtil.fromDartColor(Colors.green),
+      distances.getMonthlyDistance(8),
     ),
-    KilometerSeries(
+    MonthlyKilometerSeries(
       "OKT",
-      12,
-      charts.ColorUtil.fromDartColor(Colors.green),
+      distances.getMonthlyDistance(9),
     ),
-    KilometerSeries(
+    MonthlyKilometerSeries(
       "NOV",
-      12,
-      charts.ColorUtil.fromDartColor(Colors.green),
+      distances.getMonthlyDistance(10),
     ),
-    KilometerSeries(
+    MonthlyKilometerSeries(
       "DEZ",
-      12,
-      charts.ColorUtil.fromDartColor(Colors.green),
+      distances.getMonthlyDistance(11),
     ),
   ];
 
@@ -137,10 +141,10 @@ class Stats extends StatefulWidget {
     ),
   ];
 
-  _StatsState createState() => _StatsState();
+  StatsState createState() => StatsState();
 }
 
-class _StatsState extends State<Stats> {
+class StatsState extends State<Stats> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,93 +153,15 @@ class _StatsState extends State<Stats> {
         backgroundColor: Colors.white,
       ),
       body: PageView(children: [
-        DropDownYear(),
-        KilometerChart(widget.kilometers),
-        TimeChart(widget.minutes)
+        Column(children: [
+          SliderWidget(),
+          new Expanded(child: KilometerChart(widget.kilometers))
+        ]),
+        Column(children: [
+          SliderWidget(),
+          new Expanded(child: TimeChart(widget.minutes))
+        ]),
       ]),
     );
   }
-}
-
-class DropDownYear extends StatefulWidget {
-  _DropDownYearState createState() => _DropDownYearState();
-}
-
-class _DropDownYearState extends State<DropDownYear> {
-  String dropdownValue = '2021';
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      icon: const Icon(Icons.arrow_downward),
-      iconSize: 24,
-      //elevation: 5,
-      style: const TextStyle(color: Colors.green, fontSize: 20),
-      onChanged: (String? newValue) {
-        setState(() {
-          dropdownValue = newValue!;
-        });
-      },
-      items: <String>['2021', '2022', '2023', '2024']
-          .map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );
-  }
-}
-
-class DropDownMonth extends StatefulWidget {
-  _DropDownMonthState createState() => _DropDownMonthState();
-}
-
-class _DropDownMonthState extends State<DropDownYear> {
-  String dropdownValue = 'Juli';
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      icon: const Icon(Icons.arrow_downward),
-      iconSize: 24,
-      elevation: 5,
-      style: const TextStyle(color: Colors.green, fontSize: 20),
-      onChanged: (String? newValue) {
-        setState(() {
-          dropdownValue = newValue!;
-        });
-      },
-      items: <String>[
-        'Januar',
-        'Februar',
-        'März',
-        'April',
-        'Mai',
-        'Juni',
-        'Juli',
-        'August',
-        'September',
-        'Oktober',
-        'November',
-        'Dezember'
-      ].map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );
-  }
-}
-
-Widget DropDownMenuRow(BuildContext context) {
-  return Container(
-      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [DropDownYear(), DropDownMonth()],
-      ));
 }
