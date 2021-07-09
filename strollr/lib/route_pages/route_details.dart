@@ -56,7 +56,9 @@ class _RouteDetailsState extends State<RouteDetails> {
                 if(navigationID == 1) {
                   Navigator.of(context).pop();
                 } else if(navigationID == 2) {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => Routes()));
+                  Navigator.of(context).
+                  pop();
+                  //push(MaterialPageRoute(builder: (context) => Routes()));
                 }
 
               }),
@@ -427,7 +429,7 @@ class _SaveButtonState extends State<SaveButton> {
             setState(() {
               _isEnable = false;
             });
-            Navigator.of(context).pop();
+            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
                 //.push(MaterialPageRoute(builder: (context) => Routes()));
             // neuen Routennamen in Datenbank übernehmen
           }
@@ -454,11 +456,15 @@ Widget deleteButton(BuildContext context) {
 
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Route wird gelöscht', style: TextStyle(fontSize: 20),)));
-        Navigator.of(context).pop();
+        //Navigator.of(context).pop();
+
         /*
         Navigator.of(context)
             .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
-         */
+        */
+
+        Navigator.of(context)
+            .pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
       },
       child: Text(' Route löschen'),
     ),
