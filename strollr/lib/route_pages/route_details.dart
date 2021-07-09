@@ -69,14 +69,12 @@ class _RouteDetailsState extends State<RouteDetails> {
             getImageMenuRoute(context),
           ],
         ),
-        body: Center(
-            child: Container(
-                padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [RouteForm(walkId), buttonRow(context)],
-                  ),
-                ),
+        body: Container(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [RouteForm(walkId)],
+              ),
             ),
         ),
     );
@@ -196,7 +194,7 @@ class _RouteDetailsState extends State<RouteDetails> {
       setState(() {
         _isEnable = false;
       });
-      Navigator.of(context).pop();
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
       //.push(MaterialPageRoute(builder: (context) => Routes()));
       // neuen Routennamen in Datenbank übernehmen
     }
@@ -402,82 +400,4 @@ class RouteFormState extends State<RouteForm> {
           icon: Icon(Icons.edit))
     ]);
   }
-}
-
-class SaveButton extends StatefulWidget {
-  _SaveButtonState createState() => _SaveButtonState();
-}
-
-class _SaveButtonState extends State<SaveButton> {
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width / 3,
-      child: ElevatedButton(
-        style: OutlinedButton.styleFrom(
-          padding:
-          EdgeInsets.all(10),
-          primary: Colors.white,
-          textStyle: TextStyle(fontSize: 18),
-          backgroundColor: headerGreen,
-        ),
-        onPressed: () async {
-          if (_formKey.currentState!.validate()) {
-            await DbRouteInterface.setWalkName(walkId: walkId, name: nName);
-
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Route wird gespeichert', style: TextStyle(fontSize: 20),)));
-            setState(() {
-              _isEnable = false;
-            });
-            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
-                //.push(MaterialPageRoute(builder: (context) => Routes()));
-            // neuen Routennamen in Datenbank übernehmen
-          }
-        },
-        child: Text('Speichern'),
-      ),
-    );
-  }
-}
-
-Widget deleteButton(BuildContext context) {
-  return SizedBox(
-    width: MediaQuery.of(context).size.width / 3,
-    //height: 50,
-    child: ElevatedButton(
-      style: OutlinedButton.styleFrom(
-        padding: EdgeInsets.all(10),
-        primary: headerGreen,
-        textStyle: TextStyle(fontSize: 18),
-        backgroundColor: Colors.white,
-      ),
-      onPressed: () async {
-        await DbRouteInterface.deleteWalk(walkId: walkId);
-
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Route wird gelöscht', style: TextStyle(fontSize: 20),)));
-        //Navigator.of(context).pop();
-
-        /*
-        Navigator.of(context)
-            .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
-        */
-
-        Navigator.of(context)
-            .pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
-      },
-      child: Text(' Route löschen'),
-    ),
-  );
-}
-
-
-
-Widget buttonRow(BuildContext context) {
-  return Container(
-      padding: EdgeInsets.fromLTRB(30, 15, 30, 15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [deleteButton(context), SaveButton()],
-      ));
 }
