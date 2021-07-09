@@ -66,12 +66,12 @@ class CollectionTwo extends StatelessWidget {
           child: Row(
             children: <Widget>[
               Container(
-                width: 100,
-                height: 100,
+                width: 80,
+                height: 80,
                 child: Image.asset(category.categoryImage),
               ),
               Padding(
-                padding: const EdgeInsets.all(30.0),
+                padding: const EdgeInsets.fromLTRB(50.0, 30, 20, 30),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[

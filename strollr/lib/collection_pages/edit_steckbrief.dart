@@ -97,6 +97,8 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
                       builder: (context) => Steckbrief_2(picture: image, navigationID: _navigationID)),
                 ),
               );
+
+              //Navigator.of(context).pop();
             },
           ),
         ],

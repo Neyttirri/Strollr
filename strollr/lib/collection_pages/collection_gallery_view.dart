@@ -47,9 +47,10 @@ class GalleryView extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: headerGreen),
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => CollectionTwo()),
-          ),
+          onPressed: () {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => CollectionTwo()));
+            //Navigator.of(context).pop();
+          },
         ),
         title: Text("Hebarium", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,

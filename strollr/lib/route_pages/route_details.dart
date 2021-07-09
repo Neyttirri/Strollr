@@ -56,9 +56,8 @@ class _RouteDetailsState extends State<RouteDetails> {
                 if(navigationID == 1) {
                   Navigator.of(context).pop();
                 } else if(navigationID == 2) {
-                  Navigator.of(context).
-                  pop();
-                  //push(MaterialPageRoute(builder: (context) => Routes()));
+                  //Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
                 }
 
               }),

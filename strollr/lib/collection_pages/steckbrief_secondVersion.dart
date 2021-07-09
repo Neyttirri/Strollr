@@ -41,13 +41,13 @@ class Steckbrief_2 extends StatelessWidget {
           onPressed: () {
             print("Navigation ID: " + navigationID.toString());
             print("Walk ID: " + picture.walk_id.toString());
+            //Navigator.of(context).pop();
             if(navigationID == 1) {
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture)));
             } else if ( navigationID == 2) {
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(picture.walk_id, navigationID)));
             }
           },
-          //push(MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture,)),
         ),
         iconTheme: IconThemeData(
           color: headerGreen,
