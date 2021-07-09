@@ -41,8 +41,26 @@ class GalleryView extends StatelessWidget {
         orElse: () => 1);
   }
 
+  late String _title = "";
+
+
   @override
   Widget build(BuildContext context) {
+    if(category.index == 0) {
+      _title = "Andere";
+      print(category.index.toString());
+    } else if(category.index == 1) {
+      _title = "Meine Pflanzen";
+    } else if(category.index == 2) {
+      _title = "Meine Tiere";
+    } else if(category.index == 3) {
+      _title = "Meine Bäume";
+      print(category.index.toString());
+    } else if(category.index == 4) {
+      _title = "Meine Planzen";
+    } else if(category.index == 5) {
+      _title = "Meine Pilze";
+    }
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -52,7 +70,8 @@ class GalleryView extends StatelessWidget {
             //Navigator.of(context).pop();
           },
         ),
-        title: Text("Herbarium", style: TextStyle(color: headerGreen)),
+        title: Text(_title, style: TextStyle(color: headerGreen)),
+        //Text("Herbarium", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
       body: FutureBuilder(
@@ -87,28 +106,9 @@ class GalleryView extends StatelessWidget {
                   );
                 });
           } else {
-            return GridView.builder(
-                gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4),
-                itemCount: 4,
-                itemBuilder: (BuildContext context, int index) {
-                  return new GestureDetector(
-                    onTap: () {
-                      //selectedPicture = allPicturesInCategory;
-                      pictureID = selectedPicture.id!;
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => Steckbrief_2(
-                            picture: selectedPicture,
-                            navigationID: navigationID,
-                          )
-                      ));
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(4),
-                      child: Image.asset("assets/images/treeIcon.png"),
-                    ),
-                  );
-                });
+            return Center(
+              child: Text("Noch keine Bilder vorhanden", style: TextStyle(fontSize: 20, color: headerGreen),),
+            );
           }
         },
       ),
