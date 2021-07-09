@@ -16,7 +16,7 @@ class MonthlyKilometerChartState extends State<MonthlyKilometerChart> {
   Widget build(BuildContext context) {
     List<charts.Series<DailyKilometerSeries, String>> series = [
       charts.Series(
-          id: "Kilometers",
+          id: "DailyKilometers",
           data: widget.dailykilometer,
           colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
           domainFn: (DailyKilometerSeries series, _) => series.day,
