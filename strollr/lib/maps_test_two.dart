@@ -8,6 +8,7 @@ import 'package:gpx/gpx.dart';
 import 'package:strollr/model/picture.dart';
 import 'package:strollr/route_pages/PolylineIf.dart';
 import 'package:strollr/route_pages/dbInterface.dart';
+import 'package:strollr/style.dart';
 import 'package:strollr/utils/shared_prefs.dart';
 
 import 'collection_pages/steckbrief_secondVersion.dart';
@@ -121,7 +122,7 @@ class _MapViewState extends State<MapView> {
             Polyline(
                 width: 5,
                 polylineId: PolylineId('route'),
-                color: Colors.blueAccent,
+                color: headerGreen,
                 points: polylineCoordinates
             )
         );
