@@ -291,11 +291,11 @@ class _MapViewState extends State<MapView> {
 
   void loadMarkerIcons() {
     var resources = [
-      "assets/images/defaultIcon.png",
-      "assets/images/animalFootstepIcon.png",
-      "assets/images/treeIcon.png",
-      "assets/images/plantIcon.png",
-      "assets/images/mushroomIcon.png"
+      "assets/images/defaultIcon_marker.png",
+      "assets/images/animalFootstepIcon_marker.png",
+      "assets/images/treeIcon_marker.png",
+      "assets/images/plantIcon_marker.png",
+      "assets/images/mushroomIcon_marker.png"
     ];
     for (String res in resources) {
       BitmapDescriptor.fromAssetImage(
