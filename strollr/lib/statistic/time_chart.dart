@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:strollr/statistic/stats_monthly.dart';
 import 'package:strollr/statistic/timeSeries.dart';
 
-class TimeChart extends StatelessWidget {
+class TimeChart extends StatefulWidget {
   final List<TimeSeries> minutes;
 
   TimeChart(this.minutes);
 
+  TimeChartState createState() => TimeChartState();
+}
+
+class TimeChartState extends State<TimeChart> {
   @override
   Widget build(BuildContext context) {
     List<charts.Series<TimeSeries, String>> series = [
       charts.Series(
           id: "Minutes",
-          data: minutes,
+          data: widget.minutes,
+          colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
           domainFn: (TimeSeries series, _) => series.month,
-          measureFn: (TimeSeries series, _) => series.minutes,
-          colorFn: (TimeSeries series, _) => series.barColor)
+          measureFn: (TimeSeries series, _) => series.minutes)
     ];
 
     return Container(
@@ -31,12 +36,30 @@ class TimeChart extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyText1,
               ),
               Expanded(
-                child: charts.BarChart(series, animate: true),
+                child: charts.BarChart(
+                  series,
+                  animate: true,
+                  selectionModels: [
+                    charts.SelectionModelConfig(
+                      type: charts.SelectionModelType.info,
+                      changedListener: _onSelectionChanged,
+                    )
+                  ],
+                ),
               )
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _onSelectionChanged(charts.SelectionModel<String> model) {
+    final selectedDatum = model.selectedDatum;
+    if (selectedDatum.isNotEmpty) {
+      print("hello");
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => MonthlyStats()));
+    }
   }
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:strollr/Tabs/collection.dart';
 import 'package:strollr/Tabs/stats.dart';
 import 'package:strollr/statistic/kilometerSeries.dart';
+import 'package:strollr/statistic/monthlyKilometer_chart.dart';
+import 'package:strollr/statistic/stats_monthly.dart';
 
 class KilometerChart extends StatefulWidget {
   final List<MonthlyKilometerSeries> kilometer;
@@ -58,6 +61,8 @@ class KilometerChartState extends State<KilometerChart> {
     final selectedDatum = model.selectedDatum;
     if (selectedDatum.isNotEmpty) {
       print("hello");
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => MonthlyStats()));
     }
   }
 }

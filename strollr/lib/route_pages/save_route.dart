@@ -70,8 +70,8 @@ class RouteFormState extends State<RouteForm> {
     map = new MapView();
 
     ///creates polylines after widget is built
-    WidgetsBinding.instance!
-        .addPostFrameCallback((_) => map.createPolyLines(gpx: MapRouteInterface.gpx));
+    WidgetsBinding.instance!.addPostFrameCallback(
+        (_) => map.createPolyLines(gpx: MapRouteInterface.gpx));
   }
 
   ///returns true when each attribute is set
@@ -127,33 +127,44 @@ class RouteFormState extends State<RouteForm> {
               return null;
             },
           ),
-           Row(
-             children: [new Expanded(child: map)],
-           ),
+          Row(
+            children: [new Expanded(child: map)],
+          ),
           //insert map
           FutureBuilder(
             future: setStarted(),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-              if (snapshot.hasData){
+              if (snapshot.hasData) {
                 print(snapshot.data.toString());
 
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
                   child: Row(
                     children: <Widget>[
-                      Text("Datum:", style: TextStyle(fontSize: 18),),
+                      Text(
+                        "Datum:",
+                        style: TextStyle(fontSize: 18),
+                      ),
                       Spacer(),
-                      Text(started.toString() + ' Uhr', style: TextStyle(fontSize: 18),),
+                      Text(
+                        started.toString() + ' Uhr',
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ],
                   ),
                 );
-              }
-              else {
+              } else {
                 return Row(
                   children: <Widget>[
-                    Text("Start am/um:", style: TextStyle(fontSize: 18),),
+                    Text(
+                      "Start am/um:",
+                      style: TextStyle(fontSize: 18),
+                    ),
                     Spacer(),
-                    Text('', style: TextStyle(fontSize: 18),),
+                    Text(
+                      '',
+                      style: TextStyle(fontSize: 18),
+                    ),
                   ],
                 );
               }
@@ -164,21 +175,32 @@ class RouteFormState extends State<RouteForm> {
             child: FutureBuilder(
               future: setDistance(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                if (snapshot.hasData){
+                if (snapshot.hasData) {
                   return Row(
                     children: <Widget>[
-                      Text("Distanz:", style: TextStyle(fontSize: 18),),
+                      Text(
+                        "Distanz:",
+                        style: TextStyle(fontSize: 18),
+                      ),
                       Spacer(),
-                      Text(distance.toString() + ' km', style: TextStyle(fontSize: 18),),
+                      Text(
+                        distance.toString() + ' km',
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ],
                   );
-                }
-                else {
+                } else {
                   return Row(
                     children: <Widget>[
-                      Text("Distanz:", style: TextStyle(fontSize: 18),),
+                      Text(
+                        "Distanz:",
+                        style: TextStyle(fontSize: 18),
+                      ),
                       Spacer(),
-                      Text('', style: TextStyle(fontSize: 18),),
+                      Text(
+                        '',
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ],
                   );
                 }
@@ -190,21 +212,32 @@ class RouteFormState extends State<RouteForm> {
             child: FutureBuilder(
               future: setDuration(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                if (snapshot.hasData){
+                if (snapshot.hasData) {
                   return Row(
                     children: <Widget>[
-                      Text("Dauer:", style: TextStyle(fontSize: 18),),
+                      Text(
+                        "Dauer:",
+                        style: TextStyle(fontSize: 18),
+                      ),
                       Spacer(),
-                      Text(duration.toString() + ' h', style: TextStyle(fontSize: 18),),
+                      Text(
+                        duration.toString() + ' h',
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ],
                   );
-                }
-                else {
+                } else {
                   return Row(
                     children: <Widget>[
-                      Text("Dauer:", style: TextStyle(fontSize: 18),),
+                      Text(
+                        "Dauer:",
+                        style: TextStyle(fontSize: 18),
+                      ),
                       Spacer(),
-                      Text('', style: TextStyle(fontSize: 18),),
+                      Text(
+                        '',
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ],
                   );
                 }
@@ -222,8 +255,7 @@ Widget saveButton(BuildContext context) {
     width: 150,
     child: ElevatedButton(
       style: OutlinedButton.styleFrom(
-        padding:
-        EdgeInsets.all(10),
+        padding: EdgeInsets.all(10),
         primary: Colors.white,
         textStyle: TextStyle(fontSize: 18),
         backgroundColor: headerGreen,
@@ -236,8 +268,11 @@ Widget saveButton(BuildContext context) {
 
           stopWatchTimer.onExecute.add(StopWatchExecuted.reset);
 
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('Route wird gespeichert', style: TextStyle(fontSize: 20),)));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+            'Route wird gespeichert',
+            style: TextStyle(fontSize: 20),
+          )));
           Navigator.of(context)
               .pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
               //.push(MaterialPageRoute(builder: (context) => Routes()));
