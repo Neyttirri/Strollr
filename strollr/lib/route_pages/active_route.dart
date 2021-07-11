@@ -46,9 +46,8 @@ class _OverviewState extends State<Overview> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Container(
-        padding: EdgeInsets.fromLTRB(3, 10, 10, 5),
+    return  Container(
+        padding: EdgeInsets.fromLTRB(3, 5, 5, 3),
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(width: 1.0, color: Colors.black),
@@ -60,8 +59,10 @@ class _OverviewState extends State<Overview> {
             Column(
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         StreamBuilder<int>(
                             stream: globals.stopWatchTimer.rawTime,
@@ -72,7 +73,7 @@ class _OverviewState extends State<Overview> {
                                   value!,
                                   hours: _isHours);
                               return Padding(
-                                  padding: EdgeInsets.all(8),
+                                  padding: EdgeInsets.all(3),
                                   child: Text(displayTime,
                                       style: TextStyle(
                                           color: Colors.black,
@@ -87,6 +88,7 @@ class _OverviewState extends State<Overview> {
                     Padding(
                       padding: EdgeInsets.fromLTRB(50, 0, 0, 0),
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
                               padding: EdgeInsets.all(8),
@@ -104,7 +106,9 @@ class _OverviewState extends State<Overview> {
                     ),
                   ],
                 ),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                   Padding(
                     padding: EdgeInsets.all(10),
                     child: startPause,
@@ -112,7 +116,7 @@ class _OverviewState extends State<Overview> {
                   Padding(
                     padding: EdgeInsets.all(10),
                     child: SizedBox(
-                      width: 150,
+                      width: MediaQuery.of(context).size.width * 0.4,
                       child: ElevatedButton(
                           child: Text('Route beenden'),
                           style: OutlinedButton.styleFrom(
@@ -141,7 +145,7 @@ class _OverviewState extends State<Overview> {
             ]
         ),
       ]),
-    ));
+    );
   }
 }
 
@@ -346,7 +350,7 @@ class _CustomButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 150,
+      width: MediaQuery.of(context).size.width * 0.4,
       child: ElevatedButton(
         style: OutlinedButton.styleFrom(
           padding: EdgeInsets.all(10),
