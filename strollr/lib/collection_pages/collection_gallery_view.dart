@@ -51,11 +51,8 @@ class GalleryView extends StatelessWidget {
       print(category.index.toString());
     } else if(category.index == 1) {
       _title = "Meine Pflanzen";
-    } else if(category.index == 2) {
-      _title = "Meine Tiere";
-    } else if(category.index == 3) {
+    }  else if(category.index == 3) {
       _title = "Meine Bäume";
-      print(category.index.toString());
     } else if(category.index == 4) {
       _title = "Meine Planzen";
     } else if(category.index == 5) {
@@ -97,7 +94,7 @@ class GalleryView extends StatelessWidget {
                             borderRadius: BorderRadius.all(Radius.circular(15)),
                             image: new DecorationImage(
                               image: MemoryImage(pictureList[index].pictureData),
-                              fit: BoxFit.fill,
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
@@ -200,5 +197,4 @@ class GalleryView extends StatelessWidget {
         }
     );
   }
-
 }

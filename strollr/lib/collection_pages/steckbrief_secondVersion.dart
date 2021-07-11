@@ -74,7 +74,7 @@ class Steckbrief_2 extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                       image: new DecorationImage(
                         image: MemoryImage(picture.pictureData),
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:strollr/collection_pages/collection_category_card.dart';
 import 'package:strollr/collection_pages/collection_gallery_view.dart';
+import 'package:strollr/db/database_manager.dart';
+import 'package:strollr/model/picture.dart';
 import 'package:strollr/model/picture_categories.dart';
 import 'package:strollr/style.dart';
 import '../globals.dart';
@@ -89,7 +91,7 @@ class CollectionTwo extends StatelessWidget {
                     Container(
                       width: 150,
                       child: Text(
-                        "Gesammelt: " + category.itemCount.toString(),
+                        "Gesammelt: ",
                         style: TextStyle(
                           fontSize: 20,
                           color: headerGreen,
