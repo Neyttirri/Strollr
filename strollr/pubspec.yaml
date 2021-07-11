@@ -70,6 +70,14 @@ dev_dependencies:
 
   flutter_launcher_icons: ^0.9.0
 
+  flutter_native_splash: ^1.0.0
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/images/strollr_logo.png
+  android: true
+  ios: true
+
 flutter_icons:
   image_path_android: "assets/images/strollrLogo_android.png"
   image_path_ios: "assets/images/strollrLogo_ios.png"
