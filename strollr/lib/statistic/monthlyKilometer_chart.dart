@@ -4,6 +4,7 @@ import 'package:strollr/Tabs/stats.dart';
 import 'package:strollr/statistic/kilometerSeries.dart';
 import 'dailyKilometerSeries.dart';
 
+/*
 class MonthlyKilometerChart extends StatefulWidget {
   final List<DailyKilometerSeries> dailykilometer;
 
@@ -53,3 +54,5 @@ class MonthlyKilometerChartState extends State<MonthlyKilometerChart> {
     );
   }
 }
+
+ */

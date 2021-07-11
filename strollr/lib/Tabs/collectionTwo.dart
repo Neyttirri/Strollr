@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:strollr/collection_pages/collection_category_card.dart';
 import 'package:strollr/collection_pages/collection_gallery_view.dart';
+import 'package:strollr/db/database_manager.dart';
 import 'package:strollr/model/picture_categories.dart';
 import 'package:strollr/style.dart';
 import '../globals.dart';
-
 
 class CollectionTwo extends StatelessWidget {
 
   int indexTemp = 0;
   late Categories category;
-
-  final List<CollectionListCard> categoryList = [
-    CollectionListCard(treeImagePath, "Bäume", 14),
-    CollectionListCard(plantImagePath, "Pflanzen", 23),
+  List<CollectionListCard> categoryList = [
+    CollectionListCard(treeImagePath, "Bäume", 4),
+    CollectionListCard(plantImagePath, "Pflanzen", 5),
     CollectionListCard(animalImagePath, "Tiere", 3),
-    CollectionListCard(mushroomImagePath, "Pilze", 7),
-    CollectionListCard(undefinedCategoryImagePath, "Andere", 7),
+    CollectionListCard(mushroomImagePath, "Pilze", 6),
+    CollectionListCard(undefinedCategoryImagePath, "Andere", 1),
   ];
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Kategorien", style: TextStyle(color: headerGreen)),
@@ -32,28 +32,31 @@ class CollectionTwo extends StatelessWidget {
             return new GestureDetector(
               onTap: () {
                 indexTemp = index;
-                if(index == 0) {
+                if (index == 0) {
                   category = Categories.tree;
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category)));
-                } else if(index == 1) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => GalleryView(category: category)));
+                } else if (index == 1) {
                   category = Categories.plant;
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category)));
-                } else if(index == 2) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => GalleryView(category: category)));
+                } else if (index == 2) {
                   category = Categories.animal;
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category)));
-                } else if(index == 3) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => GalleryView(category: category)));
+                } else if (index == 3) {
                   category = Categories.mushroom;
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category)));
-                } else if(index == 4) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => GalleryView(category: category)));
+                } else if (index == 4) {
                   category = Categories.undefined;
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category : category)));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => GalleryView(category: category)));
                 }
               },
               child: buildRouteListCard(context, index),
             );
-
-          }
-      ),
+          }),
     );
   }
 
@@ -66,8 +69,8 @@ class CollectionTwo extends StatelessWidget {
           child: Row(
             children: <Widget>[
               Container(
-                width: 80,
-                height: 80,
+                width: MediaQuery.of(context).size.width * 0.2,
+                height: MediaQuery.of(context).size.width * 0.2,
                 child: Image.asset(category.categoryImage),
               ),
               Padding(
@@ -87,15 +90,25 @@ class CollectionTwo extends StatelessWidget {
                       height: 10,
                     ),
                     Container(
-                      width: 150,
-                      child: Text(
-                        "Gesammelt: " + category.itemCount.toString(),
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: headerGreen,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      child: FutureBuilder(
+                        future: getItemCount(category.categoryId),
+                        builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(
+                              "Gesammelt: ${snapshot.data}",
+                              //itemCount.toString(),
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: headerGreen,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            );
+                          } else {
+                            return Text(' ');
+                          }
+                        },
+                      )
                     )
                   ],
                 ),
@@ -106,5 +119,9 @@ class CollectionTwo extends StatelessWidget {
       ),
     );
   }
-}
 
+  Future<int> getItemCount(int cat) async {
+
+    return (await DatabaseManager.instance.readALlPicturesFromCategory(cat)).length;
+  }
+}
