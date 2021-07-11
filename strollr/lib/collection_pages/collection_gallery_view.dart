@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
 import 'package:strollr/Tabs/collectionTwo.dart';
 import 'package:strollr/collection_pages/steckbrief_secondVersion.dart';
@@ -93,8 +95,8 @@ class GalleryView extends StatelessWidget {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(15)),
                             image: new DecorationImage(
-                              image: MemoryImage(pictureList[index].pictureData),
-                              fit: BoxFit.cover,
+                              image: Image.memory(pictureList[index].pictureData, scale: 0.2, filterQuality: FilterQuality.none,).image, 
+                              fit: BoxFit.fill,
                             ),
                           ),
                         ),
@@ -110,6 +112,21 @@ class GalleryView extends StatelessWidget {
         },
       ),
     );
+  }
+
+  img.Image _getImage(int index) {
+
+    return img.decodeImage(pictureList[index].pictureData)!;
+    /*
+    late ui.Image image;
+    ui.decodeImageFromList(pictureList[index].pictureData, (result) { image = result; });
+    late ByteData? bytes;
+    image.toByteData().then((value) => bytes = value);
+    if(bytes == null)
+      return Uint8List(0);
+
+     */
+    //return Image.memory(decoded);
   }
 
   Widget mainWidget() {

@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:strollr/Tabs/stats.dart';
+import 'package:strollr/statistic/dailyTimeSeries.dart';
 import 'package:strollr/statistic/kilometerSeries.dart';
-import 'dailyKilometerSeries.dart';
+import 'package:strollr/statistic/stats_monthly.dart';
+import 'package:strollr/statistic/timeSeries.dart';
 
-/*
-class MonthlyKilometerChart extends StatefulWidget {
-  final List<DailyKilometerSeries> dailykilometer;
+class MonthlyTimeChart extends StatefulWidget {
+  final List<DailyTimeSeries> dailyminutes;
 
-  MonthlyKilometerChart(this.dailykilometer);
+  MonthlyTimeChart(this.dailyminutes);
 
-  State<StatefulWidget> createState() => new MonthlyKilometerChartState();
+  MonthlyTimeChartState createState() => MonthlyTimeChartState();
 }
 
-class MonthlyKilometerChartState extends State<MonthlyKilometerChart> {
+class MonthlyTimeChartState extends State<MonthlyTimeChart> {
   @override
   Widget build(BuildContext context) {
-    List<charts.Series<DailyKilometerSeries, String>> series = [
+    List<charts.Series<DailyTimeSeries, String>> series = [
       charts.Series(
-          id: "DailyKilometers",
-          data: widget.dailykilometer,
+          id: "Minutes",
+          data: widget.dailyminutes,
           colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
-          domainFn: (DailyKilometerSeries series, _) => series.day.toString(),
-          measureFn: (DailyKilometerSeries series, _) => series.dailykilometers)
-      //colorFn: (KilometerSeries series, _) => series.barColor)
+          domainFn: (DailyTimeSeries series, _) => series.day.toString(),
+          measureFn: (DailyTimeSeries series, _) => series.minutes)
     ];
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
@@ -37,7 +37,7 @@ class MonthlyKilometerChartState extends State<MonthlyKilometerChart> {
             child: Column(
               children: <Widget>[
                 Text(
-                  "Kilometerübersicht",
+                  "Zeitübersicht",
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Expanded(
@@ -54,5 +54,3 @@ class MonthlyKilometerChartState extends State<MonthlyKilometerChart> {
     );
   }
 }
-
- */

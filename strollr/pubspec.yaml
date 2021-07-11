@@ -71,7 +71,8 @@ dev_dependencies:
   flutter_launcher_icons: ^0.9.0
 
 flutter_icons:
-  image_path: "assets/images/strollrLogo.png"
+  image_path_android: "assets/images/strollrLogo_android.png"
+  image_path_ios: "assets/images/strollrLogo_ios.png"
   android: true
   ios: true
 # For information on the generic Dart part of this file, see the

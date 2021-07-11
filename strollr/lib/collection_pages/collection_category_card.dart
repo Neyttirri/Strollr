@@ -1,10 +1,14 @@
-import 'package:flutter/material.dart';
-
 class CollectionListCard {
-  String categoryImage;
-  String categoryName;
-  int itemCount;
+  final String categoryImage;
+  final String categoryName;
+  final int categoryId;
+  int _itemCount = 0;
 
 
-  CollectionListCard(this.categoryImage, this.categoryName, this.itemCount);
+  CollectionListCard(this.categoryImage, this.categoryName, this.categoryId);
+
+  set itemCount(count) => _itemCount = count;
+  get itemCount {return _itemCount;}
+
+
 }
