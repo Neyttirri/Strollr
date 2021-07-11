@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 class Routes extends StatelessWidget {
 
   final List<RouteListCard> routeList = [];
+  int navigationID = 2;
 
   Future<bool> buildRouteList() async {
     List<Walk> walks = await DbRouteInterface.getAllWalks();
@@ -40,7 +41,7 @@ class Routes extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) =>
-                              RouteDetails(routeList[index].routeId)));
+                              RouteDetails(routeList[index].routeId, navigationID)));
                     },
                     child: buildRouteListCard(context, index),
                   );
@@ -49,11 +50,8 @@ class Routes extends StatelessWidget {
           }
 
           else {
-            return ListView.builder(
-                itemCount: routeList.length, //Database length
-                itemBuilder: (BuildContext context, int index) {
-                  return Row();
-                }
+            return Row(
+              children: [Text('Loading')],
             );
           }
         }

@@ -24,6 +24,8 @@ class Steckbrief_2 extends StatelessWidget {
   final int ID_SHARE = 0;
   final int ID_DELETE = 1;
   final int ID_DOWNLOAD = 2;
+  final int ID_BEARBEITEN = 3;
+  final int ID_ROUTE = 4;
 
   Steckbrief_2({required this.picture, required this.navigationID}) {
     categoryPicture = idToCategoryMap[picture.category]!;
@@ -37,17 +39,15 @@ class Steckbrief_2 extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: headerGreen),
           onPressed: () {
-            print(navigationID);
-            if (navigationID == 1) {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      GalleryView(category: categoryPicture)));
-            } else if (navigationID == 2) {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => RouteDetails(picture.walk_id)));
+            print("Navigation ID: " + navigationID.toString());
+            print("Walk ID: " + picture.walk_id.toString());
+            //Navigator.of(context).pop();
+            if(navigationID == 1) {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture)));
+            } else if ( navigationID == 2) {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(picture.walk_id, navigationID)));
             }
           },
-          //push(MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture,)),
         ),
         iconTheme: IconThemeData(
           color: headerGreen,
@@ -267,48 +267,6 @@ class Steckbrief_2 extends StatelessWidget {
                       ),
                     ),
 // ---------------- UNTEN LEISTE
-                    Padding(
-                        padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
-                        child: ButtonBar(
-                          alignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => EditSteckbriefScreen(
-                                          picture: picture,
-                                          navigationID: navigationID,
-                                        )));
-                              },
-                              child: Text("Bearbeiten"),
-                              style: OutlinedButton.styleFrom(
-                                padding:
-                                    EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0),
-                                primary: headerGreen,
-                                textStyle: TextStyle(fontSize: 20),
-                                backgroundColor: Colors.white,
-                              ),
-                            ),
-                            Spacer(),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => RouteDetails(
-                                          picture.walk_id,
-                                        )));
-                              },
-                              child: Text("Zeige Route"),
-                              style: OutlinedButton.styleFrom(
-                                padding:
-                                    EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0),
-                                primary: headerGreen,
-                                textStyle: TextStyle(fontSize: 20),
-                                backgroundColor: Colors.white,
-                              ),
-                            ),
-                          ],
-                          buttonMinWidth: 150,
-                        )),
                     SizedBox(
                       height: 20,
                     ),
@@ -336,6 +294,11 @@ class Steckbrief_2 extends StatelessWidget {
           _confirmDeleting(context);
         } else if (choice == ID_DOWNLOAD) {
           _saveImageInGallery();
+        } else if (choice == ID_BEARBEITEN) {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => EditSteckbriefScreen(picture: picture, navigationID: navigationID,)));
+        } else if (choice == ID_ROUTE) {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => RouteDetails(picture.walk_id, navigationID)));
         } else
           print('nothing chosen !!  ');
       },
@@ -380,6 +343,42 @@ class Steckbrief_2 extends StatelessWidget {
                   width: 90,
                   child: Text(
                     'in Galerie speichern',
+                    maxLines: 2,
+                    softWrap: true,
+                  )),
+            ],
+          ),
+        ),
+        PopupMenuDivider(),
+        PopupMenuItem<int>(
+          value: 3,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(Icons.edit),
+              Container(
+                  margin: EdgeInsets.only(left: 10),
+                  width: 90,
+                  child: Text(
+                    'Bearbeiten',
+                    maxLines: 2,
+                    softWrap: true,
+                  )),
+            ],
+          ),
+        ),
+        PopupMenuDivider(),
+        PopupMenuItem<int>(
+          value: 4,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(Icons.directions_walk),
+              Container(
+                  margin: EdgeInsets.only(left: 10),
+                  width: 90,
+                  child: Text(
+                    'Zeige Route',
                     maxLines: 2,
                     softWrap: true,
                   )),

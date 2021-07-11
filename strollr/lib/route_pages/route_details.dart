@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:strollr/Tabs/routes.dart';
 import '../style.dart';
 import 'package:gpx/gpx.dart';
@@ -6,17 +7,18 @@ import 'package:strollr/maps_test_two.dart';
 import 'dbInterface.dart';
 
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-TextEditingController _controller =
-    TextEditingController(); // Name aus Datenbank
+TextEditingController _controller = TextEditingController(); // Name aus Datenbank
 bool _isEnable = false;
 late int walkId;
 late String nName;
 
 class RouteDetails extends StatefulWidget {
   late int walkId;
+  late int navigationID;
 
-  RouteDetails(int walkId) {
+  RouteDetails(int walkId, int navigationID) {
     this.walkId = walkId;
+    this.navigationID = navigationID;
 
     setTextEditor();
   }
@@ -32,6 +34,10 @@ class RouteDetails extends StatefulWidget {
 
 class _RouteDetailsState extends State<RouteDetails> {
   late int walkId;
+  late int navigationID = widget.navigationID;
+
+  final int ID_DELETE = 0;
+  final int ID_SAVE = 1;
 
   _RouteDetailsState(int walkId){
     this.walkId = walkId;
@@ -47,17 +53,150 @@ class _RouteDetailsState extends State<RouteDetails> {
           leading: IconButton(
               icon: Icon(Icons.arrow_back, color: headerGreen),
               onPressed: () {
-                Navigator.of(context).pop();
+                if(navigationID == 1) {
+                  Navigator.of(context).pop();
+                } else if(navigationID == 2) {
+                  //Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
+                }
+
               }),
+          iconTheme: IconThemeData(
+            color: headerGreen,
+          ),
+          actions: [
+            getImageMenuRoute(context),
+          ],
         ),
-        body: Center(
-            child: Container(
-                padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [RouteForm(walkId), buttonRow(context)],
-                  ),
-                ))));
+        body: Container(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [RouteForm(walkId)],
+              ),
+            ),
+        ),
+    );
+  }
+
+  Widget getImageMenuRoute(BuildContext context) {
+    return PopupMenuButton(
+      elevation: 3.2,
+      offset: Offset(0, 45),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(15.0)),
+      ),
+      onSelected: (choice) {
+        if (choice == ID_DELETE) {
+          confirmDeleting(context);
+        } else if (choice == ID_SAVE) {
+          saveRoute(context);
+        } else
+          print('nothing chosen !!  ');
+      },
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+        PopupMenuItem<int>(
+          value: 0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(Icons.delete),
+              Container(
+                margin: EdgeInsets.only(left:10),
+                child: Text('Löschen'),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuDivider(),
+        PopupMenuItem<int>(
+          value: 1,
+          child:  Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(Icons.save_alt),
+              Container(
+                margin: EdgeInsets.only(left:10),
+                child: Text('Speichern'),
+              ),
+            ],
+          ),
+          //width: 10,
+        ),
+      ],
+    );
+  }
+  deleteRoute(BuildContext context) async {
+    await DbRouteInterface.deleteWalk(walkId: walkId);
+    Fluttertoast.showToast(
+      msg: 'Gelöscht',
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.grey.shade800,
+      textColor: Color(0xffffffff),
+    );
+  }
+
+  confirmDeleting(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      // barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: const Text(
+              'Bist du sicher, dass du die Route löschen möchtest?'),
+          buttonPadding: EdgeInsets.only(left: 15, right: 15),
+          actions: <Widget>[
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              TextButton(
+                child: const Text(
+                  'Ja',
+                  style: TextStyle(fontSize: 16),
+                ),
+                style: TextButton.styleFrom(
+                  primary: Colors.green,
+                ),
+                onPressed: () {
+
+                  Navigator.of(context).pop();
+
+
+                  Future.delayed(Duration.zero, () {
+                    Navigator.of(context).maybePop();
+                  });
+                  deleteRoute(context);
+
+                },
+              ),
+              TextButton(
+                child: const Text(
+                  'Nein',
+                  style: TextStyle(fontSize: 16),
+                ),
+                style: TextButton.styleFrom(primary: Colors.green),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ]),
+          ],
+        );
+      },
+    );
+  }
+  saveRoute(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      await DbRouteInterface.setWalkName(walkId: walkId, name: nName);
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Route wird gespeichert', style: TextStyle(fontSize: 20),)));
+      setState(() {
+        _isEnable = false;
+      });
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
+      //.push(MaterialPageRoute(builder: (context) => Routes()));
+      // neuen Routennamen in Datenbank übernehmen
+    }
   }
 }
 
@@ -260,76 +399,4 @@ class RouteFormState extends State<RouteForm> {
           icon: Icon(Icons.edit))
     ]);
   }
-}
-
-class SaveButton extends StatefulWidget {
-  _SaveButtonState createState() => _SaveButtonState();
-}
-
-class _SaveButtonState extends State<SaveButton> {
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 150,
-      child: ElevatedButton(
-        style: OutlinedButton.styleFrom(
-          padding:
-          EdgeInsets.all(10),
-          primary: Colors.white,
-          textStyle: TextStyle(fontSize: 18),
-          backgroundColor: headerGreen,
-        ),
-        onPressed: () async {
-          if (_formKey.currentState!.validate()) {
-            await DbRouteInterface.setWalkName(walkId: walkId, name: nName);
-
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Route wird gespeichert', style: TextStyle(fontSize: 20),)));
-            setState(() {
-              _isEnable = false;
-            });
-            Navigator.of(context).pop();
-                //.push(MaterialPageRoute(builder: (context) => Routes()));
-            // neuen Routennamen in Datenbank übernehmen
-          }
-        },
-        child: Text('Speichern'),
-      ),
-    );
-  }
-}
-
-Widget deleteButton(BuildContext context) {
-  return SizedBox(
-    width: 150,
-    //height: 50,
-    child: ElevatedButton(
-      style: OutlinedButton.styleFrom(
-        padding: EdgeInsets.all(10),
-        primary: headerGreen,
-        textStyle: TextStyle(fontSize: 18),
-        backgroundColor: Colors.white,
-      ),
-      onPressed: () async {
-        await DbRouteInterface.deleteWalk(walkId: walkId);
-
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Route wird gelöscht', style: TextStyle(fontSize: 20),)));
-        Navigator.of(context).pop();
-        /*
-        Navigator.of(context)
-            .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
-         */
-      },
-      child: Text(' Route löschen'),
-    ),
-  );
-}
-
-Widget buttonRow(BuildContext context) {
-  return Container(
-      padding: EdgeInsets.fromLTRB(30, 15, 30, 15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [deleteButton(context), SaveButton()],
-      ));
 }

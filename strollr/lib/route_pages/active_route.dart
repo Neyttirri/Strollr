@@ -27,6 +27,8 @@ Geolocator _geolocator = Geolocator();
 
 var gpx = Gpx();
 
+late MapView maps;
+
 class Overview extends StatefulWidget {
   _OverviewState createState() => _OverviewState();
 }
@@ -179,7 +181,6 @@ class ActiveRoute extends StatefulWidget {
 }
 
 class _ActiveRouteState extends State<ActiveRoute> {
-  final maps = new MapView();
   late File _imageFile;
   late Position _currentPosition;
   final _picker = ImagePicker();
@@ -187,6 +188,9 @@ class _ActiveRouteState extends State<ActiveRoute> {
   @override
   void initState() {
     super.initState();
+
+    maps = MapView();
+
     MapRouteInterface.walkFinished = true;
     //initiate periodic Timer on init
     _timer = startTracking();
@@ -352,6 +356,8 @@ class _CustomButtonState extends State<CustomButton> {
         ),
         onPressed: () {
           if (label == 'Start') {
+            maps.letsTrack();
+
             setState(() {
               label = 'Pause';
               MapRouteInterface.walkPaused = false;

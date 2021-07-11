@@ -91,12 +91,13 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
                   .d('updating image and info');
               _updatePicture();
               Future.delayed(Duration(milliseconds: 1500)).then(
-                (value) => Navigator.push(
+                (value) => Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                       builder: (context) => Steckbrief_2(picture: image, navigationID: _navigationID)),
                 ),
               );
+              //Navigator.of(context).pop();
             },
           ),
         ],
@@ -226,7 +227,7 @@ class _EditSteckbriefScreenState extends State<EditSteckbriefScreen>
           TextField(
             controller: TextEditingController()..text = image.description,
             cursorColor: Colors.black,
-            textCapitalization: TextCapitalization.words,
+            textCapitalization: TextCapitalization.sentences,
             textAlignVertical: TextAlignVertical.center,
             onEditingComplete: () => FocusScope.of(context).nextFocus(),
             onChanged: (value) {

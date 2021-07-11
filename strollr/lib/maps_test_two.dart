@@ -8,10 +8,10 @@ import 'package:gpx/gpx.dart';
 import 'package:strollr/model/picture.dart';
 import 'package:strollr/route_pages/PolylineIf.dart';
 import 'package:strollr/route_pages/dbInterface.dart';
+import 'package:strollr/style.dart';
 import 'package:strollr/utils/shared_prefs.dart';
 
 import 'collection_pages/steckbrief_secondVersion.dart';
-
 
 void main() {
   runApp(MyApp());
@@ -20,7 +20,6 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     return MapView();
     /*
     return MaterialApp(
@@ -38,11 +37,15 @@ class MyApp extends StatelessWidget {
 class MapView extends StatefulWidget {
   late _MapViewState map = new _MapViewState();
 
+  void letsTrack() {
+    map.activateTracker();
+  }
+
   void createPolyLines({required Gpx gpx, int walkId = -1}) async {
     if (walkId == -1) walkId = await SharedPrefs.getCurrentWalkId();
 
-    Timer(Duration (seconds: 2), () => map._createPolylines(gpx));
-    Timer(Duration (seconds: 2), () => map._setMarkers(walkId));
+    Timer(Duration(seconds: 2), () => map._createPolylines(gpx));
+    Timer(Duration(seconds: 2), () => map._setMarkers(walkId));
   }
 
   @override
@@ -51,19 +54,16 @@ class MapView extends StatefulWidget {
 
 class _MapViewState extends State<MapView> {
   CameraPosition _initialLocation = CameraPosition(target: LatLng(0.0, 0.0));
-   late GoogleMapController mapController;
-   late BitmapDescriptor markerIcon;
+  late GoogleMapController mapController;
 
-   late int navigationID = 2;
-
-   late List<Picture> pics;
-
-  final Geolocator _geolocator = Geolocator();
+  late List<BitmapDescriptor> _markerIcons;
   final Set<Marker> _itemMarkers = {};
 
-  final _locationUpdateIntervall = Duration(seconds: 3);
-  static Timer? _timer;
+  late int navigationID = 2;
 
+  late List<Picture> pics;
+
+  final Geolocator _geolocator = Geolocator();
 
   //lines to be drawn in maps
   Set<Polyline> _polylines = {};
@@ -72,55 +72,40 @@ class _MapViewState extends State<MapView> {
 
   PolylinePoints? polylinePoints;
 
-  Timer _getCurrentLocation() {
-    return Timer.periodic(_locationUpdateIntervall, (timer) async {
-      if (MapRouteInterface.walkPaused) return;
+  void activateTracker() async {
+    StreamSubscription<Position> positionStream = await _geolocator
+        .getPositionStream(LocationOptions(
+            accuracy: LocationAccuracy.high, distanceFilter: 20))
+        .listen((event) {
+      if (MapRouteInterface.walkPaused || MapRouteInterface.walkFinished)
+        return;
 
+      MapRouteInterface.currentPosition = event;
 
-      if (MapRouteInterface.walkFinished &&
-          MapRouteInterface.gpx.wpts.isNotEmpty) {
-        //_createPolylines(MapRouteInterface.gpx);
-        _timer?.cancel();
-        MapRouteInterface.walkPaused = true;
-      }
-
-      //print(PolylineIf.gpx);
-
-
-      if (!MapRouteInterface.walkFinished) {
-        Position? myPosition = await _geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.high);
-        // Store the position in the variable
-        MapRouteInterface.currentPosition = myPosition;
-
-        if (mounted) {
-          setState(() {
-            print('CURRENT POS: $myPosition');
-
-            // For moving the camera to current location
-            mapController.animateCamera(
-              CameraUpdate.newCameraPosition(
-                CameraPosition(
-                  target: LatLng(
-                      myPosition.latitude, myPosition.longitude),
-                  zoom: 18.0,
-                ),
+      if (mounted) {
+        setState(() {
+          // For moving the camera to current location
+          mapController.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: LatLng(event.latitude, event.longitude),
+                zoom: 18.0,
               ),
-            );
-          });
-        }
+            ),
+          );
+        });
       }
     });
   }
-
 
   /*
   * when finished, method will take list of recorded locations
   * connect them via _polylines.add
    */
   void _createPolylines(Gpx gpx) async {
-    gpx.wpts.forEach((element)  {
-      polylineCoordinates.add(LatLng(element.lat as double,  element.lon  as double));
+    gpx.wpts.forEach((element) {
+      polylineCoordinates
+          .add(LatLng(element.lat as double, element.lon as double));
     });
 
     LatLng southWestBound = _getBound(true, gpx);
@@ -128,29 +113,26 @@ class _MapViewState extends State<MapView> {
 
     if (mounted) {
       setState(() {
-
         var gpxString = GpxWriter().asString(gpx, pretty: true);
         print(gpxString);
 
-        _polylines.add(
-            Polyline(
-                width: 5,
-                polylineId: PolylineId('route'),
-                color: Colors.blueAccent,
-                points: polylineCoordinates
-            )
-        );
+        _polylines.add(Polyline(
+            width: 5,
+            polylineId: PolylineId('route'),
+            color: headerGreen,
+            points: polylineCoordinates));
 
         mapController.animateCamera(
-          /*CameraUpdate.newCameraPosition(
+            /*CameraUpdate.newCameraPosition(
             CameraPosition(
               target: LatLng(
                   _currentPosition.latitude, _currentPosition.longitude),
             ),
           ),*/
-          CameraUpdate.newLatLngBounds(LatLngBounds(southwest: southWestBound,
-              northeast: northEastBound), 50)
-        );
+            CameraUpdate.newLatLngBounds(
+                LatLngBounds(
+                    southwest: southWestBound, northeast: northEastBound),
+                50));
       });
     }
   }
@@ -159,7 +141,7 @@ class _MapViewState extends State<MapView> {
   * compares coordinates of recorded Locations
   * to find southwest or northwest most points
    */
-  _getBound(bool southWest, Gpx gpx){
+  _getBound(bool southWest, Gpx gpx) {
     LatLng res = LatLng(gpx.wpts[0].lat as double, gpx.wpts[0].lon as double);
 
     double resLat = res.latitude;
@@ -171,29 +153,27 @@ class _MapViewState extends State<MapView> {
       elementLat = element.lat;
       elementLon = element.lon;
       // TODO what happens when null?
-      if(elementLat == null || elementLon == null )
+      if (elementLat == null || elementLon == null)
         throw Exception('_MapViewState | Should not happen: latitude is null!');
       if (southWest && elementLat < res.latitude) {
         resLat = elementLat;
         res = LatLng(elementLat, elementLon);
-      }
-
-      else if (!southWest && elementLat > res.latitude) {
+      } else if (!southWest && elementLat > res.latitude) {
         resLat = elementLat;
-        res = LatLng( elementLat, elementLon);
+        res = LatLng(elementLat, elementLon);
       }
     });
 
     gpx.wpts.forEach((element) {
       elementLat = element.lat;
       elementLon = element.lon;
-      if(elementLat == null || elementLon == null )
-        throw Exception('_MapViewState | Should not happen: longitude is null!');
+      if (elementLat == null || elementLon == null)
+        throw Exception(
+            '_MapViewState | Should not happen: longitude is null!');
       if (southWest && elementLon < res.longitude) {
         resLon = elementLon;
         res = LatLng(elementLat, elementLon);
-      }
-      else if (!southWest && elementLon > res.longitude){
+      } else if (!southWest && elementLon > res.longitude) {
         resLon = elementLon;
         res = LatLng(elementLat, elementLon);
       }
@@ -205,46 +185,76 @@ class _MapViewState extends State<MapView> {
   }
 
   _setMarkers(int walkId) async {
-    List<LatLng> markers = await DbRouteInterface.getMarkerPositions(walkId: walkId);
+    List<LatLng> markers =
+        await DbRouteInterface.getMarkerPositions(walkId: walkId);
     pics = await DbRouteInterface.getPicuturesOfWalk(walkId: walkId);
 
     //_addMarker(MapRouteInterface.currentPosition);
 
-    for (LatLng marker in markers){
+    for (LatLng marker in markers) {
       _addMarker(marker);
     }
   }
 
   _addMarker(latlong) {
+    print(pics);
+    // find corresponding picture
+    Picture match = pics.first; // for init purposes; should change
+    if (pics.isNotEmpty) {
+      for (Picture picture in pics) {
+        Gpx position = GpxReader().fromString(picture.location);
+
+        LatLng location = LatLng(
+            position.wpts[0].lat as double, position.wpts[0].lon as double);
+
+        if (location == latlong) {
+          match = picture;
+        }
+      }
+    }
+    // adjust category
+    int category = match.category;
+    BitmapDescriptor tempIcon;
+    if (category == 3) {
+      // animal
+      tempIcon = _markerIcons.elementAt(1);
+    } else if (category == 4) {
+      // tree
+      tempIcon = _markerIcons.elementAt(2);
+    } else if (category == 5) {
+      // plant
+      tempIcon = _markerIcons.elementAt(3);
+    } else if (category == 6) {
+      // mushroom
+      tempIcon = _markerIcons.elementAt(4);
+    } else {
+      tempIcon = _markerIcons.elementAt(0);
+    }
+
+    // create marker
+    final tempMarker = Marker(
+      markerId: MarkerId('$latlong'),
+      position: LatLng(
+        latlong.latitude,
+        latlong.longitude,
+      ),
+      infoWindow: InfoWindow(
+          //title: 'Start',
+          ),
+      onTap: () async {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+                builder: (context) =>
+                    Steckbrief_2(picture: match, navigationID: navigationID)),
+            (Route<dynamic> route) => false);
+      },
+      icon: tempIcon,
+    );
+
+    // add marker to map
     setState(
       () {
-        _itemMarkers.add(
-          Marker(
-            markerId: MarkerId('$latlong'),
-            position: LatLng(
-              latlong.latitude,
-              latlong.longitude,
-            ),
-            infoWindow: InfoWindow(
-              title: 'Start',
-            ),
-            onTap: () async {
-              print(pics);
-              if (pics.isNotEmpty){
-                for (Picture picture in pics){
-                  Gpx position = GpxReader().fromString(picture.location);
-
-                  LatLng location = LatLng(position.wpts[0].lat as double, position.wpts[0].lon as double);
-
-                  if (location == latlong){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => Steckbrief_2(picture : picture, navigationID: navigationID,)));
-                  }
-                }
-              }
-            },
-            icon: markerIcon,
-          ),
-        );
+        _itemMarkers.add(tempMarker);
       },
     );
   }
@@ -252,17 +262,14 @@ class _MapViewState extends State<MapView> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
-    getMarkerIcon();
-
-    _timer = _getCurrentLocation();
+    _markerIcons = new List.empty(growable: true);
+    loadMarkerIcons();
 
     polylinePoints = PolylinePoints();
     _polylines = {};
   }
 
   void dispose() {
-    _timer?.cancel();
     _polylines = {};
 
     super.dispose();
@@ -282,17 +289,26 @@ class _MapViewState extends State<MapView> {
     mapController.setMapStyle(mapStyle);
   }
 
-  void getMarkerIcon() {
-    BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(
-        devicePixelRatio: 2.0,
-      ),
-      "assets/images/purple_icon.png",
-    ).then(
-      (onValue) {
-        markerIcon = onValue;
-      },
-    );
+  void loadMarkerIcons() {
+    var resources = [
+      "assets/images/defaultIcon_marker.png",
+      "assets/images/animalFootstepIcon_marker.png",
+      "assets/images/treeIcon_marker.png",
+      "assets/images/plantIcon_marker.png",
+      "assets/images/mushroomIcon_marker.png"
+    ];
+    for (String res in resources) {
+      BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(
+          devicePixelRatio: 1.0,
+        ),
+        res,
+      ).then(
+        (onValue) {
+          _markerIcons.add(onValue);
+        },
+      );
+    }
   }
 
   @override
@@ -317,16 +333,10 @@ class _MapViewState extends State<MapView> {
               markers: _itemMarkers,
               zoomGesturesEnabled: true,
               zoomControlsEnabled: false,
-              onTap: (latlang) {
-                print('${latlang.latitude}, ${latlang.longitude}');
-                _addMarker(latlang);
-              },
               onMapCreated: (GoogleMapController controller) {
                 MapRouteInterface.walkFinished = true;
                 mapController = controller;
                 changeMapStyle();
-
-                _timer = _getCurrentLocation();
               },
             ),
           ],

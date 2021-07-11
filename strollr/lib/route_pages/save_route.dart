@@ -274,7 +274,8 @@ Widget saveButton(BuildContext context) {
             style: TextStyle(fontSize: 20),
           )));
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => Routes()));
+              .pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
+              //.push(MaterialPageRoute(builder: (context) => Routes()));
         }
       },
       child: Text('Speichern'),
@@ -294,14 +295,15 @@ Widget deleteButton(BuildContext context) {
       ),
       onPressed: () async {
         await DbRouteInterface.deleteWalk();
+        MapRouteInterface.gpx.wpts.clear();
 
         stopWatchTimer.onExecute.add(StopWatchExecuted.reset);
 
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Route wird gelöscht')));
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => Routes()),
-            (Route<dynamic> route) => false);
+        Navigator.of(context)
+            .pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
+            //.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
       },
       child: Text(' Route löschen'),
     ),
