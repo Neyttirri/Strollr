@@ -48,10 +48,9 @@ class Routes extends StatelessWidget {
                 }
             );
           }
-
           else {
-            return Row(
-              children: [Text('Loading')],
+            return Center(
+              child: Text('Lege eine neue Route an.', style: TextStyle(fontSize: 20, color: headerGreen)),
             );
           }
         }

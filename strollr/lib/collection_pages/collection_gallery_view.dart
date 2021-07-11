@@ -106,7 +106,7 @@ class GalleryView extends StatelessWidget {
                 });
           } else {
             return Center(
-              child: Text("Noch keine Bilder vorhanden", style: TextStyle(fontSize: 20, color: headerGreen),),
+              child: Text("Noch keine Bilder vorhanden", style: TextStyle(fontSize: 20, color: headerGreen)),
             );
           }
         },
