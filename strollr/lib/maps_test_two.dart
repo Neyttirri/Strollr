@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -21,16 +22,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MapView();
-    /*
-    return MaterialApp(
-      title: 'Flutter Maps',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MapView(),
-    );
-
-     */
   }
 }
 
@@ -228,6 +219,7 @@ class _MapViewState extends State<MapView> {
       // mushroom
       tempIcon = _markerIcons.elementAt(4);
     } else {
+      // other/default
       tempIcon = _markerIcons.elementAt(0);
     }
 
@@ -238,9 +230,6 @@ class _MapViewState extends State<MapView> {
         latlong.latitude,
         latlong.longitude,
       ),
-      infoWindow: InfoWindow(
-          //title: 'Start',
-          ),
       onTap: () async {
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
@@ -278,7 +267,6 @@ class _MapViewState extends State<MapView> {
   void changeMapStyle() {
     //add String path as parameter
     getJsonMapStyle("assets/mapsBundle/mapsDefaultView.json").then(setMapStyle);
-    //exchange "" with String path parameter just for testing
   }
 
   Future<String> getJsonMapStyle(String path) {
@@ -290,18 +278,28 @@ class _MapViewState extends State<MapView> {
   }
 
   void loadMarkerIcons() {
-    var resources = [
-      "assets/images/mapIconsIphone/defaultIcon.png",
-      "assets/images/mapIconsIphone/animalFootstepIcon.png",
-      "assets/images/mapIconsIphone/treeIcon.png",
-      "assets/images/mapIconsIphone/plantIcon.png",
-      "assets/images/mapIconsIphone/mushroomIcon.png"
-    ];
+    var resources;
+    if (Platform.isIOS) {
+      resources = [
+        "assets/images/mapIconsIphone/defaultIcon.png",
+        "assets/images/mapIconsIphone/animalFootstepIcon.png",
+        "assets/images/mapIconsIphone/treeIcon.png",
+        "assets/images/mapIconsIphone/plantIcon.png",
+        "assets/images/mapIconsIphone/mushroomIcon.png"
+      ];
+    } else {
+      resources = [
+        "assets/images/mapIconsAndroid/defaultIcon.png",
+        "assets/images/mapIconsAndroid/animalFootstepIcon.png",
+        "assets/images/mapIconsAndroid/treeIcon.png",
+        "assets/images/mapIconsAndroid/plantIcon.png",
+        "assets/images/mapIconsAndroid/mushroomIcon.png"
+      ];
+    }
+
     for (String res in resources) {
       BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(
-          devicePixelRatio: 1.0,
-        ),
+        ImageConfiguration(),
         res,
       ).then(
         (onValue) {
@@ -329,7 +327,6 @@ class _MapViewState extends State<MapView> {
               initialCameraPosition: _initialLocation,
               myLocationEnabled: true,
               myLocationButtonEnabled: false,
-              //mapType: MapType.normal,
               markers: _itemMarkers,
               zoomGesturesEnabled: true,
               zoomControlsEnabled: false,
