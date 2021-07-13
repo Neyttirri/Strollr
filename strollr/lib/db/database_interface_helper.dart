@@ -6,6 +6,8 @@ import 'database_manager.dart';
 import 'package:gpx/gpx.dart';
 
 class DbHelper {
+
+  // *************************  Statistics - Distance *************************
   /// the list with distances starts from 0 !
   /// so to get the accurate day you should add 1 to the index
   /// example: the distances for day 11 would be the value at index 10
@@ -52,8 +54,54 @@ class DbHelper {
     else
       return '$month';
   }
+
+// *************************  Statistics - Duration *************************
+  static Future<List<YearlyDuration>> readAllWalkDurationYearly() async {
+    List<YearlyDuration> res = await DatabaseManager.instance.readAllWalkDurationsYearly();
+    return summarizeList(res);
+  }
+
+  static List<YearlyDuration> summarizeList(List<YearlyDuration> list){
+    List<YearlyDuration> res = List.empty(growable: true);
+    res.add(list.first);
+    int index = 0;
+    for(int i = 1; i < list.length; i++) {
+      if(list[i].year == list[index].year){
+        list[index].duration += list[i].duration;
+      } else {
+        while(list[i].year - 1 != res[index].year) {
+          res.add(YearlyDuration(year: res[index].year + 1, duration: 0.0));
+          index++;
+        }
+        index++;
+        res.add(list[i]);
+      }
+    }
+    return res;
+  }
+
 }
 
+// *************************  Statistics - Duration *************************
+class YearlyDurationField {
+  static final String year = 'year';
+  static final String duration = 'sum_distances';
+}
+
+class YearlyDuration {
+  int year;
+  double duration;
+
+  YearlyDuration({required this.year, required this.duration});
+
+  static YearlyDuration fromJson(Map<String, Object?> json) => YearlyDuration(
+        year: int.parse(json[YearlyDurationField.year] as String),
+        duration:
+        roundNumber(getDurationFromString(json[YearlyDurationField.duration] as String)),
+      );
+}
+
+// *************************  Statistics - Distance *************************
 class YearlyDistancesField {
   static final String year = 'year';
   static final String distKm = 'sum_distances';
@@ -150,4 +198,14 @@ class Pin {
 double roundNumber(double val, {int places = 2}) {
   var mod = pow(10.0, places);
   return ((val * mod).round().toDouble() / mod);
+}
+
+// translate a String in format "hh:mm:ss" to a double
+double getDurationFromString(String duration) {
+  List<String> measurements = duration.split(':');
+  double hours = double.parse(measurements[0]);
+  double minutes = double.parse(measurements[1]);
+  double seconds = double.parse(measurements[2]);
+
+  return hours + (minutes / 60) + (seconds / 60 / 60);
 }

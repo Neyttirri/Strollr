@@ -318,6 +318,17 @@ class DatabaseManager {
      */
   }
 
+  Future<List<YearlyDuration>> readAllWalkDurationsYearly() async {
+    final db = await instance.database;
+    final result = await db.query(tableWalks,
+        columns: [
+          'strftime(\'%Y\', ${WalkField.endedAt}) AS ${YearlyDurationField.year}',
+          '${WalkField.duration} AS ${YearlyDurationField.duration}',
+        ],
+        orderBy: '${WalkField.endedAt} ASC');
+    return result.map((json) => YearlyDuration.fromJson(json)).toList();
+  }
+
 
 
   /// update a picture in the database by passing the updated version [picture]. Returns the number of changes made

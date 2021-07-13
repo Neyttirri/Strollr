@@ -10,7 +10,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUp(() async {
     // clean up db before every test
-    // await DatabaseManager.instance.deleteDb();
+     await DatabaseManager.instance.deleteDb();
   });
 
   tearDownAll(() async {
@@ -23,7 +23,7 @@ void main() {
     Walk walk1 = _createTestWalk('second test walk');
     Walk walk2 = Walk(
       name: 'third walk ',
-      durationTime: ("2021-04-12 01:30:00Z"),
+      durationTime: ("01:30:00"),
       distanceInKm: 4.1,
       route: 'should be a xml file',
       startedAtTime: DateTime.parse("2022-04-23 11:30:00Z"),
@@ -37,13 +37,20 @@ void main() {
       walk2 = await DatabaseOperations.insertWalk(walk2);
       //expect((await DatabaseManager.instance.readALlWalks()).length,
       //   DatabaseOperations.walksCounter);
-
+      List<YearlyDuration> res = await DbHelper.readAllWalkDurationYearly();
+      print(res.length);
+      for (YearlyDuration dist in res) {
+        print('year: ${dist.year}, duration: ${dist.duration}');
+      }
+      /*
       List<DailyDistance> res = await DatabaseManager.instance
           .readAllWalkDistancesInAMonth('04', '2023');
       print(res.length);
       for (DailyDistance dist in res) {
         print('day: ${dist.day}, distance: ${dist.distance}');
       }
+
+       */
     });
 
 /*
@@ -123,7 +130,7 @@ void main() {
 Walk _createTestWalk(String name) {
   return Walk(
     name: name,
-    durationTime: '01:30:00',
+    durationTime: '01:40:00',
     distanceInKm: 3.56,
     route: 'should be a xml file',
     startedAtTime: DateTime.parse("2021-04-22 11:30:00Z"),
