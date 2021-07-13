@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:strollr/statistic/dailyKilometerSeries.dart';
 import '../style.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:strollr/statistic/kilometerSeries.dart';
 import 'package:strollr/statistic/kilometer_chart.dart';
 import 'package:strollr/statistic/timeSeries.dart';
@@ -40,7 +37,7 @@ class Stats extends StatefulWidget {
     this.year = year;
   }
 
-  late List<MonthlyKilometerSeries> kilometers;
+  late List<MonthlyKilometerSeries> kilometers = List.empty(growable: true);
 
   late List<MonthlyKilometerSeries> defaultkilometers = [
     MonthlyKilometerSeries(
@@ -236,7 +233,7 @@ class StatsState extends State<Stats> {
           FutureBuilder(
             future: setKilometers(),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-              if (snapshot.hasData) {
+              if (snapshot.hasData  && widget.kilometers.isNotEmpty) {
                 return KilometerChart(widget.kilometers);
               } else {
                 return KilometerChart(widget.defaultkilometers);
