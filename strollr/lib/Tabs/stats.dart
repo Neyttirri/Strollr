@@ -311,6 +311,19 @@ class StatsState extends State<Stats> {
         body: SingleChildScrollView(
           child: Column(children: [
             SliderWidget(),
+            Container(
+              child: Padding(
+                padding:
+                    const EdgeInsets.only(top: 20.0, left: 20, bottom: 2.0),
+                child: Text(
+                  'Kilometerübersicht',
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 17,
+                      color: Colors.black),
+                ),
+              ),
+            ),
             FutureBuilder(
               future: setKilometers(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -320,6 +333,19 @@ class StatsState extends State<Stats> {
                   return KilometerChart(widget.defaultkilometers);
                 }
               },
+            ),
+            Container(
+              child: Padding(
+                padding:
+                    const EdgeInsets.only(top: 20.0, left: 20, bottom: 2.0),
+                child: Text(
+                  'Zeitübersicht',
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 17,
+                      color: Colors.black),
+                ),
+              ),
             ),
             FutureBuilder(
               future: setminutes(),

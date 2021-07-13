@@ -6,6 +6,7 @@ import 'package:strollr/statistic/dailyTimeSeries.dart';
 import '../style.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:strollr/db/database_interface_helper.dart';
+import 'package:strollr/globals.dart' as globals;
 
 import 'monthlyKilometer_chart.dart';
 import 'monthlyTime_chart.dart';
@@ -94,7 +95,7 @@ class MonthlyStatsState extends State<MonthlyStats> {
             Container(
               child: Padding(
                 padding:
-                    const EdgeInsets.only(top: 20.0, left: 20, bottom: 2.0),
+                    const EdgeInsets.only(top: 20.0, left: 20, bottom: 4.0),
                 child: Text(
                   'Kilometerübersicht',
                   style: TextStyle(
@@ -116,8 +117,7 @@ class MonthlyStatsState extends State<MonthlyStats> {
             ),
             Container(
               child: Padding(
-                padding:
-                    const EdgeInsets.only(top: 20.0, left: 20, bottom: 2.0),
+                padding: const EdgeInsets.only(top: 8.0, left: 20, bottom: 4.0),
                 child: Text(
                   'Zeitübersicht',
                   style: TextStyle(
@@ -202,10 +202,36 @@ class MonthlyStatsState extends State<MonthlyStats> {
 }
 
 class MonthlySummary extends StatefulWidget {
+  double distancesAll = 0.0;
+  double durationAll = 0.0;
+
+  //late String month;
+  int year = 2021;
+
   MonthlySummaryState createState() => MonthlySummaryState();
 }
 
 class MonthlySummaryState extends State<MonthlySummary> {
+  Future<bool> setKilometersAll(int month, int year) async {
+    MonthWithDistances monthly =
+        await DbHelper.getAllDailyDistancesInAMonth(month, year);
+    for (int i = 0; i < monthly.distancesPerDay.length; i++) {
+      widget.distancesAll = widget.distancesAll + monthly.distancesPerDay[i];
+    }
+    return true;
+  }
+
+  Future<bool> setDurationAll() async {
+    List<YearlyDuration> monthlyDuration =
+        await DbHelper.readAllWalkDurationYearly();
+
+/*     for (int i = 0; i < yearlyDuration.length; i++) {
+      widget.durationAll = widget.durationAll + yearlyDuration.duration[i];
+    } */
+
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -222,49 +248,136 @@ class MonthlySummaryState extends State<MonthlySummary> {
                 fontWeight: FontWeight.bold, fontSize: 17, color: headerGreen),
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Container(
-                width: 55,
-                height: 55,
-                child: Icon(Icons.directions_walk_outlined,
-                    color: Colors.green[500])),
-            Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Text(
-                "0.0 Km",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Container(
-                width: 55,
-                height: 55,
-                child: Icon(Icons.timer, color: Colors.green[500])),
-            Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Text(
-                "0:00 Zeit",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
+        FutureBuilder(
+            future: setKilometersAll(monthToInt(globals.month), widget.year),
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+              if (snapshot.hasData) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Container(
+                        width: 55,
+                        height: 55,
+                        child: Icon(Icons.directions_walk_outlined,
+                            color: Colors.green[500])),
+                    Padding(
+                      padding: const EdgeInsets.all(30.0),
+                      child: Text(
+                        widget.distancesAll.toString() + ' km',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Container(
+                        width: 55,
+                        height: 55,
+                        child: Icon(Icons.directions_walk_outlined,
+                            color: Colors.green[500])),
+                    Padding(
+                      padding: const EdgeInsets.all(30.0),
+                      child: Text(
+                        "0.0 Km",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+            }),
+        FutureBuilder(
+            future: setDurationAll(),
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+              if (snapshot.hasData) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Container(
+                        width: 55,
+                        height: 55,
+                        child: Icon(Icons.timer, color: Colors.green[500])),
+                    Padding(
+                      padding: const EdgeInsets.all(30.0),
+                      child: Text(
+                        widget.durationAll.toString() + ' h',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Container(
+                        width: 55,
+                        height: 55,
+                        child: Icon(Icons.timer, color: Colors.green[500])),
+                    Padding(
+                      padding: const EdgeInsets.all(30.0),
+                      child: Text(
+                        '0:00 h',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+            }),
       ]),
     );
+  }
+
+  int monthToInt(String month) {
+    int monthInt;
+    if (month == 'JAN') {
+      monthInt = 1;
+    } else if (month == 'FEB') {
+      monthInt = 2;
+    } else if (month == 'MRZ') {
+      monthInt = 3;
+    } else if (month == 'APR') {
+      monthInt = 4;
+    } else if (month == 'MAI') {
+      monthInt = 5;
+    } else if (month == 'JUN') {
+      monthInt = 6;
+    } else if (month == 'JUL') {
+      monthInt = 7;
+    } else if (month == 'AUG') {
+      monthInt = 8;
+    } else if (month == 'SEP') {
+      monthInt = 9;
+    } else if (month == 'OKT') {
+      monthInt = 10;
+    } else if (month == 'NOV') {
+      monthInt = 11;
+    } else if (month == 'DEZ') {
+      monthInt = 12;
+    } else {
+      monthInt = 1;
+    }
+    return monthInt;
   }
 }
 

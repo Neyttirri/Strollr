@@ -50,10 +50,10 @@ class KilometerChartState extends State<KilometerChart> {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: <Widget>[
-                  Text(
+                  /*                  Text(
                     "Kilometerübersicht",
                     style: Theme.of(context).textTheme.bodyText1,
-                  ),
+                  ), */
                   Expanded(
                     child: charts.BarChart(
                       series,
@@ -77,6 +77,7 @@ class KilometerChartState extends State<KilometerChart> {
 
   void _onSelectionChanged(charts.SelectionModel<String> model) {
     final selectedMonth = model.selectedDatum.first.datum;
+    globals.month = selectedMonth.month;
     if (selectedMonth.kilometers > 0.0)
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => MonthlyStats(selectedMonth.month)));

@@ -10,6 +10,7 @@ export 'globals.dart';
 final StopWatchTimer stopWatchTimer = StopWatchTimer();
 
 int currentSliderValue = 2021;
+String month = '';
 
 final String mushroomImagePath = "assets/images/mushroomIcon.png";
 final String plantImagePath = "assets/images/plantIcon.png";

@@ -31,10 +31,10 @@ class TimeChartState extends State<TimeChart> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: <Widget>[
-              Text(
+/*               Text(
                 "Zeitübersicht",
                 style: Theme.of(context).textTheme.bodyText1,
-              ),
+              ), */
               Expanded(
                 child: charts.BarChart(
                   series,
