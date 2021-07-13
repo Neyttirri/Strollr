@@ -8,12 +8,8 @@ import 'model/picture_categories.dart';
 export 'globals.dart';
 
 final StopWatchTimer stopWatchTimer = StopWatchTimer();
-//final Slider slider = Slider(value: value, onChanged: onChanged)();
-int currentSliderValue = 2021;
 
-int getcurrentSliderValue() {
-  return currentSliderValue;
-}
+int currentSliderValue = 2021;
 
 final String mushroomImagePath = "assets/images/mushroomIcon.png";
 final String plantImagePath = "assets/images/plantIcon.png";

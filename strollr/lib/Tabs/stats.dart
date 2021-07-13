@@ -6,6 +6,7 @@ import 'package:strollr/statistic/timeSeries.dart';
 import 'package:strollr/statistic/time_chart.dart';
 import 'package:strollr/db/database_interface_helper.dart';
 import 'package:strollr/globals.dart' as globals;
+import 'package:provider/provider.dart';
 
 /* DateTime dateToday = DateTime(DateTime.now().year);
 String _chosenValue = dateToday.toString(); */
@@ -204,27 +205,30 @@ class StatsState extends State<Stats> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Statistiken", style: TextStyle(color: headerGreen)),
-        backgroundColor: Colors.white,
-      ),
-      body: SingleChildScrollView(
-        child: Column(children: [
-          SliderWidget(),
-          FutureBuilder(
-            future: setKilometers(),
-            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-              if (snapshot.hasData && widget.kilometers.isNotEmpty) {
-                return KilometerChart(widget.kilometers);
-              } else {
-                return KilometerChart(widget.defaultkilometers);
-              }
-            },
-          ),
-          TimeChart(widget.minutes),
-          Summary()
-        ]),
+    return ChangeNotifierProvider(
+      create: (context) => Change(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Statistiken", style: TextStyle(color: headerGreen)),
+          backgroundColor: Colors.white,
+        ),
+        body: SingleChildScrollView(
+          child: Column(children: [
+            SliderWidget(),
+            FutureBuilder(
+              future: setKilometers(),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.hasData && widget.kilometers.isNotEmpty) {
+                  return KilometerChart(widget.kilometers);
+                } else {
+                  return KilometerChart(widget.defaultkilometers);
+                }
+              },
+            ),
+            TimeChart(widget.minutes),
+            Summary()
+          ]),
+        ),
       ),
     );
   }

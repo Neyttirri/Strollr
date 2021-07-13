@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:provider/provider.dart';
 import 'package:strollr/Tabs/collection.dart';
 import 'package:strollr/Tabs/stats.dart';
 import 'package:strollr/statistic/kilometerSeries.dart';
 import 'package:strollr/statistic/monthlyKilometer_chart.dart';
 import 'package:strollr/statistic/stats_monthly.dart';
 import 'package:strollr/globals.dart' as globals;
+
+class Change extends ChangeNotifier {
+  void sliderValueChange(int sliderValue) {
+    globals.currentSliderValue = sliderValue;
+    notifyListeners();
+  }
+}
 
 class KilometerChart extends StatefulWidget {
   final List<MonthlyKilometerSeries> kilometer;
@@ -32,34 +40,38 @@ class KilometerChartState extends State<KilometerChart> {
           measureFn: (MonthlyKilometerSeries series, _) => series.kilometers)
       //colorFn: (KilometerSeries series, _) => series.barColor)
     ];
-    return Container(
-      height: 400,
-      padding: EdgeInsets.all(20),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              Text(
-                "Kilometerübersicht",
-                style: Theme.of(context).textTheme.bodyText1,
+    return Consumer<Change>(
+      builder: (context, value, child) {
+        return Container(
+          height: 400,
+          padding: EdgeInsets.all(20),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    "Kilometerübersicht",
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  Expanded(
+                    child: charts.BarChart(
+                      series,
+                      animate: true,
+                      selectionModels: [
+                        charts.SelectionModelConfig(
+                          type: charts.SelectionModelType.info,
+                          changedListener: _onSelectionChanged,
+                        )
+                      ],
+                    ),
+                  )
+                ],
               ),
-              Expanded(
-                child: charts.BarChart(
-                  series,
-                  animate: true,
-                  selectionModels: [
-                    charts.SelectionModelConfig(
-                      type: charts.SelectionModelType.info,
-                      changedListener: _onSelectionChanged,
-                    )
-                  ],
-                ),
-              )
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -79,8 +91,7 @@ class SliderWidget extends StatefulWidget {
 }
 
 class SliderState extends State<SliderWidget> {
-  /*  Stats stats1 = new Stats();
-  int chosenyear = stats1.getYear(); */
+  Change change = Change();
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +119,8 @@ class SliderState extends State<SliderWidget> {
             label: globals.currentSliderValue.round().toString(),
             onChanged: (double value) {
               setState(() {
-                globals.currentSliderValue = value.toInt();
+                change.sliderValueChange(value.toInt());
+                //globals.currentSliderValue = value.toInt();
               });
             },
           )

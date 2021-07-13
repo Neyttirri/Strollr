@@ -35,10 +35,6 @@ class MonthlyKilometerChartState extends State<MonthlyKilometerChart> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: <Widget>[
-                Text(
-                  "Kilometerübersicht",
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
                 Expanded(
                   child: charts.BarChart(
                     series,

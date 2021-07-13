@@ -91,6 +91,19 @@ class MonthlyStatsState extends State<MonthlyStats> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            Container(
+              child: Padding(
+                padding:
+                    const EdgeInsets.only(top: 20.0, left: 20, bottom: 2.0),
+                child: Text(
+                  'Kilometerübersicht',
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 17,
+                      color: Colors.black),
+                ),
+              ),
+            ),
             FutureBuilder(
               future: setKilometers(monthToInt(widget.month), widget.year),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -100,6 +113,19 @@ class MonthlyStatsState extends State<MonthlyStats> {
                   return MonthlyKilometerChart(widget.defaultdailykilometers);
                 }
               },
+            ),
+            Container(
+              child: Padding(
+                padding:
+                    const EdgeInsets.only(top: 20.0, left: 20, bottom: 2.0),
+                child: Text(
+                  'Zeitübersicht',
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 17,
+                      color: Colors.black),
+                ),
+              ),
             ),
             MonthlyTimeChart(widget.dailyminutes),
             MonthlySummary(),
