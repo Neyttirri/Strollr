@@ -14,7 +14,19 @@ String _chosenValue = dateToday.toString(); */
 
 class Stats extends StatefulWidget {
   int year = 2021;
-  late YearWithDistances distances = new YearWithDistances(year);
+
+  late double jan;
+  late double feb;
+  late double mar;
+  late double apr;
+  late double may;
+  late double jun;
+  late double jul;
+  late double aug;
+  late double sep;
+  late double oct;
+  late double nov;
+  late double dec;
 
   Stats() {
     this.year = year;
@@ -31,51 +43,102 @@ class Stats extends StatefulWidget {
   late List<MonthlyKilometerSeries> kilometers = [
     MonthlyKilometerSeries(
       "JAN",
-      10,
+      jan,
     ),
     MonthlyKilometerSeries(
       "FEB",
-      7,
+      feb,
     ),
     MonthlyKilometerSeries(
       "MRZ",
-      distances.getMonthlyDistance(2),
+      mar,
     ),
     MonthlyKilometerSeries(
       "APR",
-      distances.getMonthlyDistance(3),
+      apr,
     ),
     MonthlyKilometerSeries(
       "MAI",
-      distances.getMonthlyDistance(4),
+      may,
     ),
     MonthlyKilometerSeries(
       "JUN",
-      distances.getMonthlyDistance(5),
+      jun,
     ),
     MonthlyKilometerSeries(
       "JUL",
-      distances.getMonthlyDistance(6),
+      jul,
     ),
     MonthlyKilometerSeries(
       "AUG",
-      distances.getMonthlyDistance(7),
+      aug,
     ),
     MonthlyKilometerSeries(
       "SEP",
-      distances.getMonthlyDistance(8),
+      sep,
     ),
     MonthlyKilometerSeries(
       "OKT",
-      distances.getMonthlyDistance(9),
+      oct,
     ),
     MonthlyKilometerSeries(
       "NOV",
-      distances.getMonthlyDistance(10),
+      nov,
     ),
     MonthlyKilometerSeries(
       "DEZ",
-      distances.getMonthlyDistance(11),
+      dec,
+    ),
+  ];
+
+  late List<MonthlyKilometerSeries> defaultkilometers = [
+    MonthlyKilometerSeries(
+      "JAN",
+      0.0,
+    ),
+    MonthlyKilometerSeries(
+      "FEB",
+      0.0,
+    ),
+    MonthlyKilometerSeries(
+      "MRZ",
+      0.0,
+    ),
+    MonthlyKilometerSeries(
+      "APR",
+      0.0,
+    ),
+    MonthlyKilometerSeries(
+      "MAI",
+      0.0,
+    ),
+    MonthlyKilometerSeries(
+      "JUN",
+      0.0,
+    ),
+    MonthlyKilometerSeries(
+      "JUL",
+      0.0,
+    ),
+    MonthlyKilometerSeries(
+      "AUG",
+      0.0,
+    ),
+    MonthlyKilometerSeries(
+      "SEP",
+      0.0,
+    ),
+    MonthlyKilometerSeries(
+      "OKT",
+      0.0,
+    ),
+    MonthlyKilometerSeries(
+      "NOV",
+      0.0,
+    ),
+    MonthlyKilometerSeries(
+      "DEZ",
+      0.0,
     ),
   ];
 
@@ -134,6 +197,30 @@ class Stats extends StatefulWidget {
 }
 
 class StatsState extends State<Stats> {
+/*   void initState() {
+    super.initState();    
+
+  } */
+
+  Future<bool> setKilometers() async {
+    YearWithDistances monthly =
+        await DbHelper.getAllMonthlyDistancesInYear(widget.year);
+    widget.jan = monthly.distancesPerMonth[0];
+    widget.feb = monthly.distancesPerMonth[1];
+    widget.mar = monthly.distancesPerMonth[2];
+    widget.apr = monthly.distancesPerMonth[3];
+    widget.may = monthly.distancesPerMonth[4];
+    widget.jun = monthly.distancesPerMonth[5];
+    widget.jul = monthly.distancesPerMonth[6];
+    widget.aug = monthly.distancesPerMonth[7];
+    widget.sep = monthly.distancesPerMonth[8];
+    widget.oct = monthly.distancesPerMonth[9];
+    widget.nov = monthly.distancesPerMonth[10];
+    widget.dec = monthly.distancesPerMonth[11];
+    print(widget.jul);
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,7 +231,16 @@ class StatsState extends State<Stats> {
       body: SingleChildScrollView(
         child: Column(children: [
           SliderWidget(),
-          KilometerChart(widget.kilometers),
+          FutureBuilder(
+            future: setKilometers(),
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+              if (snapshot.hasData) {
+                return KilometerChart(widget.kilometers);
+              } else {
+                return KilometerChart(widget.defaultkilometers);
+              }
+            },
+          ),
           TimeChart(widget.minutes),
           Summary()
         ]),

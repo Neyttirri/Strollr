@@ -273,9 +273,9 @@ Widget saveButton(BuildContext context) {
             'Route wird gespeichert',
             style: TextStyle(fontSize: 20),
           )));
-          Navigator.of(context)
-              .pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
-              //.push(MaterialPageRoute(builder: (context) => Routes()));
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => Routes()));
+          //.push(MaterialPageRoute(builder: (context) => Routes()));
         }
       },
       child: Text('Speichern'),
@@ -303,7 +303,7 @@ Widget deleteButton(BuildContext context) {
             .showSnackBar(SnackBar(content: Text('Route wird gelöscht')));
         Navigator.of(context)
             .pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
-            //.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
+        //.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (Route<dynamic> route) => false);
       },
       child: Text(' Route löschen'),
     ),
