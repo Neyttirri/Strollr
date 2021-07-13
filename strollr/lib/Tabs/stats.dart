@@ -40,56 +40,7 @@ class Stats extends StatefulWidget {
     this.year = year;
   }
 
-  late List<MonthlyKilometerSeries> kilometers = [
-    MonthlyKilometerSeries(
-      "JAN",
-      jan,
-    ),
-    MonthlyKilometerSeries(
-      "FEB",
-      feb,
-    ),
-    MonthlyKilometerSeries(
-      "MRZ",
-      mar,
-    ),
-    MonthlyKilometerSeries(
-      "APR",
-      apr,
-    ),
-    MonthlyKilometerSeries(
-      "MAI",
-      may,
-    ),
-    MonthlyKilometerSeries(
-      "JUN",
-      jun,
-    ),
-    MonthlyKilometerSeries(
-      "JUL",
-      jul,
-    ),
-    MonthlyKilometerSeries(
-      "AUG",
-      aug,
-    ),
-    MonthlyKilometerSeries(
-      "SEP",
-      sep,
-    ),
-    MonthlyKilometerSeries(
-      "OKT",
-      oct,
-    ),
-    MonthlyKilometerSeries(
-      "NOV",
-      nov,
-    ),
-    MonthlyKilometerSeries(
-      "DEZ",
-      dec,
-    ),
-  ];
+  late List<MonthlyKilometerSeries> kilometers;
 
   late List<MonthlyKilometerSeries> defaultkilometers = [
     MonthlyKilometerSeries(
@@ -217,7 +168,58 @@ class StatsState extends State<Stats> {
     widget.oct = monthly.distancesPerMonth[9];
     widget.nov = monthly.distancesPerMonth[10];
     widget.dec = monthly.distancesPerMonth[11];
-    print(widget.jul);
+
+    widget.kilometers = [
+      MonthlyKilometerSeries(
+        "JAN",
+        widget.jan,
+      ),
+      MonthlyKilometerSeries(
+        "FEB",
+        widget.feb,
+      ),
+      MonthlyKilometerSeries(
+        "MRZ",
+        widget.mar,
+      ),
+      MonthlyKilometerSeries(
+        "APR",
+        widget.apr,
+      ),
+      MonthlyKilometerSeries(
+        "MAI",
+        widget.may,
+      ),
+      MonthlyKilometerSeries(
+        "JUN",
+        widget.jun,
+      ),
+      MonthlyKilometerSeries(
+        "JUL",
+        widget.jul,
+      ),
+      MonthlyKilometerSeries(
+        "AUG",
+        widget.aug,
+      ),
+      MonthlyKilometerSeries(
+        "SEP",
+        widget.sep,
+      ),
+      MonthlyKilometerSeries(
+        "OKT",
+        widget.oct,
+      ),
+      MonthlyKilometerSeries(
+        "NOV",
+        widget.nov,
+      ),
+      MonthlyKilometerSeries(
+        "DEZ",
+        widget.dec,
+      ),
+    ];
+
     return true;
   }
 

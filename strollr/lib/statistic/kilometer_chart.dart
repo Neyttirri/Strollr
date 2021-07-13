@@ -15,6 +15,11 @@ class KilometerChart extends StatefulWidget {
 }
 
 class KilometerChartState extends State<KilometerChart> {
+/*   @override
+  void setState(VoidCallback fn) {
+    
+    super.setState(fn);
+  } */
   @override
   Widget build(BuildContext context) {
     List<charts.Series<MonthlyKilometerSeries, String>> series = [
