@@ -17,7 +17,9 @@ class Routes extends StatelessWidget {
     List<Walk> walks = await DbRouteInterface.getAllWalks();
 
     walks.forEach((element) {
-      routeList.add(new RouteListCard(element.id as int, element.startedAtTime, "Datum:", element.name, element.durationTime, element.distanceInKm));
+      double distance = double.parse(element.distanceInKm.toStringAsFixed(2));
+
+      routeList.add(new RouteListCard(element.id as int, element.startedAtTime, "Datum:", element.name, element.durationTime, distance));
     });
 
     return true;
