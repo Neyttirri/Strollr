@@ -58,8 +58,8 @@ class TimeChartState extends State<TimeChart> {
     final selectedDatum = model.selectedDatum;
     if (selectedDatum.isNotEmpty) {
       print("hello");
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => MonthlyStats()));
+/*       Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => MonthlyStats())); */
     }
   }
 }

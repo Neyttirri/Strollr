@@ -14,26 +14,24 @@ import 'monthlyTime_chart.dart';
 String _chosenValue = dateToday.toString(); */
 
 class MonthlyStats extends StatefulWidget {
-  late List<DailyKilometerSeries> dailykilometers = [
-    DailyKilometerSeries(1, 10),
-    DailyKilometerSeries(2, 5),
-    DailyKilometerSeries(3, 5),
-    DailyKilometerSeries(4, 5),
-    DailyKilometerSeries(5, 5),
-    DailyKilometerSeries(6, 5),
-    DailyKilometerSeries(7, 5),
-    DailyKilometerSeries(8, 5),
-    DailyKilometerSeries(9, 5),
-    DailyKilometerSeries(10, 5),
-    DailyKilometerSeries(11, 5),
-    DailyKilometerSeries(12, 5),
-    DailyKilometerSeries(13, 5),
-    DailyKilometerSeries(14, 5),
-    DailyKilometerSeries(15, 5),
-    DailyKilometerSeries(16, 5),
-    DailyKilometerSeries(17, 5),
-    DailyKilometerSeries(18, 5),
-    DailyKilometerSeries(19, 5),
+  late String month;
+  int year = 2021;
+
+  late List<DailyKilometerSeries> dailykilometers = List.empty(growable: true);
+
+  List<DailyKilometerSeries> defaultdailykilometers = [
+    DailyKilometerSeries(1, 0),
+    DailyKilometerSeries(2, 0),
+    DailyKilometerSeries(3, 0),
+    DailyKilometerSeries(4, 0),
+    DailyKilometerSeries(5, 0),
+    DailyKilometerSeries(6, 0),
+    DailyKilometerSeries(7, 0),
+    DailyKilometerSeries(8, 0),
+    DailyKilometerSeries(9, 0),
+    DailyKilometerSeries(10, 0),
+    DailyKilometerSeries(11, 0),
+    DailyKilometerSeries(12, 0),
   ];
 
   late List<DailyTimeSeries> dailyminutes = [
@@ -53,15 +51,35 @@ class MonthlyStats extends StatefulWidget {
     DailyTimeSeries(14, 20),
   ];
 
+  MonthlyStats(this.month);
+
   MonthlyStatsState createState() => MonthlyStatsState();
 }
 
 class MonthlyStatsState extends State<MonthlyStats> {
+  Future<bool> setKilometers(int month, int year) async {
+    MonthWithDistances daily =
+        await DbHelper.getAllDailyDistancesInAMonth(month, year);
+
+/*     for (int i = 0; i < daily.distancesPerDay.length; i++) {
+      print(daily.distancesPerDay[i]);
+    } */
+
+    int day = 1;
+    for (int i = 0; i < daily.distancesPerDay.length; i++) {
+      widget.dailykilometers
+          .add(DailyKilometerSeries(day, daily.distancesPerDay[i]));
+      day++;
+    }
+
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("monatliche Statistik  + Monat",
+        title: Text(monthlyCaption(widget.month, widget.year),
             style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
         leading: IconButton(
@@ -73,7 +91,16 @@ class MonthlyStatsState extends State<MonthlyStats> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            MonthlyKilometerChart(widget.dailykilometers),
+            FutureBuilder(
+              future: setKilometers(monthToInt(widget.month), widget.year),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.hasData && widget.dailykilometers.isNotEmpty) {
+                  return MonthlyKilometerChart(widget.dailykilometers);
+                } else {
+                  return MonthlyKilometerChart(widget.defaultdailykilometers);
+                }
+              },
+            ),
             MonthlyTimeChart(widget.dailyminutes),
             MonthlySummary(),
             Categories()
@@ -81,6 +108,70 @@ class MonthlyStatsState extends State<MonthlyStats> {
         ),
       ),
     );
+  }
+
+  String monthlyCaption(String month, int year) {
+    String mon = '';
+    String caption;
+    if (month == 'JAN') {
+      mon = 'Januar';
+    } else if (month == 'FEB') {
+      mon = 'Februar';
+    } else if (month == 'MRZ') {
+      mon = 'März';
+    } else if (month == 'APR') {
+      mon = 'April';
+    } else if (month == 'MAI') {
+      mon = 'Mai';
+    } else if (month == 'JUN') {
+      mon = 'Juni';
+    } else if (month == 'JUL') {
+      mon = 'Juli';
+    } else if (month == 'AUG') {
+      mon = 'August';
+    } else if (month == 'SEP') {
+      mon = 'September';
+    } else if (month == 'OKT') {
+      mon = 'Oktober';
+    } else if (month == 'NOV') {
+      mon = 'November';
+    } else if (month == 'DEZ') {
+      mon = 'Dezember';
+    }
+    caption = '$mon $year';
+    return caption;
+  }
+
+  int monthToInt(String month) {
+    int monthInt;
+    if (month == 'JAN') {
+      monthInt = 1;
+    } else if (month == 'FEB') {
+      monthInt = 2;
+    } else if (month == 'MRZ') {
+      monthInt = 3;
+    } else if (month == 'APR') {
+      monthInt = 4;
+    } else if (month == 'MAI') {
+      monthInt = 5;
+    } else if (month == 'JUN') {
+      monthInt = 6;
+    } else if (month == 'JUL') {
+      monthInt = 7;
+    } else if (month == 'AUG') {
+      monthInt = 8;
+    } else if (month == 'SEP') {
+      monthInt = 9;
+    } else if (month == 'OKT') {
+      monthInt = 10;
+    } else if (month == 'NOV') {
+      monthInt = 11;
+    } else if (month == 'DEZ') {
+      monthInt = 12;
+    } else {
+      monthInt = 1;
+    }
+    return monthInt;
   }
 }
 

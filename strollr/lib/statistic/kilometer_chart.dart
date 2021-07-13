@@ -5,6 +5,7 @@ import 'package:strollr/Tabs/stats.dart';
 import 'package:strollr/statistic/kilometerSeries.dart';
 import 'package:strollr/statistic/monthlyKilometer_chart.dart';
 import 'package:strollr/statistic/stats_monthly.dart';
+import 'package:strollr/globals.dart' as globals;
 
 class KilometerChart extends StatefulWidget {
   final List<MonthlyKilometerSeries> kilometer;
@@ -63,12 +64,10 @@ class KilometerChartState extends State<KilometerChart> {
   }
 
   void _onSelectionChanged(charts.SelectionModel<String> model) {
-    final selectedDatum = model.selectedDatum;
-    if (selectedDatum.isNotEmpty) {
-      print("hello");
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => MonthlyStats()));
-    }
+    final selectedMonth = model.selectedDatum.first.datum;
+    if (selectedMonth.kilometers > 0.0)
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => MonthlyStats(selectedMonth.month)));
   }
 }
 
@@ -80,7 +79,6 @@ class SliderWidget extends StatefulWidget {
 }
 
 class SliderState extends State<SliderWidget> {
-  int currentSliderValue = 2021;
   /*  Stats stats1 = new Stats();
   int chosenyear = stats1.getYear(); */
 
@@ -99,20 +97,18 @@ class SliderState extends State<SliderWidget> {
         children: <Widget>[
           SizedBox(height: 15),
           Text(
-            currentSliderValue.toString(),
+            globals.currentSliderValue.toString(),
             style: TextStyle(fontSize: 21.0, fontWeight: FontWeight.w500),
           ),
           Slider(
-            value: currentSliderValue.toDouble(),
+            value: globals.currentSliderValue.toDouble(),
             min: 2021,
             max: 2024,
             divisions: 3,
-            label: currentSliderValue.round().toString(),
+            label: globals.currentSliderValue.round().toString(),
             onChanged: (double value) {
               setState(() {
-                currentSliderValue = value.toInt();
-                Stats stats1 = Stats();
-                stats1.setYear(currentSliderValue);
+                globals.currentSliderValue = value.toInt();
               });
             },
           )

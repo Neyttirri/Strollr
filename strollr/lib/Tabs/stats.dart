@@ -5,13 +5,12 @@ import 'package:strollr/statistic/kilometer_chart.dart';
 import 'package:strollr/statistic/timeSeries.dart';
 import 'package:strollr/statistic/time_chart.dart';
 import 'package:strollr/db/database_interface_helper.dart';
+import 'package:strollr/globals.dart' as globals;
 
 /* DateTime dateToday = DateTime(DateTime.now().year);
 String _chosenValue = dateToday.toString(); */
 
 class Stats extends StatefulWidget {
-  int year = 2021;
-
   late double jan;
   late double feb;
   late double mar;
@@ -24,18 +23,6 @@ class Stats extends StatefulWidget {
   late double oct;
   late double nov;
   late double dec;
-
-  Stats() {
-    this.year = year;
-  }
-
-  getYear() {
-    return year;
-  }
-
-  setYear(int year) {
-    this.year = year;
-  }
 
   late List<MonthlyKilometerSeries> kilometers = List.empty(growable: true);
 
@@ -145,14 +132,9 @@ class Stats extends StatefulWidget {
 }
 
 class StatsState extends State<Stats> {
-/*   void initState() {
-    super.initState();    
-
-  } */
-
   Future<bool> setKilometers() async {
     YearWithDistances monthly =
-        await DbHelper.getAllMonthlyDistancesInYear(widget.year);
+        await DbHelper.getAllMonthlyDistancesInYear(globals.currentSliderValue);
     widget.jan = monthly.distancesPerMonth[0];
     widget.feb = monthly.distancesPerMonth[1];
     widget.mar = monthly.distancesPerMonth[2];
@@ -233,7 +215,7 @@ class StatsState extends State<Stats> {
           FutureBuilder(
             future: setKilometers(),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-              if (snapshot.hasData  && widget.kilometers.isNotEmpty) {
+              if (snapshot.hasData && widget.kilometers.isNotEmpty) {
                 return KilometerChart(widget.kilometers);
               } else {
                 return KilometerChart(widget.defaultkilometers);
