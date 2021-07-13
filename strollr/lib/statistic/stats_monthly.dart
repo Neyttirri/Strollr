@@ -129,7 +129,7 @@ class MonthlyStatsState extends State<MonthlyStats> {
             ),
             MonthlyTimeChart(widget.dailyminutes),
             MonthlySummary(),
-            Categories()
+            //Categories()
           ],
         ),
       ),
@@ -233,7 +233,7 @@ class MonthlySummaryState extends State<MonthlySummary> {
             Padding(
               padding: const EdgeInsets.all(30.0),
               child: Text(
-                "Km",
+                "0.0 Km",
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.black,
@@ -253,7 +253,7 @@ class MonthlySummaryState extends State<MonthlySummary> {
             Padding(
               padding: const EdgeInsets.all(30.0),
               child: Text(
-                "Zeit",
+                "0:00 Zeit",
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.black,

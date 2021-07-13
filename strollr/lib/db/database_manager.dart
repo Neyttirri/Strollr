@@ -99,7 +99,6 @@ class DatabaseManager {
         .i('Table $tablePictureCategories filled.');
   }
 
-
   void _insertCategories(Database db) {
     ApplicationLogger.getLogger('DatabaseManager', colors: true)
         .d('inserting categories in the database');
@@ -290,7 +289,8 @@ class DatabaseManager {
     return result.map((json) => MonthlyDistance.fromJson(json)).toList();
   }
 
-  Future<List<DailyDistance>> readAllWalkDistancesInAMonth(String month, String year) async {
+  Future<List<DailyDistance>> readAllWalkDistancesInAMonth(
+      String month, String year) async {
     final db = await instance.database;
     final result = await db.query(tableWalks,
         columns: [
@@ -299,12 +299,11 @@ class DatabaseManager {
           'strftime(\'%Y\', ${WalkField.endedAt}) AS ${DailyDistancesField.year}',
           'SUM(${WalkField.distance}) AS ${DailyDistancesField.distKm}'
         ],
-        where: 'strftime(\'%m\', ${WalkField.endedAt}) = ? AND strftime(\'%Y\', ${WalkField.endedAt}) = ?',
+        where:
+            'strftime(\'%m\', ${WalkField.endedAt}) = ? AND strftime(\'%Y\', ${WalkField.endedAt}) = ?',
         orderBy: '${WalkField.endedAt} ASC',
         groupBy: '${DailyDistancesField.day}',
-        whereArgs: [
-          month, year]);
-
+        whereArgs: [month, year]);
 
     return result.map((json) => DailyDistance.fromJson(json)).toList();
     // where: 'strftime(\'%m\', ${WalkField.endedAt}) = ? AND strftime(\'%Y\', ${WalkField.endedAt}) = ?',
@@ -312,13 +311,21 @@ class DatabaseManager {
     // orderBy: WalkField.endedAt,
     /*
     where: 'strftime(\'%m\', ${WalkField.endedAt}) = ? AND strftime(\'%Y\', ${WalkField.endedAt}) = ?',
-
         groupBy: '${DailyDistancesField.day}',
         whereArgs: [month, year]
      */
   }
 
-
+  Future<List<YearlyDuration>> readAllWalkDurationsYearly() async {
+    final db = await instance.database;
+    final result = await db.query(tableWalks,
+        columns: [
+          'strftime(\'%Y\', ${WalkField.endedAt}) AS ${YearlyDurationField.year}',
+          '${WalkField.duration} AS ${YearlyDurationField.duration}',
+        ],
+        orderBy: '${WalkField.endedAt} ASC');
+    return result.map((json) => YearlyDuration.fromJson(json)).toList();
+  }
 
   /// update a picture in the database by passing the updated version [picture]. Returns the number of changes made
   Future<int> updatePicture(Picture picture) async {
