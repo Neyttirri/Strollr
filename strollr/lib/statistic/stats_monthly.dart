@@ -35,7 +35,9 @@ class MonthlyStats extends StatefulWidget {
     DailyKilometerSeries(12, 0),
   ];
 
-  late List<DailyTimeSeries> dailyminutes = [
+  late List<DailyTimeSeries> dailyminutes = List.empty(growable: true);
+
+  late List<DailyTimeSeries> defaultdailyminutes = [
     DailyTimeSeries(1, 20),
     DailyTimeSeries(2, 20),
     DailyTimeSeries(3, 20),
@@ -70,6 +72,19 @@ class MonthlyStatsState extends State<MonthlyStats> {
     for (int i = 0; i < daily.distancesPerDay.length; i++) {
       widget.dailykilometers
           .add(DailyKilometerSeries(day, daily.distancesPerDay[i]));
+      day++;
+    }
+
+    return true;
+  }
+
+  Future<bool> setMinutes(int month, int year) async {
+    MonthWithDurations dailyM =
+        await DbHelper.readAllWalkDurationsDailyInAMonth(month, year);
+
+    int day = 1;
+    for (int i = 0; i < dailyM.durationsPerDay.length; i++) {
+      widget.dailyminutes.add(DailyTimeSeries(day, dailyM.durationsPerDay[i]));
       day++;
     }
 
@@ -127,7 +142,16 @@ class MonthlyStatsState extends State<MonthlyStats> {
                 ),
               ),
             ),
-            MonthlyTimeChart(widget.dailyminutes),
+            FutureBuilder(
+              future: setMinutes(monthToInt(widget.month), widget.year),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.hasData && widget.dailyminutes.isNotEmpty) {
+                  return MonthlyTimeChart(widget.dailyminutes);
+                } else {
+                  return MonthlyTimeChart(widget.defaultdailyminutes);
+                }
+              },
+            ),
             MonthlySummary(),
             //Categories()
           ],
@@ -221,13 +245,14 @@ class MonthlySummaryState extends State<MonthlySummary> {
     return true;
   }
 
-  Future<bool> setDurationAll() async {
-    List<YearlyDuration> monthlyDuration =
-        await DbHelper.readAllWalkDurationYearly();
+  Future<bool> setDurationAll(int month, int year) async {
+    MonthWithDurations monthlyDuration =
+        await DbHelper.readAllWalkDurationsDailyInAMonth(month, year);
 
-/*     for (int i = 0; i < yearlyDuration.length; i++) {
-      widget.durationAll = widget.durationAll + yearlyDuration.duration[i];
-    } */
+    for (int i = 0; i < monthlyDuration.durationsPerDay.length; i++) {
+      widget.durationAll =
+          widget.durationAll + monthlyDuration.durationsPerDay[i];
+    }
 
     return true;
   }
@@ -298,7 +323,7 @@ class MonthlySummaryState extends State<MonthlySummary> {
               }
             }),
         FutureBuilder(
-            future: setDurationAll(),
+            future: setDurationAll(monthToInt(globals.month), widget.year),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
               if (snapshot.hasData) {
                 return Row(
@@ -311,7 +336,7 @@ class MonthlySummaryState extends State<MonthlySummary> {
                     Padding(
                       padding: const EdgeInsets.all(30.0),
                       child: Text(
-                        widget.durationAll.toString() + ' h',
+                        widget.durationAll.toStringAsFixed(2) + ' h',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black,

@@ -25,18 +25,18 @@ class Stats extends StatefulWidget {
   late double nov;
   late double dec;
 
-  late int janM;
-  late int febM;
-  late int marM;
-  late int aprM;
-  late int mayM;
-  late int junM;
-  late int julM;
-  late int augM;
-  late int sepM;
-  late int octM;
-  late int novM;
-  late int decM;
+  late double janM;
+  late double febM;
+  late double marM;
+  late double aprM;
+  late double mayM;
+  late double junM;
+  late double julM;
+  late double augM;
+  late double sepM;
+  late double octM;
+  late double novM;
+  late double decM;
 
   late List<MonthlyKilometerSeries> kilometers = List.empty(growable: true);
 
@@ -91,7 +91,7 @@ class Stats extends StatefulWidget {
     ),
   ];
 
-  late List<TimeSeries> minutes = List.empty(growable: true);
+  late List<TimeSeries> minutes;
 
   late List<TimeSeries> defaultminutes = [
     TimeSeries(
@@ -120,7 +120,7 @@ class Stats extends StatefulWidget {
     ),
     TimeSeries(
       "JUL",
-      5,
+      0,
     ),
     TimeSeries(
       "AUG",
@@ -148,6 +148,79 @@ class Stats extends StatefulWidget {
 }
 
 class StatsState extends State<Stats> {
+  Future<bool> setminutes() async {
+    YearWithDuration monthlyM =
+        await DbHelper.readAllWalkDurationMonthlyInAYear(2021);
+    for (int i = 0; i < monthlyM.durationPerMonth.length; i++) {
+      print(monthlyM.durationPerMonth[i]);
+    }
+
+    widget.janM = monthlyM.durationPerMonth[0];
+    widget.febM = monthlyM.durationPerMonth[1];
+    widget.marM = monthlyM.durationPerMonth[2];
+    widget.aprM = monthlyM.durationPerMonth[3];
+    widget.mayM = monthlyM.durationPerMonth[4];
+    widget.junM = monthlyM.durationPerMonth[5];
+    widget.julM = monthlyM.durationPerMonth[6];
+    widget.augM = monthlyM.durationPerMonth[7];
+    widget.sepM = monthlyM.durationPerMonth[8];
+    widget.octM = monthlyM.durationPerMonth[9];
+    widget.novM = monthlyM.durationPerMonth[10];
+    widget.decM = monthlyM.durationPerMonth[11];
+
+    widget.minutes = [
+      TimeSeries(
+        "JAN",
+        widget.janM,
+      ),
+      TimeSeries(
+        "FEB",
+        widget.febM,
+      ),
+      TimeSeries(
+        "MRZ",
+        widget.marM,
+      ),
+      TimeSeries(
+        "APR",
+        widget.aprM,
+      ),
+      TimeSeries(
+        "MAI",
+        widget.mayM,
+      ),
+      TimeSeries(
+        "JUN",
+        widget.junM,
+      ),
+      TimeSeries(
+        "JUL",
+        widget.julM,
+      ),
+      TimeSeries(
+        "AUG",
+        widget.augM,
+      ),
+      TimeSeries(
+        "SEP",
+        widget.sepM,
+      ),
+      TimeSeries(
+        "OKT",
+        widget.octM,
+      ),
+      TimeSeries(
+        "NOV",
+        widget.novM,
+      ),
+      TimeSeries(
+        "DEZ",
+        widget.decM,
+      ),
+    ];
+    return true;
+  }
+
   Future<bool> setKilometers() async {
     YearWithDistances monthly =
         await DbHelper.getAllMonthlyDistancesInYear(globals.currentSliderValue);
@@ -218,87 +291,6 @@ class StatsState extends State<Stats> {
     return true;
   }
 
-  Future<bool> setminutes() async {
-/*     YearWithDistances monthlyM =
-        await DbHelper.getAllMonthlyDistancesInYear(globals.currentSliderValue);
-    widget.janM = monthlyM.distancesPerMonth[0];
-    widget.febM = monthlyM.distancesPerMonth[1];
-    widget.marM = monthlyM.distancesPerMonth[2];
-    widget.aprM = monthlyM.distancesPerMonth[3];
-    widget.mayM = monthlyM.distancesPerMonth[4];
-    widget.junM = monthlyM.distancesPerMonth[5];
-    widget.julM = monthlyM.distancesPerMonth[6];
-    widget.augM = monthlyM.distancesPerMonth[7];
-    widget.sepM = monthlyM.distancesPerMonth[8];
-    widget.octM = monthlyM.distancesPerMonth[9];
-    widget.novM = monthlyM.distancesPerMonth[10];
-    widget.decM = monthlyM.distancesPerMonth[11]; */
-    widget.janM = 10;
-    widget.febM = 10;
-    widget.marM = 10;
-    widget.aprM = 10;
-    widget.mayM = 10;
-    widget.junM = 10;
-    widget.julM = 10;
-    widget.augM = 10;
-    widget.sepM = 10;
-    widget.octM = 10;
-    widget.novM = 10;
-    widget.decM = 10;
-
-    widget.minutes = [
-      TimeSeries(
-        "JAN",
-        widget.janM,
-      ),
-      TimeSeries(
-        "FEB",
-        5,
-      ),
-      TimeSeries(
-        "MRZ",
-        5,
-      ),
-      TimeSeries(
-        "APR",
-        5,
-      ),
-      TimeSeries(
-        "MAI",
-        5,
-      ),
-      TimeSeries(
-        "JUN",
-        10,
-      ),
-      TimeSeries(
-        "JUL",
-        5,
-      ),
-      TimeSeries(
-        "AUG",
-        12,
-      ),
-      TimeSeries(
-        "SEP",
-        12,
-      ),
-      TimeSeries(
-        "OKT",
-        12,
-      ),
-      TimeSeries(
-        "NOV",
-        12,
-      ),
-      TimeSeries(
-        "DEZ",
-        12,
-      ),
-    ];
-    return true;
-  }
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -350,10 +342,10 @@ class StatsState extends State<Stats> {
             FutureBuilder(
               future: setminutes(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                if (snapshot.hasData && widget.kilometers.isNotEmpty) {
+                if (snapshot.hasData && widget.minutes.length >= 1) {
                   return TimeChart(widget.minutes);
                 } else {
-                  return TimeChart(widget.defaultminutes);
+                  return TimeChart(widget.minutes);
                 }
               },
             ),
@@ -382,12 +374,12 @@ class SummaryState extends State<Summary> {
   }
 
   Future<bool> setDurationAll() async {
-    List<YearlyDuration> yearlyDuration =
-        await DbHelper.readAllWalkDurationYearly();
+    YearWithDuration yearlyM = await DbHelper.readAllWalkDurationMonthlyInAYear(
+        globals.currentSliderValue);
 
-/*     for (int i = 0; i < yearlyDuration.length; i++) {
-      widget.durationAll = widget.durationAll + yearlyDuration.duration[i];
-    } */
+    for (int i = 0; i < yearlyM.durationPerMonth.length; i++) {
+      widget.durationAll = widget.durationAll + yearlyM.durationPerMonth[i];
+    }
 
     return true;
   }
