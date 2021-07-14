@@ -152,7 +152,7 @@ class StatsState extends State<Stats> {
     YearWithDuration monthlyM =
         await DbHelper.readAllWalkDurationMonthlyInAYear(2021);
     for (int i = 0; i < monthlyM.durationPerMonth.length; i++) {
-      print(monthlyM.durationPerMonth[i]);
+      print('stats: $i : ${monthlyM.durationPerMonth[i]}');
     }
 
     widget.janM = monthlyM.durationPerMonth[0];

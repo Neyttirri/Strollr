@@ -90,7 +90,7 @@ class DbHelper {
 
   static List<YearlyDuration> summarizeListYearly(List<YearlyDuration> list) {
     List<YearlyDuration> res = List.empty(growable: true);
-    if (list.length < 1) return list;
+    if (list.length < 2) return list;
     res.add(list.first);
     int index = 0;
     for (int i = 1; i < list.length; i++) {
@@ -111,7 +111,7 @@ class DbHelper {
   static List<MonthlyDuration> summarizeListMonthly(
       List<MonthlyDuration> list) {
     List<MonthlyDuration> res = List.empty(growable: true);
-    if (list.length < 1) return list;
+    if (list.length < 2) return list;
     res.add(list.first);
     int index = 0;
     for (int i = 1; i < list.length; i++) {
@@ -131,7 +131,7 @@ class DbHelper {
 
   static List<DailyDuration> summarizeListDaily(List<DailyDuration> list) {
     List<DailyDuration> res = List.empty(growable: true);
-    if (list.length < 1) return list;
+    if (list.length < 2) return list;
     res.add(list.first);
     int index = 0;
     for (int i = 1; i < list.length; i++) {
