@@ -149,7 +149,6 @@ class Stats extends StatefulWidget {
 
 class StatsState extends State<Stats> {
   Future<bool> setminutes() async {
-    print('hello');
     YearWithDuration monthlyM =
         await DbHelper.readAllWalkDurationMonthlyInAYear(2021);
     for (int i = 0; i < monthlyM.durationPerMonth.length; i++) {
