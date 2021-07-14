@@ -329,6 +329,36 @@ class DatabaseManager {
     return result.map((json) => YearlyDuration.fromJson(json)).toList();
   }
 
+  Future<List<MonthlyDuration>> readAllWalkDurationsMonthly(String year) async {
+    final db = await instance.database;
+    final result = await db.query(tableWalks,
+        columns: [
+          'strftime(\'%m\', ${WalkField.endedAt}) AS ${MonthlyDurationField.month}',
+          '${WalkField.duration} AS ${MonthlyDurationField.duration}',
+        ],
+        where: 'strftime(\'%Y\', ${WalkField.endedAt}) = ?',
+        orderBy: '${WalkField.endedAt} ASC',
+        whereArgs: [year]);
+    return result.map((json) => MonthlyDuration.fromJson(json)).toList();
+  }
+
+  Future<List<DailyDuration>> readAllWalkDurationsInAMonth(String month, String year) async {
+    final db = await instance.database;
+    final result = await db.query(tableWalks,
+        columns: [
+          'strftime(\'%d\', ${WalkField.endedAt}) AS ${DailyDurationField.day}',
+          'strftime(\'%m\', ${WalkField.endedAt}) AS ${DailyDurationField.month}',
+          'strftime(\'%Y\', ${WalkField.endedAt}) AS ${DailyDurationField.year}',
+          '${WalkField.duration} AS ${DailyDurationField.duration}'
+        ],
+        where: 'strftime(\'%m\', ${WalkField.endedAt}) = ? AND strftime(\'%Y\', ${WalkField.endedAt}) = ?',
+        orderBy: '${WalkField.endedAt} ASC',
+        whereArgs: [
+          month, year]);
+
+
+    return result.map((json) => DailyDuration.fromJson(json)).toList();
+  }
 
 
   /// update a picture in the database by passing the updated version [picture]. Returns the number of changes made
