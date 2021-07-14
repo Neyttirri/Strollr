@@ -84,14 +84,14 @@ class KilometerChartState extends State<KilometerChart> {
   }
 }
 
-class SliderWidget extends StatefulWidget {
+/* class SliderWidget extends StatefulWidget {
   const SliderWidget({Key? key}) : super(key: key);
 
   @override
   State<SliderWidget> createState() => SliderState();
-}
+} */
 
-class SliderState extends State<SliderWidget> {
+/* class SliderState extends State<SliderWidget> {
   Change change = Change();
 
   @override
@@ -129,4 +129,4 @@ class SliderState extends State<SliderWidget> {
       ),
     );
   }
-}
+} */

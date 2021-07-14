@@ -297,12 +297,12 @@ class StatsState extends State<Stats> {
       create: (context) => Change(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Statistiken", style: TextStyle(color: headerGreen)),
+          title: Text("Statistiken 2021", style: TextStyle(color: headerGreen)),
           backgroundColor: Colors.white,
         ),
         body: SingleChildScrollView(
           child: Column(children: [
-            SliderWidget(),
+            //SliderWidget(),
             Container(
               child: Padding(
                 padding:
@@ -345,7 +345,7 @@ class StatsState extends State<Stats> {
                 if (snapshot.hasData && widget.minutes.isNotEmpty) {
                   return TimeChart(widget.minutes);
                 } else {
-                  return TimeChart(widget.minutes);
+                  return TimeChart(widget.defaultminutes);
                 }
               },
             ),
