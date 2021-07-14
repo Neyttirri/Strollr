@@ -91,7 +91,7 @@ class Stats extends StatefulWidget {
     ),
   ];
 
-  late List<TimeSeries> minutes;
+  late List<TimeSeries> minutes = List.empty(growable: true);
 
   late List<TimeSeries> defaultminutes = [
     TimeSeries(
@@ -149,6 +149,7 @@ class Stats extends StatefulWidget {
 
 class StatsState extends State<Stats> {
   Future<bool> setminutes() async {
+    print('hello');
     YearWithDuration monthlyM =
         await DbHelper.readAllWalkDurationMonthlyInAYear(2021);
     for (int i = 0; i < monthlyM.durationPerMonth.length; i++) {
@@ -342,7 +343,7 @@ class StatsState extends State<Stats> {
             FutureBuilder(
               future: setminutes(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                if (snapshot.hasData && widget.minutes.length >= 1) {
+                if (snapshot.hasData && widget.minutes.isNotEmpty) {
                   return TimeChart(widget.minutes);
                 } else {
                   return TimeChart(widget.minutes);
@@ -416,7 +417,7 @@ class SummaryState extends State<Summary> {
                     Padding(
                       padding: const EdgeInsets.all(30.0),
                       child: Text(
-                        widget.distancesAll.toString() + ' km',
+                        widget.distancesAll.toStringAsFixed(2) + ' km',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black,
@@ -464,7 +465,7 @@ class SummaryState extends State<Summary> {
                     Padding(
                       padding: const EdgeInsets.all(30.0),
                       child: Text(
-                        widget.durationAll.toString() + ' h',
+                        formatStringTime(widget.durationAll) + ' h',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black,
@@ -499,5 +500,12 @@ class SummaryState extends State<Summary> {
             }),
       ]),
     );
+  }
+
+  String formatStringTime(double durationALl) {
+    String duration = durationALl.toStringAsFixed(2);
+    String time = duration.replaceAll(".", ':');
+
+    return time;
   }
 }

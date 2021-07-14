@@ -288,7 +288,7 @@ class MonthlySummaryState extends State<MonthlySummary> {
                     Padding(
                       padding: const EdgeInsets.all(30.0),
                       child: Text(
-                        widget.distancesAll.toString() + ' km',
+                        widget.distancesAll.toStringAsFixed(2) + ' km',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black,
@@ -336,7 +336,7 @@ class MonthlySummaryState extends State<MonthlySummary> {
                     Padding(
                       padding: const EdgeInsets.all(30.0),
                       child: Text(
-                        widget.durationAll.toStringAsFixed(2) + ' h',
+                        formatStringTime(widget.durationAll) + ' h',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black,
@@ -403,6 +403,13 @@ class MonthlySummaryState extends State<MonthlySummary> {
       monthInt = 1;
     }
     return monthInt;
+  }
+
+  String formatStringTime(double durationALl) {
+    String duration = durationALl.toStringAsFixed(2);
+    String time = duration.replaceAll(".", ':');
+
+    return time;
   }
 }
 
