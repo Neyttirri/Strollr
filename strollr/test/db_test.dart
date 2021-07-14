@@ -10,7 +10,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUp(() async {
     // clean up db before every test
-    // await DatabaseManager.instance.deleteDb();
+     // await DatabaseManager.instance.deleteDb();
   });
 
   tearDownAll(() async {
@@ -23,11 +23,11 @@ void main() {
     Walk walk1 = _createTestWalk('second test walk');
     Walk walk2 = Walk(
       name: 'third walk ',
-      durationTime: ("2021-04-12 01:30:00Z"),
+      durationTime: ("01:30:00"),
       distanceInKm: 4.1,
       route: 'should be a xml file',
       startedAtTime: DateTime.parse("2022-04-23 11:30:00Z"),
-      endedAtTime: DateTime.parse("2023-04-03 13:00:00Z"),
+      endedAtTime: DateTime.parse("2023-01-07 13:00:00Z"),
     );
     late Picture picture;
     test('Insert walk', () async {
@@ -35,15 +35,30 @@ void main() {
       walk = await DatabaseOperations.insertWalk(walk);
       walk1 = await DatabaseOperations.insertWalk(walk1);
       walk2 = await DatabaseOperations.insertWalk(walk2);
+
       //expect((await DatabaseManager.instance.readALlWalks()).length,
       //   DatabaseOperations.walksCounter);
+/*
+      YearWithDuration res1 = await DbHelper.readAllWalkDurationMonthlyInAYear(2023);
+      int i2 = 1;
+      print('${res1.durationPerMonth.length}');
+      for (double dist in res1.durationPerMonth) {
+        print('day: ${i2}, duration: ${dist}');
+        i2++;
+      }
+      
+ */
 
+
+      /*
       List<DailyDistance> res = await DatabaseManager.instance
           .readAllWalkDistancesInAMonth('04', '2023');
       print(res.length);
       for (DailyDistance dist in res) {
         print('day: ${dist.day}, distance: ${dist.distance}');
       }
+
+       */
     });
 
 /*
@@ -123,11 +138,11 @@ void main() {
 Walk _createTestWalk(String name) {
   return Walk(
     name: name,
-    durationTime: '01:30:00',
+    durationTime: '01:40:00',
     distanceInKm: 3.56,
     route: 'should be a xml file',
     startedAtTime: DateTime.parse("2021-04-22 11:30:00Z"),
-    endedAtTime: DateTime.parse("2021-04-22 13:00:00Z"),
+    endedAtTime: DateTime.parse("2023-12-28 13:00:00Z"),
   );
 }
 
