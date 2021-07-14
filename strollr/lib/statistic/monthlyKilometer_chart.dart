@@ -4,7 +4,6 @@ import 'package:strollr/Tabs/stats.dart';
 import 'package:strollr/statistic/kilometerSeries.dart';
 import 'dailyKilometerSeries.dart';
 
-
 class MonthlyKilometerChart extends StatefulWidget {
   final List<DailyKilometerSeries> dailykilometer;
 
@@ -36,10 +35,6 @@ class MonthlyKilometerChartState extends State<MonthlyKilometerChart> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: <Widget>[
-                Text(
-                  "Kilometerübersicht",
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
                 Expanded(
                   child: charts.BarChart(
                     series,
@@ -54,5 +49,3 @@ class MonthlyKilometerChartState extends State<MonthlyKilometerChart> {
     );
   }
 }
-
-

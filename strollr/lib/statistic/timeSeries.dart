@@ -1,6 +1,6 @@
 class TimeSeries {
   final String month;
-  final int minutes;
+  final double minutes;
 
   TimeSeries(this.month, this.minutes);
 }

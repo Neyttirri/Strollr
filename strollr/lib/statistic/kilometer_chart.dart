@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:provider/provider.dart';
 import 'package:strollr/Tabs/collection.dart';
 import 'package:strollr/Tabs/stats.dart';
 import 'package:strollr/statistic/kilometerSeries.dart';
 import 'package:strollr/statistic/monthlyKilometer_chart.dart';
 import 'package:strollr/statistic/stats_monthly.dart';
+import 'package:strollr/globals.dart' as globals;
+
+class Change extends ChangeNotifier {
+  void sliderValueChange(int sliderValue) {
+    globals.currentSliderValue = sliderValue;
+    notifyListeners();
+  }
+}
 
 class KilometerChart extends StatefulWidget {
   final List<MonthlyKilometerSeries> kilometer;
@@ -15,6 +24,11 @@ class KilometerChart extends StatefulWidget {
 }
 
 class KilometerChartState extends State<KilometerChart> {
+/*   @override
+  void setState(VoidCallback fn) {
+    
+    super.setState(fn);
+  } */
   @override
   Widget build(BuildContext context) {
     List<charts.Series<MonthlyKilometerSeries, String>> series = [
@@ -26,58 +40,59 @@ class KilometerChartState extends State<KilometerChart> {
           measureFn: (MonthlyKilometerSeries series, _) => series.kilometers)
       //colorFn: (KilometerSeries series, _) => series.barColor)
     ];
-    return Container(
-      height: 400,
-      padding: EdgeInsets.all(20),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              Text(
-                "Kilometerübersicht",
-                style: Theme.of(context).textTheme.bodyText1,
+    return Consumer<Change>(
+      builder: (context, value, child) {
+        return Container(
+          height: 400,
+          padding: EdgeInsets.all(20),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  /*                  Text(
+                    "Kilometerübersicht",
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ), */
+                  Expanded(
+                    child: charts.BarChart(
+                      series,
+                      animate: true,
+                      selectionModels: [
+                        charts.SelectionModelConfig(
+                          type: charts.SelectionModelType.info,
+                          changedListener: _onSelectionChanged,
+                        )
+                      ],
+                    ),
+                  )
+                ],
               ),
-              Expanded(
-                child: charts.BarChart(
-                  series,
-                  animate: true,
-                  selectionModels: [
-                    charts.SelectionModelConfig(
-                      type: charts.SelectionModelType.info,
-                      changedListener: _onSelectionChanged,
-                    )
-                  ],
-                ),
-              )
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
   void _onSelectionChanged(charts.SelectionModel<String> model) {
-    final selectedDatum = model.selectedDatum;
-    if (selectedDatum.isNotEmpty) {
-      print("hello");
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => MonthlyStats()));
-    }
+    final selectedMonth = model.selectedDatum.first.datum;
+    globals.month = selectedMonth.month;
+    if (selectedMonth.kilometers > 0.0)
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => MonthlyStats(selectedMonth.month)));
   }
 }
 
-class SliderWidget extends StatefulWidget {
+/* class SliderWidget extends StatefulWidget {
   const SliderWidget({Key? key}) : super(key: key);
 
   @override
   State<SliderWidget> createState() => SliderState();
-}
+} */
 
-class SliderState extends State<SliderWidget> {
-  int currentSliderValue = 2021;
-  /*  Stats stats1 = new Stats();
-  int chosenyear = stats1.getYear(); */
+/* class SliderState extends State<SliderWidget> {
+  Change change = Change();
 
   @override
   Widget build(BuildContext context) {
@@ -94,20 +109,19 @@ class SliderState extends State<SliderWidget> {
         children: <Widget>[
           SizedBox(height: 15),
           Text(
-            currentSliderValue.toString(),
+            globals.currentSliderValue.toString(),
             style: TextStyle(fontSize: 21.0, fontWeight: FontWeight.w500),
           ),
           Slider(
-            value: currentSliderValue.toDouble(),
+            value: globals.currentSliderValue.toDouble(),
             min: 2021,
             max: 2024,
             divisions: 3,
-            label: currentSliderValue.round().toString(),
+            label: globals.currentSliderValue.round().toString(),
             onChanged: (double value) {
               setState(() {
-                currentSliderValue = value.toInt();
-                Stats stats1 = Stats();
-                stats1.setYear(currentSliderValue);
+                change.sliderValueChange(value.toInt());
+                //globals.currentSliderValue = value.toInt();
               });
             },
           )
@@ -115,4 +129,4 @@ class SliderState extends State<SliderWidget> {
       ),
     );
   }
-}
+} */

@@ -6,7 +6,6 @@ import 'database_manager.dart';
 import 'package:gpx/gpx.dart';
 
 class DbHelper {
-
   // *************************  Statistics - Distance *************************
   /// the list with distances starts from 0 !
   /// so to get the accurate day you should add 1 to the index
@@ -57,22 +56,26 @@ class DbHelper {
 
 // *************************  Statistics - Duration *************************
   static Future<List<YearlyDuration>> readAllWalkDurationYearly() async {
-    List<YearlyDuration> res = await DatabaseManager.instance.readAllWalkDurationsYearly();
+    List<YearlyDuration> res =
+        await DatabaseManager.instance.readAllWalkDurationsYearly();
     return summarizeListYearly(res);
   }
 
-  static Future<YearWithDuration> readAllWalkDurationMonthlyInAYear(int year) async {
+  static Future<YearWithDuration> readAllWalkDurationMonthlyInAYear(
+      int year) async {
     List<MonthlyDuration> res =
-    await DatabaseManager.instance.readAllWalkDurationsMonthly('$year');
+        await DatabaseManager.instance.readAllWalkDurationsMonthly('$year');
     res = summarizeListMonthly(res);
     YearWithDuration yearDuration = YearWithDuration(year);
     for (MonthlyDuration monthly in res) {
-      yearDuration.durationPerMonth[monthly.month - 1] = roundNumber(monthly.duration);
+      yearDuration.durationPerMonth[monthly.month - 1] =
+          roundNumber(monthly.duration);
     }
     return yearDuration;
   }
 
-  static Future<MonthWithDurations> readAllWalkDurationsDailyInAMonth(int month, int year) async {
+  static Future<MonthWithDurations> readAllWalkDurationsDailyInAMonth(
+      int month, int year) async {
     List<DailyDuration> daysWithWalks = await DatabaseManager.instance
         .readAllWalkDurationsInAMonth(getMonthStringFromInt(month), '$year');
     daysWithWalks = summarizeListDaily(daysWithWalks);
@@ -83,20 +86,18 @@ class DbHelper {
       monthDur.durationsPerDay[daily.day - 1] = roundNumber(daily.duration);
     }
     return monthDur;
-
-
-
   }
 
-  static List<YearlyDuration> summarizeListYearly(List<YearlyDuration> list){
+  static List<YearlyDuration> summarizeListYearly(List<YearlyDuration> list) {
     List<YearlyDuration> res = List.empty(growable: true);
+    if (list.length < 2) return list;
     res.add(list.first);
     int index = 0;
-    for(int i = 1; i < list.length; i++) {
-      if(list[i].year == res[index].year){
+    for (int i = 1; i < list.length; i++) {
+      if (list[i].year == res[index].year) {
         res[index].duration += list[i].duration;
       } else {
-        while(list[i].year - 1 != res[index].year) {
+        while (list[i].year - 1 != res[index].year) {
           res.add(YearlyDuration(year: res[index].year + 1, duration: 0.0));
           index++;
         }
@@ -107,15 +108,17 @@ class DbHelper {
     return res;
   }
 
-  static List<MonthlyDuration> summarizeListMonthly(List<MonthlyDuration> list){
+  static List<MonthlyDuration> summarizeListMonthly(
+      List<MonthlyDuration> list) {
     List<MonthlyDuration> res = List.empty(growable: true);
+    if (list.length < 2) return list;
     res.add(list.first);
     int index = 0;
-    for(int i = 1; i < list.length; i++) {
-      if(list[i].month == res[index].month){
+    for (int i = 1; i < list.length; i++) {
+      if (list[i].month == res[index].month) {
         res[index].duration += list[i].duration;
       } else {
-        while(list[i].month - 1 != res[index].month) {
+        while (list[i].month - 1 != res[index].month) {
           res.add(MonthlyDuration(month: res[index].month + 1, duration: 0.0));
           index++;
         }
@@ -126,16 +129,21 @@ class DbHelper {
     return res;
   }
 
-  static List<DailyDuration> summarizeListDaily(List<DailyDuration> list){
+  static List<DailyDuration> summarizeListDaily(List<DailyDuration> list) {
     List<DailyDuration> res = List.empty(growable: true);
+    if (list.length < 2) return list;
     res.add(list.first);
     int index = 0;
-    for(int i = 1; i < list.length; i++) {
-      if(list[i].day == res[index].day){
+    for (int i = 1; i < list.length; i++) {
+      if (list[i].day == res[index].day) {
         res[index].duration += list[i].duration;
       } else {
-        while(list[i].day - 1 != res[index].day) {
-          res.add(DailyDuration(year: res[index].year, month: res[index].month, day: res[index].day + 1, duration: 0.0));
+        while (list[i].day - 1 != res[index].day) {
+          res.add(DailyDuration(
+              year: res[index].year,
+              month: res[index].month,
+              day: res[index].day + 1,
+              duration: 0.0));
           index++;
         }
         index++;
@@ -144,7 +152,6 @@ class DbHelper {
     }
     return res;
   }
-
 }
 
 // *************************  Statistics - Duration *************************
@@ -161,8 +168,8 @@ class YearlyDuration {
 
   static YearlyDuration fromJson(Map<String, Object?> json) => YearlyDuration(
         year: int.parse(json[YearlyDurationField.year] as String),
-        duration:
-        roundNumber(getDurationFromString(json[YearlyDurationField.duration] as String)),
+        duration: roundNumber(getDurationFromString(
+            json[YearlyDurationField.duration] as String)),
       );
 }
 
@@ -178,10 +185,10 @@ class MonthlyDuration {
   MonthlyDuration({required this.month, required this.duration});
 
   static MonthlyDuration fromJson(Map<String, Object?> json) => MonthlyDuration(
-    month: int.parse(json[MonthlyDurationField.month] as String),
-    duration:
-    roundNumber(getDurationFromString(json[MonthlyDurationField.duration] as String)),
-  );
+        month: int.parse(json[MonthlyDurationField.month] as String),
+        duration: roundNumber(getDurationFromString(
+            json[MonthlyDurationField.duration] as String)),
+      );
 }
 
 class YearWithDuration {
@@ -211,15 +218,19 @@ class DailyDuration {
   int day;
   double duration;
 
-  DailyDuration({required this.year, required this.month, required this.day, required this.duration});
+  DailyDuration(
+      {required this.year,
+      required this.month,
+      required this.day,
+      required this.duration});
 
-  static DailyDuration fromJson(Map<String, Object?> json)  => DailyDuration(
-      year: int.parse(json[DailyDurationField.year] as String),
-      month: int.parse(json[DailyDurationField.month] as String),
-      day: int.parse(json[DailyDurationField.day] as String),
-      duration:
-      roundNumber(getDurationFromString(json[DailyDurationField.duration] as String)),
-    );
+  static DailyDuration fromJson(Map<String, Object?> json) => DailyDuration(
+        year: int.parse(json[DailyDurationField.year] as String),
+        month: int.parse(json[DailyDurationField.month] as String),
+        day: int.parse(json[DailyDurationField.day] as String),
+        duration: roundNumber(
+            getDurationFromString(json[DailyDurationField.duration] as String)),
+      );
 }
 
 class MonthWithDurations {

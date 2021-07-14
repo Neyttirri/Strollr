@@ -1,11 +1,16 @@
 library strollr.globals;
 
+import 'package:flutter/material.dart';
+import 'package:strollr/Tabs/stats.dart';
 import 'package:strollr/stop_watch_timer.dart';
 import 'model/picture_categories.dart';
 
 export 'globals.dart';
 
 final StopWatchTimer stopWatchTimer = StopWatchTimer();
+
+int currentSliderValue = 2021;
+String month = '';
 
 final String mushroomImagePath = "assets/images/mushroomIcon.png";
 final String plantImagePath = "assets/images/plantIcon.png";
@@ -55,7 +60,6 @@ Map<Categories, List<String>> questionsForCategory = {
 
 final String descriptionField = "Erzähl was du darüber weißt!";
 
-
 Map<Categories, List<String>> questionsForCategory = {
   Categories.animal: [
     'Name des Tieres:',
@@ -82,4 +86,3 @@ Map<Categories, List<String>> questionsForCategory = {
     'zB kann die Eiche nicht im Schatten anderer Gehölze wachsen'
   ],
 };
-

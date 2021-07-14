@@ -63,6 +63,7 @@ dependencies:
   gallery_saver: ^2.1.2
   photofilters: ^3.0.1
   clickable_list_wheel_view: ^0.0.4
+  provider: ^5.0.0
 
 dev_dependencies:
   flutter_test:

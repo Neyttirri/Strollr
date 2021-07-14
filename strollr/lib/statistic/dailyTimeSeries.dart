@@ -3,7 +3,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 
 class DailyTimeSeries {
   final int day;
-  final int minutes;
+  final double minutes;
 
   DailyTimeSeries(this.day, this.minutes);
 }
