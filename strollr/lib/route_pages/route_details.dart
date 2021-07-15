@@ -162,8 +162,10 @@ class _RouteDetailsState extends State<RouteDetails> {
 
 
                   Future.delayed(Duration.zero, () {
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => Routes()));
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (route) => false);
+                        
+                        /*.pushReplacement(
+                        MaterialPageRoute(builder: (context) => Routes()));*/
                   });
                   deleteRoute(context);
 
@@ -194,7 +196,9 @@ class _RouteDetailsState extends State<RouteDetails> {
       setState(() {
         _isEnable = false;
       });
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (route) => false);
+
+      //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
       //.push(MaterialPageRoute(builder: (context) => Routes()));
       // neuen Routennamen in Datenbank übernehmen
     }
