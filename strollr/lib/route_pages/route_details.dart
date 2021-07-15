@@ -53,13 +53,12 @@ class _RouteDetailsState extends State<RouteDetails> {
           leading: IconButton(
               icon: Icon(Icons.arrow_back, color: headerGreen),
               onPressed: () {
+                //Navigator.of(context).pop();
                 if(navigationID == 1) {
                   Navigator.of(context).pop();
                 } else if(navigationID == 2) {
-                  //Navigator.of(context).pop();
                   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
                 }
-
               }),
           iconTheme: IconThemeData(
             color: headerGreen,

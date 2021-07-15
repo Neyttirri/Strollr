@@ -65,7 +65,7 @@ class CollectionTwo extends StatelessWidget {
     return new Container(
       child: Card(
         child: Padding(
-          padding: EdgeInsets.all(30.0),
+          padding: EdgeInsets.fromLTRB(30.0,10,30,10),
           child: Row(
             children: <Widget>[
               Container(

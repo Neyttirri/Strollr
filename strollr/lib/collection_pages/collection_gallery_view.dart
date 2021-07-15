@@ -65,7 +65,7 @@ class GalleryView extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: headerGreen),
           onPressed: () {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => CollectionTwo()));
+            Navigator.of(context).pop();
             //Navigator.of(context).pop();
           },
         ),
@@ -96,7 +96,7 @@ class GalleryView extends StatelessWidget {
                             borderRadius: BorderRadius.all(Radius.circular(15)),
                             image: new DecorationImage(
                               image: Image.memory(pictureList[index].pictureData, scale: 0.2, filterQuality: FilterQuality.none,).image, 
-                              fit: BoxFit.scaleDown,
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),

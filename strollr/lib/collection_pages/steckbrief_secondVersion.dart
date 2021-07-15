@@ -41,9 +41,9 @@ class Steckbrief_2 extends StatelessWidget {
             print("Walk ID: " + picture.walk_id.toString());
             //Navigator.of(context).pop();
             if(navigationID == 1) {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => GalleryView(category: categoryPicture)));
+              Navigator.of(context).pop();
             } else if ( navigationID == 2) {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RouteDetails(picture.walk_id, navigationID)));
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => RouteDetails(picture.walk_id, navigationID)));
             }
           },
         ),
