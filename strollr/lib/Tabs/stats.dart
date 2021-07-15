@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:strollr/privacy_policy/privacyPolicy.dart';
 import '../style.dart';
 import 'package:strollr/statistic/kilometerSeries.dart';
 import 'package:strollr/statistic/kilometer_chart.dart';
@@ -147,6 +148,9 @@ class Stats extends StatefulWidget {
 }
 
 class StatsState extends State<Stats> {
+
+  final int ID_PRIVACY_POLICY = 0;
+
   Future<bool> setminutes() async {
     YearWithDuration monthlyM =
         await DbHelper.readAllWalkDurationMonthlyInAYear(2021);
@@ -296,6 +300,12 @@ class StatsState extends State<Stats> {
       appBar: AppBar(
         title: Text("Statistiken 2021", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
+        iconTheme: IconThemeData(
+          color: headerGreen,
+        ),
+        actions: [
+          getPrivacyPolicy(context),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(children: [
@@ -347,6 +357,37 @@ class StatsState extends State<Stats> {
           Summary()
         ]),
       ),
+    );
+  }
+
+  Widget getPrivacyPolicy(BuildContext context) {
+    return PopupMenuButton(
+      elevation: 3.2,
+      offset: Offset(0, 45),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(15.0)),
+      ),
+      onSelected: (choice) {
+        if (choice == ID_PRIVACY_POLICY) {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => PrivacyPolicy()));
+        } else
+          print('nothing chosen !!  ');
+      },
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+        PopupMenuItem<int>(
+          value: 0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(Icons.privacy_tip_outlined),
+              Container(
+                margin: EdgeInsets.only(left: 10),
+                child: Text('Datenschutzerklärung'),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -6,7 +6,7 @@
         </intent>
     </queries>
    <application
-        android:label="strollr"
+        android:label="Strollr"
         android:icon="@mipmap/ic_launcher">
         android:requestLegacyExternalStorage="true"
         <activity
