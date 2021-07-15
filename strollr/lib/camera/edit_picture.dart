@@ -613,7 +613,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
           ),
           Flexible(
             child: Text(
-              'Speichern in extra guter Qualität! Braucht natürlich mehr Platz... ^.^',
+              'Bild in hoher Auflösung speichern. Verbraucht mehr Speicher!',
               maxLines: 2,
               softWrap: true,
               //overflow: TextOverflow.fade,
