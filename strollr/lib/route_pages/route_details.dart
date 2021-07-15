@@ -160,8 +160,10 @@ class _RouteDetailsState extends State<RouteDetails> {
                   Navigator.of(context).pop();
 
 
+
                   Future.delayed(Duration.zero, () {
-                    Navigator.of(context).maybePop();
+                    Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => Routes()));
                   });
                   deleteRoute(context);
 
