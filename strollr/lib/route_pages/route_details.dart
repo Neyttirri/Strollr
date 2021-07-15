@@ -156,19 +156,15 @@ class _RouteDetailsState extends State<RouteDetails> {
                   primary: Colors.green,
                 ),
                 onPressed: () {
+                  //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (route) => false);
+                  //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
 
                   Navigator.of(context).pop();
 
-
-
                   Future.delayed(Duration.zero, () {
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (route) => false);
-                        
-                        /*.pushReplacement(
-                        MaterialPageRoute(builder: (context) => Routes()));*/
+                    Navigator.of(context).maybePop();
                   });
                   deleteRoute(context);
-
                 },
               ),
               TextButton(
@@ -197,7 +193,7 @@ class _RouteDetailsState extends State<RouteDetails> {
         _isEnable = false;
       });
       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Routes()), (route) => false);
-
+      //Navigator.of(context).pop();
       //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Routes()));
       //.push(MaterialPageRoute(builder: (context) => Routes()));
       // neuen Routennamen in Datenbank übernehmen

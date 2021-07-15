@@ -11,11 +11,10 @@ import '../globals.dart';
 import '../style.dart';
 
 class GalleryView extends StatelessWidget {
-  //int indexTemp;
+
   Categories category;
 
   late int navigationID = 1;
-
   late int categoryID;
   late int walkID;
   late int pictureID;
@@ -70,7 +69,6 @@ class GalleryView extends StatelessWidget {
           },
         ),
         title: Text(_title, style: TextStyle(color: headerGreen)),
-        //Text("Herbarium", style: TextStyle(color: headerGreen)),
         backgroundColor: Colors.white,
       ),
       body: FutureBuilder(
