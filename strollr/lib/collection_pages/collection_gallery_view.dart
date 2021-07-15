@@ -51,8 +51,8 @@ class GalleryView extends StatelessWidget {
     if(category.index == 0) {
       _title = "Andere";
       print(category.index.toString());
-    } else if(category.index == 1) {
-      _title = "Meine Pflanzen";
+    } else if(category.index == 2) {
+      _title = "Meine Tiere";
     }  else if(category.index == 3) {
       _title = "Meine Bäume";
     } else if(category.index == 4) {
@@ -95,7 +95,7 @@ class GalleryView extends StatelessWidget {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(15)),
                             image: new DecorationImage(
-                              image: Image.memory(pictureList[index].pictureData, scale: 0.2, filterQuality: FilterQuality.none,).image, 
+                              image: Image.memory(pictureList[index].pictureData, scale: 0.2, filterQuality: FilterQuality.none,).image,
                               fit: BoxFit.cover,
                             ),
                           ),
