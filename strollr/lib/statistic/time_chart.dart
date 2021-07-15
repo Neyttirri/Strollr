@@ -39,12 +39,12 @@ class TimeChartState extends State<TimeChart> {
                 child: charts.BarChart(
                   series,
                   animate: true,
-                  selectionModels: [
-                    charts.SelectionModelConfig(
-                      type: charts.SelectionModelType.info,
-                      changedListener: _onSelectionChanged,
-                    )
-                  ],
+                  // selectionModels: [
+                  //   charts.SelectionModelConfig(
+                  //     type: charts.SelectionModelType.info,
+                  //     changedListener: _onSelectionChanged,
+                  //   )
+                  // ],
                 ),
               )
             ],

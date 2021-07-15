@@ -336,7 +336,7 @@ class MonthlySummaryState extends State<MonthlySummary> {
                     Padding(
                       padding: const EdgeInsets.all(30.0),
                       child: Text(
-                        formatStringTime(widget.durationAll) + ' h',
+                        getTimeStringFromDouble(widget.durationAll) + ' h',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black,
@@ -410,6 +410,24 @@ class MonthlySummaryState extends State<MonthlySummary> {
     String time = duration.replaceAll(".", ':');
 
     return time;
+  }
+
+  String getTimeStringFromDouble(double value) {
+    if (value < 0) return 'Invalid Value';
+    int flooredValue = value.floor();
+    double decimalValue = value - flooredValue;
+    String hourValue = getHourString(flooredValue);
+    String minuteString = getMinuteString(decimalValue);
+
+    return '$hourValue:$minuteString';
+  }
+
+  String getMinuteString(double decimalValue) {
+    return '${(decimalValue * 60).toInt()}'.padLeft(2, '0');
+  }
+
+  String getHourString(int flooredValue) {
+    return '${flooredValue}'.padLeft(2, '0');
   }
 }
 

@@ -148,7 +148,6 @@ class Stats extends StatefulWidget {
 }
 
 class StatsState extends State<Stats> {
-
   final int ID_PRIVACY_POLICY = 0;
 
   Future<bool> setminutes() async {
@@ -369,7 +368,8 @@ class StatsState extends State<Stats> {
       ),
       onSelected: (choice) {
         if (choice == ID_PRIVACY_POLICY) {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => PrivacyPolicy()));
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => PrivacyPolicy()));
         } else
           print('nothing chosen !!  ');
       },
@@ -394,7 +394,7 @@ class StatsState extends State<Stats> {
 
 class Summary extends StatefulWidget {
   double distancesAll = 0.0;
-  late double durationAll;
+  double durationAll = 0.0;
   SummaryState createState() => SummaryState();
 }
 
@@ -500,7 +500,7 @@ class SummaryState extends State<Summary> {
                     Padding(
                       padding: const EdgeInsets.all(30.0),
                       child: Text(
-                        formatStringTime(widget.durationAll) + ' h',
+                        getTimeStringFromDouble(widget.durationAll) + ' h',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black,
@@ -542,5 +542,23 @@ class SummaryState extends State<Summary> {
     String time = duration.replaceAll(".", ':');
 
     return time;
+  }
+
+  String getTimeStringFromDouble(double value) {
+    if (value < 0) return 'Invalid Value';
+    int flooredValue = value.floor();
+    double decimalValue = value - flooredValue;
+    String hourValue = getHourString(flooredValue);
+    String minuteString = getMinuteString(decimalValue);
+
+    return '$hourValue:$minuteString';
+  }
+
+  String getMinuteString(double decimalValue) {
+    return '${(decimalValue * 60).toInt()}'.padLeft(2, '0');
+  }
+
+  String getHourString(int flooredValue) {
+    return '${flooredValue}'.padLeft(2, '0');
   }
 }
