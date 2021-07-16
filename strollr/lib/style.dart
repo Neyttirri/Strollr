@@ -26,3 +26,7 @@ const String FontNameDefault = '...tbd...';
 //   fontSize: BodyTextSize,
 //   color: Colors.black,
 // );
+
+//Colors
+const headerGreen = Colors.green;
+const backgroundGrey = Color(0xF7F7F7F7F7);

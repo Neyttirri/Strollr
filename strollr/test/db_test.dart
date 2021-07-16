@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:strollr/db/database_interface_helper.dart';
 import 'package:strollr/db/database_manager.dart';
 import 'package:strollr/model/walk.dart';
 import 'package:strollr/model/picture.dart';
@@ -9,24 +10,58 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUp(() async {
     // clean up db before every test
-    // await DatabaseManager.instance.deleteDb();
+     // await DatabaseManager.instance.deleteDb();
   });
 
   tearDownAll(() async {
     // clean up db after all tests
-    await DatabaseManager.instance.deleteDb();
+    // await DatabaseManager.instance.deleteDb();
   });
 
   group('DatabaseManager', () {
     Walk walk = _createTestWalk('first test walk');
+    Walk walk1 = _createTestWalk('second test walk');
+    Walk walk2 = Walk(
+      name: 'third walk ',
+      durationTime: ("01:30:00"),
+      distanceInKm: 4.1,
+      route: 'should be a xml file',
+      startedAtTime: DateTime.parse("2022-04-23 11:30:00Z"),
+      endedAtTime: DateTime.parse("2023-01-07 13:00:00Z"),
+    );
     late Picture picture;
     test('Insert walk', () async {
       // insert a walk
       walk = await DatabaseOperations.insertWalk(walk);
-      expect((await DatabaseManager.instance.readALlWalks()).length,
-          DatabaseOperations.walksCounter);
+      walk1 = await DatabaseOperations.insertWalk(walk1);
+      walk2 = await DatabaseOperations.insertWalk(walk2);
+
+      //expect((await DatabaseManager.instance.readALlWalks()).length,
+      //   DatabaseOperations.walksCounter);
+/*
+      YearWithDuration res1 = await DbHelper.readAllWalkDurationMonthlyInAYear(2023);
+      int i2 = 1;
+      print('${res1.durationPerMonth.length}');
+      for (double dist in res1.durationPerMonth) {
+        print('day: ${i2}, duration: ${dist}');
+        i2++;
+      }
+      
+ */
+
+
+      /*
+      List<DailyDistance> res = await DatabaseManager.instance
+          .readAllWalkDistancesInAMonth('04', '2023');
+      print(res.length);
+      for (DailyDistance dist in res) {
+        print('day: ${dist.day}, distance: ${dist.distance}');
+      }
+
+       */
     });
 
+/*
     test('Insert picture', () async {
       // insert a picture to the DB
       picture = await _createTestPicture(walk.id!);
@@ -34,6 +69,7 @@ void main() {
       expect((await DatabaseManager.instance.readALlPictures()).length,
           DatabaseOperations.picturesCounter);
     });
+
 
     test('Update walk', () async {
       String newName = 'updated walk';
@@ -68,6 +104,7 @@ void main() {
           newCategory);
     });
 
+
     test('Delete walk', () async {
       Walk toDeleteWalk = _createTestWalk('delete me');
       toDeleteWalk = await DatabaseOperations.insertWalk(toDeleteWalk);
@@ -82,6 +119,8 @@ void main() {
         expect(currentWalks[i].id == toDeleteWalk.id, false);
       }
     });
+
+     */
 
     test('Delete picture', () async {
       Picture toDeletePicture = await _createTestPicture(walk.id!);
@@ -99,11 +138,11 @@ void main() {
 Walk _createTestWalk(String name) {
   return Walk(
     name: name,
-    durationTime: DateTime.parse("2021-05-22 01:30:00Z"),
+    durationTime: '01:40:00',
     distanceInKm: 3.56,
     route: 'should be a xml file',
-    startedAtTime: DateTime.parse("2021-05-22 11:30:00Z"),
-    endedAtTime: DateTime.parse("2021-05-22 13:00:00Z"),
+    startedAtTime: DateTime.parse("2021-04-22 11:30:00Z"),
+    endedAtTime: DateTime.parse("2023-12-28 13:00:00Z"),
   );
 }
 
@@ -115,8 +154,8 @@ Future<Picture> _createTestPicture(int walkID) async {
     pictureData: bytes,
     filename: 'someNameHere.jpg',
     createdAtTime: DateTime.parse("2021-05-22 11:40:00Z"),
-    color: 'black, if that is a color',
-    size: 'not too big',
+    generic1: 'black, if that is a color',
+    generic2: 'not too big',
     description: 'gonna put sth here later',
     location: 'some gps data',
     category: 1,

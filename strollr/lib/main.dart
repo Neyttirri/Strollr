@@ -1,32 +1,35 @@
+// @dart=2.9
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:strollr/main_screen.dart';
+import 'package:strollr/model/picture.dart';
+import 'package:strollr/route_pages/active_route.dart';
+import 'package:strollr/utils/shared_prefs.dart';
+import 'globals.dart';
+import 'db/database_manager.dart';
 
-void main() => runApp(RenameMeLater());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPrefs.init();
+  await DatabaseManager.instance.database;
+  runApp(MyApp());
+}
 
-class RenameMeLater extends StatelessWidget {
+class MyApp extends StatelessWidget {
+
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Strollr',
       theme: ThemeData(
-        primaryColor: Colors.teal,
-        accentColor: Colors.black26,
+        primarySwatch: Colors.green,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Strollr'),
-        ),
-        body: Container(
-          margin: EdgeInsets.all(20.0),
-          constraints: BoxConstraints.loose(
-            // expand -> it as much as you can as long as the height stays said height (in double)
-            // loose -> does not exceed said size
-              Size(400.0,600.0)
-          ),
-          child: Image.asset(
-            'assets/images/startScreen.jpg',
-            fit: BoxFit.cover,  // how it is placed in the container ; cover -> fills as much as it can in the container
-          ),
-        ),
-      ),
+      home: MainScreen(),
+      routes: {
+        'main_screen': (BuildContext ctx) => MainScreen(),
+        'active_route': (BuildContext ctx) => ActiveRoute(),
+      },
     );
   }
 }
